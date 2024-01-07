@@ -1,4 +1,5 @@
-# Introduction 
+# Introduction
+
 Blocky is a lightweight Python templating engine able to generate various types of text-based files or strings, e.g., source
 code in various languages, markdown or reStructuredText files, HTML pages, XML or JSON data files, etc.
 
@@ -24,18 +25,23 @@ Blocky is developed around the following ideas:
 
 
 # Functional Overview
-The logic of the templated content generation heavily relies on the user-defined Python script provided for the specified template.
-Following diagram illustrates the processing flow of the content generation:
 
-```  
-	 template           input data   
-	     |                  |
-	     V                  V
-	python template filling script <- blocky
-	           |
-	           V
-	    generated content
+The logic of the templated content generation heavily relies on the user-defined Python script provided for the specified template.
+The following diagram illustrates the processing flow of the content generation:
+
+```
+     template           input data
+         |                  |
+         V                  V
+    python template filling script <- blocky
+                   |
+                   V
+           generated content
 ```
 
 The *python template filling script* uses `Block` objects provided by the imported *blocky* module to fill the variable parts of
 the *template* with the variable content extracted from the *input data* to generate the output *generated content*.
+
+
+# Usage
+
