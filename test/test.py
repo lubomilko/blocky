@@ -1,12 +1,18 @@
-# pylint: disable=missing-module-docstring, missing-function-docstring
+# pylint: disable=missing-module-docstring, missing-function-docstring, wrong-import-position
+
+import sys
 import json
-from pathlib import Path
 from typing import Callable
-from context import blocky
+from pathlib import Path
 
 
-class ReportData(blocky.BlockData):
-    def __init__(self, data_dict: dict = None, fill_hndl: Callable[[blocky.Block, object, int], None] = None) -> None:
+sys.path.insert(0, str(Path(Path(__file__).parent.parent, "src").resolve()))
+
+from blocky import Block, BlockData
+
+
+class ReportData(BlockData):
+    def __init__(self, data_dict: dict = None, fill_hndl: Callable[[Block, object, int], None] = None) -> None:
         super().__init__(data_dict, fill_hndl)
 
     def import_json(self, json_file_path: str | Path) -> None:
@@ -18,7 +24,7 @@ class ReportData(blocky.BlockData):
 class ReportDoc():
     def __init__(self) -> None:
         self.data: ReportData = ReportData()
-        self.block: blocky.Block = blocky.Block()
+        self.block: Block = Block()
         self.default_template: str | Path = None
 
     def adjust_data(self) -> None:
@@ -59,12 +65,12 @@ class GTestReportDoc(ReportDoc):
             testsuite.fill_hndl = self.__fill_hndl_testsuites_testsuite
         self.data.fill_hndl = self.__fill_hndl_testsuites_testsuite
 
-    def __fill_hndl_testsuites_testsuite(self, block: blocky.Block, block_data: object, __subidx: int) -> None:
+    def __fill_hndl_testsuites_testsuite(self, block: Block, block_data: object, __subidx: int) -> None:
         block.get_subblock("RESULT").set(0 if int(block_data.failures) == 0 and int(block_data.errors) == 0 else 1)
         block.get_subblock("FAILURES_COLOR").set(0 if int(block_data.failures) == 0 else 1)
         block.get_subblock("ERRORS_COLOR").set(0 if int(block_data.errors) == 0 else 1)
 
-    def __fill_hndl_test(self, block: blocky.Block, block_data: object, __subidx: int) -> None:
+    def __fill_hndl_test(self, block: Block, block_data: object, __subidx: int) -> None:
         blk_test_status = block.get_subblock("TEST_STATUS")
         if hasattr(block_data, "failures"):
             blk_test_status.set(2)
@@ -80,7 +86,7 @@ def test_report(report_data_file: Path, generated_file: Path, template_file: Pat
 
 
 def test_basics(template_file: Path, generated_file: Path) -> None:
-    blk_file = blocky.Block()
+    blk_file = Block()
 
     blk_file.load_template(template_file)
 
