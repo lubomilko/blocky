@@ -45,3 +45,4 @@ the *template* with the variable content extracted from the *input data* to gene
 
 # Usage
 
+To be documented... See some basic examples of use in the *samples* directory.
