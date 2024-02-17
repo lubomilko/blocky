@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction &mdash; Blocky template engine 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage" href="usage.html" />
+    <link rel="prev" title="Average component" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Blocky template engine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functional-overview">Functional Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Blocky template engine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
+<p>Blocky is a lightweight Python templating engine able to generate various types of text-based files or strings, e.g.,
+source code in various languages, markdown or reStructuredText files, HTML pages, XML or JSON data files, etc.</p>
+<p>Blocky has its name derived from its operational principle - variable parts of a template are enclosed using special
+tags into so called <em>blocks</em> of strings which can be nested together creating a multi-layered structure of blocks and
+their subblocks. Each block in a template can contain multiple variables represented also by appropriate tags. Blocky is
+able to extract the string blocks from a template into the Python <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects that provide multipe methods
+(<a class="reference internal" href="api.html#blocky.Block.set_variables" title="blocky.Block.set_variables"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_variables()</span></code></a>, <a class="reference internal" href="api.html#blocky.Block.clone" title="blocky.Block.clone"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clone()</span></code></a>, <a class="reference internal" href="api.html#blocky.Block.clear" title="blocky.Block.clear"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear()</span></code></a>, etc.) to generate the output scontent
+using a simple user-defined Python script.</p>
+<p>Blocky is developed around the following ideas:</p>
+<ul class="simple">
+<li><p><strong>Logic-less templates</strong> - Templates define primarily the formatting part of the content to be generated. Logic to
+fill the data into the variable parts of a template is defined separately in a user-defined Python script.</p></li>
+<li><p><strong>No custom templating language</strong> - Rendering logic is defined by the Python script importing the <code class="xref py py-mod docutils literal notranslate"><span class="pre">blocky</span></code>
+module, i.e., no proprietary language model is used.</p></li>
+<li><p><strong>No custom data model</strong> - Python script is directly used to read any input data needed to fill the variable parts
+of templates or to control the rendering logic.</p></li>
+<li><p><strong>Minimalism</strong> - Blocky is a single Python module with no external dependencies. Even usage of built-in Python
+modules is limited to minimum.</p></li>
+<li><p><strong>Versatility</strong> - There are no restrictions regarding the generated content as long as it is text-based. Data used
+for filling the variable parts of templates do not need to have any predefined format. Template filling logic is
+defined purely by the user-defined Python script, which allows great flexibility.</p></li>
+</ul>
+<section id="functional-overview">
+<h2>Functional Overview<a class="headerlink" href="#functional-overview" title="Link to this heading"></a></h2>
+<p>The logic of the templated content generation heavily relies on the user-defined Python script provided for the
+specified template. The following diagram illustrates the processing flow of the content generation:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span> template           input data
+     |                  |
+     V                  V
+python template filling script &lt;- blocky
+               |
+               V
+       generated content
+</pre></div>
+</div>
+<p>The <em>python template filling script</em> uses <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects provided by the imported <code class="xref py py-mod docutils literal notranslate"><span class="pre">blocky</span></code> module
+to fill the variable parts of the <em>template</em> with the variable content extracted from the <em>input data</em> to generate
+the output <em>generated content</em>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Average component" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 Lubomir Milko.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
