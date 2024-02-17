@@ -2,8 +2,9 @@
 Introduction
 ########################################################################################################################
 
-Blocky is a lightweight Python templating engine able to generate various types of text-based files or strings, e.g.,
-source code in various languages, markdown or reStructuredText files, HTML pages, XML or JSON data files, etc.
+`Blocky <https://github.com/lubomilko/blocky>`_ is a lightweight Python templating engine able to generate various types
+of text-based files or strings, e.g., source code in various languages, markdown or reStructuredText files, HTML pages,
+XML or JSON data files, etc.
 
 Blocky has its name derived from its operational principle - variable parts of a template are enclosed using special
 tags into so called *blocks* of strings which can be nested together creating a multi-layered structure of blocks and
