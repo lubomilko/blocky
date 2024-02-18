@@ -21,7 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Usage" href="usage.html" />
+    <link rel="next" title="Usage principles" href="usage.html" />
     <link rel="prev" title="Blocky template engine" href="index.html" /> 
 </head>
 
@@ -46,11 +46,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#functional-overview">Functional Overview</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#manual-template-filling">Manual template filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#automated-template-filling">Automated template filling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -103,8 +102,6 @@ modules is limited to minimum.</p></li>
 for filling the variable parts of templates do not need to have any predefined format. Template filling logic is
 defined purely by the user-defined Python script, which allows great flexibility.</p></li>
 </ul>
-<section id="functional-overview">
-<h2>Functional Overview<a class="headerlink" href="#functional-overview" title="Link to this heading"></a></h2>
 <p>The logic of the templated content generation heavily relies on the user-defined Python script provided for the
 specified template. The following diagram illustrates the processing flow of the content generation:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span> template           input data
@@ -120,14 +117,13 @@ python template filling script &lt;- blocky
 to fill the variable parts of the <em>template</em> with the variable content extracted from the <em>input data</em> to generate
 the output <em>generated content</em>.</p>
 </section>
-</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Blocky template engine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage principles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

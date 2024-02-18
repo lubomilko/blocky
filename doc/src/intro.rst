@@ -28,10 +28,6 @@ Blocky is developed around the following ideas:
     defined purely by the user-defined Python script, which allows great flexibility.
 
 
-************************************************************************************************************************
-Functional Overview
-************************************************************************************************************************
-
 The logic of the templated content generation heavily relies on the user-defined Python script provided for the
 specified template. The following diagram illustrates the processing flow of the content generation:
 
