@@ -12,7 +12,9 @@ template engine project.
 
 ## [unreleased] - 202x-xx-xx
 
-*List of modifications for a future release.*
+### Added
+
+- Add option to fill the template using a dictionary.
 
 
 ## [1.0.0] - 2024-01-05
