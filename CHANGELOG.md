@@ -10,11 +10,15 @@ template engine project.
 ---
 
 
-## [unreleased] - 202x-xx-xx
+## [unreleased] - 202y-mm-dd
 
 ### Added
 
-- Add option to fill the template using a dictionary.
+- Add option to fill the template by using a data defined by a dictionary.
+- Add option to set multiple subblocks at once using their names instead of providing the subblock
+  objects.
+- Add option to clear a single block using by the `set()` method with a `variation_idx` set to a
+  negative or `False` value. 
 
 
 ## [1.0.0] - 2024-01-05
