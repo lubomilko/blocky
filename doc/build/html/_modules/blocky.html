@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>blocky &mdash; Blocky template engine 1.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -78,7 +76,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Blocky - Lightweight Python template engine.</span>
 
-<span class="sd">Copyright (C) 2024 Lubomir Milko</span>
+<span class="sd">Copyright (C) 2025 Lubomir Milko</span>
 <span class="sd">This file is part of blocky &lt;https://github.com/lubomilko/blocky&gt;.</span>
 
 <span class="sd">This program is free software: you can redistribute it and/or modify</span>
@@ -99,8 +97,8 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Lubomir Milko&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright (C) 2024 Lubomir Milko&quot;</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.0.0&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright (C) 2025 Lubomir Milko&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.1.0&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;GPLv3&quot;</span>
 
 
@@ -247,19 +245,19 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="BlockData.__init__">
 <a class="viewcode-back" href="../api.html#blocky.BlockData.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_hndl</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Block&quot;</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_hndl</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Block&quot;</span><span class="p">,</span> <span class="nb">object</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor creating new block object data.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data_dict (dict, optional): Dictionary defining the object attributes to be created using the</span>
 <span class="sd">                :meth:`import_dict` method. Defaults to None.</span>
-<span class="sd">            fill_hndl (Callable[[Block, object, int], None], optional): Handler for a special</span>
-<span class="sd">                function to be called when the data from a corresponding :class:`BlockData` object are filled</span>
-<span class="sd">                into the block template. The handler can contain special operations to be performed during</span>
-<span class="sd">                the template filling. Defaults to None.</span>
+<span class="sd">            fill_hndl (Callable[[Block, object | dict, int], None], optional): Handler function to be called after</span>
+<span class="sd">                the values of a corresponding :class:`BlockData` object are set into the block template. The handler</span>
+<span class="sd">                can contain special operations to be performed after the regular template filling using the block data</span>
+<span class="sd">                values. Defaults to None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fill_hndl</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Block</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill_hndl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill_hndl</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Block</span><span class="p">,</span> <span class="nb">object</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill_hndl</span>
         <span class="k">if</span> <span class="n">data_dict</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">import_dict</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span></div>
 
@@ -268,16 +266,17 @@
 <a class="viewcode-back" href="../api.html#blocky.BlockData.import_dict">[docs]</a>
     <span class="k">def</span> <span class="nf">import_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Imports data from dictionary, i.e., converts dictionary key-value pairs into object</span>
-<span class="sd">        attributes with values. The dictionary keys are directly used as names for new :class:`Block` object</span>
-<span class="sd">        attributes. The dictionary values are converted according to the following rules:</span>
+<span class="sd">        Imports data from dictionary, i.e., converts the dictionary key-value pairs into the object attribute-value</span>
+<span class="sd">        pairs. The dictionary values are converted according to the following rules:</span>
 
 <span class="sd">        *   Strings, integers, floats, booleans -&gt; Directly used as :class:`BlockData` object attribute values.</span>
 <span class="sd">        *   Subdictionary with its own key-value pairs -&gt; Subdictionary is added as a :class:`BlockData` subobject</span>
 <span class="sd">            into the parent :class:`BlockData` object with internal attributes set according to the key-value</span>
 <span class="sd">            pairs of the subdictionary.</span>
-<span class="sd">        *   List -&gt; Added as a list type :class:`BlockData` object attribute. Only one-dimensional lists are</span>
-<span class="sd">            supported for filling the template blocks.</span>
+<span class="sd">        *   List, tuple -&gt; Added as a list attribute to the parent :class:`BlockData` object. Lists or tuples define</span>
+<span class="sd">            instances of template blocks that need to be cloned. Each list or tuple item should consist of a</span>
+<span class="sd">            dictionary defining the key-value pairs used for filling a single clone instance.</span>
+<span class="sd">            Only one-dimensional lists are supported for filling the template blocks.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data_dict (dict): Dictionary defining the structure of object attributes to be created.</span>
@@ -410,52 +409,62 @@
 
 <div class="viewcode-block" id="Block.fill">
 <a class="viewcode-back" href="../api.html#blocky.Block.fill">[docs]</a>
-    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_data</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">__subidx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_data</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">__subidx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fills the block content using the data from specified object. The list below defines relationships</span>
-<span class="sd">        between :class:`BlockData` object attribute types and their use in a block template:</span>
+<span class="sd">        Fills the block content using the data from a specified object (:class:`BlockData` recommended) or a</span>
+<span class="sd">        dictionary. The list below defines the relationships between the object attribute values or dictionary</span>
+<span class="sd">        values and their use in a block template:</span>
 
-<span class="sd">        *   Strings, integers, floats, booleans -&gt; Values set directly as block variables.</span>
-<span class="sd">        *   :class:`BlockData` subobject -&gt; Data to be filled into a subblock of the parent block being filled.</span>
-<span class="sd">        *   List -&gt; Content of block clones, each list item represents a content to be used in one cloned instance.</span>
+<span class="sd">        *   Strings, integers, floats, booleans -&gt; Values set directly as block variables into the template tags.</span>
+<span class="sd">        *   Subobject or subdictionary -&gt; Data to be filled into a subblock of the parent block being filled.</span>
+<span class="sd">        *   List or tuple -&gt; Content of block clones. Each list or tuple item should consist of another subobject or</span>
+<span class="sd">            a subdictionary representing attributes and their values to be used in one cloned instance of</span>
+<span class="sd">            a template block.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            block_data (object): Object whose attributes will be used to fill the block template. It is</span>
-<span class="sd">                recommended to use an instance of :class:`BlockData` class or an object inheriting from this</span>
-<span class="sd">                class.</span>
+<span class="sd">            block_data (object | dict): Object or dictionary with attribute-value or key-value pairs to be used to</span>
+<span class="sd">                fill the block template.</span>
 <span class="sd">            __subidx (int, optional): Internal value representing the item index for attributes of list type.</span>
 <span class="sd">                The index is sent as an argument to the fill handler function (it it&#39;s used) to indicate which</span>
 <span class="sd">                list item is being used for filling the template block. This parameter shall be left at a</span>
 <span class="sd">                default value 0 when this method is called. Defaults to 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">block_data</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">)]:</span>
-            <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">subblk</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                        <span class="n">subblk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                        <span class="n">subblk</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-                    <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="c1"># Get the block data in form of a dictionary even if it is defined as an object.</span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="n">block_data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">block_data</span><span class="o">.</span><span class="vm">__dict__</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">block_data</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">))</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">!=</span> <span class="s2">&quot;fill_hndl&quot;</span><span class="p">]:</span>
-            <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">subblk</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">subblk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                    <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="c1"># 1. Loop through list items of block data and fill the template blocks that need to be cloned.</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">subblk</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                            <span class="n">subblk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                            <span class="n">subblk</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># Value is an empty list, i.e., [].</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">block_data</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">))]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+        <span class="c1"># 2. Loop through object or dict items of block data and fill the single instance (non-cloned) template blocks.</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="n">attrib</span> <span class="o">!=</span> <span class="s2">&quot;fill_hndl&quot;</span><span class="p">:</span>
+                <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">subblk</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>    <span class="c1"># Value is a None object or an empty dict, i.e., None or {}.</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block_data</span><span class="p">,</span> <span class="s2">&quot;fill_hndl&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">block_data</span><span class="o">.</span><span class="n">fill_hndl</span><span class="p">:</span>
-                <span class="n">block_data</span><span class="o">.</span><span class="n">fill_hndl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_data</span><span class="p">,</span> <span class="n">__subidx</span><span class="p">)</span></div>
+        <span class="c1"># 3. Loop through simple data type items of block data and fill the template tags.</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+
+        <span class="c1"># 4. If an external fill handle is defined within the block data, then call it.</span>
+        <span class="n">fill_hndl</span> <span class="o">=</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fill_hndl&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fill_hndl</span><span class="p">:</span>
+            <span class="n">fill_hndl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_data</span><span class="p">,</span> <span class="n">__subidx</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Block.reset">
@@ -610,7 +619,7 @@
 
 <div class="viewcode-block" id="Block.set_subblock">
 <a class="viewcode-back" href="../api.html#blocky.Block.set_subblock">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblocks</span><span class="p">:</span> <span class="s2">&quot;Block&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">set_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblocks</span><span class="p">:</span> <span class="s2">&quot;Block | str&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the content of a subblock object into the template of the parent block object from which this method</span>
 <span class="sd">        is called, i.e. replaces the subblock tags in the parent block template with the subblock content.</span>
@@ -619,24 +628,36 @@
 <span class="sd">            Calling this method is equivalent to the call of the :meth:`set` method from the subblock object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            subblocks (:class:`Block`): Subblock object(s) from which the content will be set into parent block</span>
-<span class="sd">                object template.</span>
+<span class="sd">            subblocks (:class:`Block` | str): Subblock object(s) or names whose content will be set into the</span>
+<span class="sd">                parent block object template.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">subblk</span> <span class="ow">in</span> <span class="n">subblocks</span><span class="p">:</span>
-            <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subblk</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">subblk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">:</span>
+                    <span class="c1"># If subblock is already defined in child subblocks, then set it directly.</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">[</span><span class="n">subblk</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># If subblock is not defined yet, then extract it and then call the set method.</span>
+                    <span class="n">blk_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">subblk</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">blk_sub</span><span class="p">:</span>
+                        <span class="n">blk_sub</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Block.set">
 <a class="viewcode-back" href="../api.html#blocky.Block.set">[docs]</a>
-    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variation_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">all_subblocks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variation_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">all_subblocks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
             <span class="n">raw_content</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the content of the block from which this method is called into its parent block template,</span>
 <span class="sd">        i.e. replaces the subblock tags in the parent block template with the subblock content.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variation_idx (int, optional): Variation of a block content to be set. Variations are</span>
-<span class="sd">                content parts separated by separator tags. Defaults to 0.</span>
+<span class="sd">            variation_idx (int | bool, optional): Variation index of a block content to be set starting from 0.</span>
+<span class="sd">                Variations are content parts separated by the separator tags. Negative variation number causes</span>
+<span class="sd">                the block to be cleared instead of set. A boolean value True represents the first block variation 0</span>
+<span class="sd">                and False represents the block variation -1, i.e., it clears the block. Defaults to 0.</span>
 <span class="sd">            all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block</span>
 <span class="sd">                should be set into its parent blocks first before the current block is set into its parent block.</span>
 <span class="sd">            raw_content (bool | None, optional): Flag indicating that the block content should be set as is without</span>
@@ -647,6 +668,15 @@
 <span class="sd">                corresponding subblock tags in the parent content will be replaced by the subblock content.</span>
 <span class="sd">                Defaults to -1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert potentially boolean variation index to integer.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variation_idx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">variation_idx</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">variation_idx</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># If variation index is below zero, then clear the block and exit.</span>
+        <span class="k">if</span> <span class="n">variation_idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="k">if</span> <span class="n">raw_content</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">raw_content</span> <span class="o">=</span> <span class="n">raw_content</span>
 
