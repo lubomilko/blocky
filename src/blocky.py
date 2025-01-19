@@ -1,7 +1,7 @@
 """
 Blocky - Lightweight Python template engine.
 
-Copyright (C) 2024 Lubomir Milko
+Copyright (C) 2025 Lubomir Milko
 This file is part of blocky <https://github.com/lubomilko/blocky>.
 
 This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Union, Callable
 
 __author__ = "Lubomir Milko"
-__copyright__ = "Copyright (C) 2024 Lubomir Milko"
+__copyright__ = "Copyright (C) 2025 Lubomir Milko"
 __version__ = "1.1.0"
 __license__ = "GPLv3"
 
@@ -483,7 +483,7 @@ class Block:
                 if blk_sub:
                     blk_sub.clear()
 
-    def set_subblock(self, *subblocks: "Block") -> None:
+    def set_subblock(self, *subblocks: "Block | str") -> None:
         """
         Sets the content of a subblock object into the template of the parent block object from which this method
         is called, i.e. replaces the subblock tags in the parent block template with the subblock content.
@@ -492,21 +492,33 @@ class Block:
             Calling this method is equivalent to the call of the :meth:`set` method from the subblock object.
 
         Args:
-            subblocks (:class:`Block`): Subblock object(s) from which the content will be set into parent block
-                object template.
+            subblocks (:class:`Block` | str): Subblock object(s) or names whose content will be set into the
+                parent block object template.
         """
         for subblk in subblocks:
-            subblk.set()
+            if isinstance(subblk, str):
+                if subblk in self.subblocks:
+                    # If subblock is already defined in child subblocks, then set it directly.
+                    self.subblocks[subblk].set()
+                else:
+                    # If subblock is not defined yet, then extract it and then call the set method.
+                    blk_sub = self.get_subblock(subblk)
+                    if blk_sub:
+                        blk_sub.set()
+            else:
+                subblk.set()
 
-    def set(self, variation_idx: int = 0, all_subblocks: bool = False,
+    def set(self, variation_idx: int | bool = 0, all_subblocks: bool = False,
             raw_content: bool | None = None, count: int = -1) -> None:
         """
         Sets the content of the block from which this method is called into its parent block template,
         i.e. replaces the subblock tags in the parent block template with the subblock content.
 
         Args:
-            variation_idx (int, optional): Variation of a block content to be set. Variations are
-                content parts separated by separator tags. Defaults to 0.
+            variation_idx (int | bool, optional): Variation index of a block content to be set starting from 0.
+                Variations are content parts separated by the separator tags. Negative variation number causes
+                the block to be cleared instead of set. A boolean value True represents the first block variation 0
+                and False represents the block variation -1, i.e., it clears the block. Defaults to 0.
             all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block
                 should be set into its parent blocks first before the current block is set into its parent block.
             raw_content (bool | None, optional): Flag indicating that the block content should be set as is without
@@ -517,6 +529,15 @@ class Block:
                 corresponding subblock tags in the parent content will be replaced by the subblock content.
                 Defaults to -1.
         """
+        # Convert potentially boolean variation index to integer.
+        if isinstance(variation_idx, bool):
+            variation_idx = 0 if variation_idx else -1
+
+        # If variation index is below zero, then clear the block and exit.
+        if variation_idx < 0:
+            self.clear(count=count)
+            return
+
         if raw_content is not None:
             self.raw_content = raw_content
 
