@@ -1,7 +1,7 @@
 """
 Blocky - Lightweight Python template engine.
 
-Copyright (C) 2024 Lubomir Milko
+Copyright (C) 2025 Lubomir Milko
 This file is part of blocky <https://github.com/lubomilko/blocky>.
 
 This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Union, Callable
 
 __author__ = "Lubomir Milko"
-__copyright__ = "Copyright (C) 2024 Lubomir Milko"
+__copyright__ = "Copyright (C) 2025 Lubomir Milko"
 __version__ = "1.1.0"
 __license__ = "GPLv3"
 
@@ -483,7 +483,7 @@ class Block:
                 if blk_sub:
                     blk_sub.clear()
 
-    def set_subblock(self, *subblocks: "Block" | str) -> None:
+    def set_subblock(self, *subblocks: "Block | str") -> None:
         """
         Sets the content of a subblock object into the template of the parent block object from which this method
         is called, i.e. replaces the subblock tags in the parent block template with the subblock content.
