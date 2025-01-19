@@ -1,7 +1,7 @@
 """
 Blocky - Lightweight Python template engine.
 
-Copyright (C) 2024 Lubomir Milko
+Copyright (C) 2025 Lubomir Milko
 This file is part of blocky <https://github.com/lubomilko/blocky>.
 
 This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@ from pathlib import Path
 from typing import Union, Callable
 
 __author__ = "Lubomir Milko"
-__copyright__ = "Copyright (C) 2024 Lubomir Milko"
-__version__ = "1.0.0"
+__copyright__ = "Copyright (C) 2025 Lubomir Milko"
+__version__ = "1.1.0"
 __license__ = "GPLv3"
 
 
@@ -145,34 +145,35 @@ class BlockData(object):
     *   List -> Content of block clones, each list item represents a content to be used in one cloned instance.
 
     """
-    def __init__(self, data_dict: dict = None, fill_hndl: Callable[["Block", object, int], None] = None) -> None:
+    def __init__(self, data_dict: dict = None, fill_hndl: Callable[["Block", object | dict, int], None] = None) -> None:
         """
         Constructor creating new block object data.
 
         Args:
             data_dict (dict, optional): Dictionary defining the object attributes to be created using the
                 :meth:`import_dict` method. Defaults to None.
-            fill_hndl (Callable[[Block, object, int], None], optional): Handler for a special
-                function to be called when the data from a corresponding :class:`BlockData` object are filled
-                into the block template. The handler can contain special operations to be performed during
-                the template filling. Defaults to None.
+            fill_hndl (Callable[[Block, object | dict, int], None], optional): Handler function to be called after
+                the values of a corresponding :class:`BlockData` object are set into the block template. The handler
+                can contain special operations to be performed after the regular template filling using the block data
+                values. Defaults to None.
         """
-        self.fill_hndl: Callable[[Block, object, int], None] = fill_hndl
+        self.fill_hndl: Callable[[Block, object | dict, int], None] = fill_hndl
         if data_dict:
             self.import_dict(data_dict)
 
     def import_dict(self, data_dict: dict) -> None:
         """
-        Imports data from dictionary, i.e., converts dictionary key-value pairs into object
-        attributes with values. The dictionary keys are directly used as names for new :class:`Block` object
-        attributes. The dictionary values are converted according to the following rules:
+        Imports data from dictionary, i.e., converts the dictionary key-value pairs into the object attribute-value
+        pairs. The dictionary values are converted according to the following rules:
 
         *   Strings, integers, floats, booleans -> Directly used as :class:`BlockData` object attribute values.
         *   Subdictionary with its own key-value pairs -> Subdictionary is added as a :class:`BlockData` subobject
             into the parent :class:`BlockData` object with internal attributes set according to the key-value
             pairs of the subdictionary.
-        *   List -> Added as a list type :class:`BlockData` object attribute. Only one-dimensional lists are
-            supported for filling the template blocks.
+        *   List, tuple -> Added as a list attribute to the parent :class:`BlockData` object. Lists or tuples define
+            instances of template blocks that need to be cloned. Each list or tuple item should consist of a
+            dictionary defining the key-value pairs used for filling a single clone instance.
+            Only one-dimensional lists are supported for filling the template blocks.
 
         Args:
             data_dict (dict): Dictionary defining the structure of object attributes to be created.
@@ -290,52 +291,62 @@ class Block:
         with open(content_file_path, "w", encoding="utf-8") as file_content:
             file_content.write(self.content)
 
-    def fill(self, block_data: object, __subidx: int = 0) -> None:
+    def fill(self, block_data: object | dict, __subidx: int = 0) -> None:
         """
-        Fills the block content using the data from specified object. The list below defines relationships
-        between :class:`BlockData` object attribute types and their use in a block template:
+        Fills the block content using the data from a specified object (:class:`BlockData` recommended) or a
+        dictionary. The list below defines the relationships between the object attribute values or dictionary
+        values and their use in a block template:
 
-        *   Strings, integers, floats, booleans -> Values set directly as block variables.
-        *   :class:`BlockData` subobject -> Data to be filled into a subblock of the parent block being filled.
-        *   List -> Content of block clones, each list item represents a content to be used in one cloned instance.
+        *   Strings, integers, floats, booleans -> Values set directly as block variables into the template tags.
+        *   Subobject or subdictionary -> Data to be filled into a subblock of the parent block being filled.
+        *   List or tuple -> Content of block clones. Each list or tuple item should consist of another subobject or
+            a subdictionary representing attributes and their values to be used in one cloned instance of
+            a template block.
 
         Args:
-            block_data (object): Object whose attributes will be used to fill the block template. It is
-                recommended to use an instance of :class:`BlockData` class or an object inheriting from this
-                class.
+            block_data (object | dict): Object or dictionary with attribute-value or key-value pairs to be used to
+                fill the block template.
             __subidx (int, optional): Internal value representing the item index for attributes of list type.
                 The index is sent as an argument to the fill handler function (it it's used) to indicate which
                 list item is being used for filling the template block. This parameter shall be left at a
                 default value 0 when this method is called. Defaults to 0.
         """
-        for (attrib, value) in [(a, v) for (a, v) in block_data.__dict__.items() if isinstance(v, list)]:
-            subblk = self.get_subblock(f"{attrib.upper()}")
-            if subblk:
-                if value:
-                    for (i, val) in enumerate(value):
-                        subblk.fill(val, i)
-                        subblk.clone()
-                    subblk.set()
-                else:
-                    subblk.clear()
+        # Get the block data in form of a dictionary even if it is defined as an object.
+        data_dict = block_data if isinstance(block_data, dict) else block_data.__dict__
 
-        for (attrib, value) in [(a, v) for (a, v) in block_data.__dict__.items()
-                                if not isinstance(v, (list, str, int, float, bool)) and a != "fill_hndl"]:
-            subblk = self.get_subblock(f"{attrib.upper()}")
-            if subblk:
-                if value:
-                    subblk.fill(value)
-                    subblk.set()
-                else:
-                    subblk.clear()
+        # 1. Loop through list items of block data and fill the template blocks that need to be cloned.
+        for (attrib, value) in data_dict.items():
+            if isinstance(value, (list, tuple)):
+                subblk = self.get_subblock(f"{attrib.upper()}")
+                if subblk:
+                    if value:
+                        for (i, val) in enumerate(value):
+                            subblk.fill(val, i)
+                            subblk.clone()
+                        subblk.set()
+                    else:
+                        subblk.clear()  # Value is an empty list, i.e., [].
 
-        for (attrib, value) in [(a, v) for (a, v) in block_data.__dict__.items()
-                                if isinstance(v, (str, int, float, bool))]:
-            self.set_variables(**{f"{attrib.upper()}": value})
+        # 2. Loop through object or dict items of block data and fill the single instance (non-cloned) template blocks.
+        for (attrib, value) in data_dict.items():
+            if isinstance(value, (object, dict)) and attrib != "fill_hndl":
+                subblk = self.get_subblock(f"{attrib.upper()}")
+                if subblk:
+                    if value:
+                        subblk.fill(value)
+                        subblk.set()
+                    else:
+                        subblk.clear()    # Value is a None object or an empty dict, i.e., None or {}.
 
-        if hasattr(block_data, "fill_hndl"):
-            if block_data.fill_hndl:
-                block_data.fill_hndl(self, block_data, __subidx)
+        # 3. Loop through simple data type items of block data and fill the template tags.
+        for (attrib, value) in data_dict.items():
+            if isinstance(value, (str, int, float, bool)):
+                self.set_variables(**{f"{attrib.upper()}": value})
+
+        # 4. If an external fill handle is defined within the block data, then call it.
+        fill_hndl = data_dict.get("fill_hndl")
+        if fill_hndl:
+            fill_hndl(self, block_data, __subidx)
 
     def reset(self, all_subblocks: bool = True) -> None:
         """
@@ -472,7 +483,7 @@ class Block:
                 if blk_sub:
                     blk_sub.clear()
 
-    def set_subblock(self, *subblocks: "Block") -> None:
+    def set_subblock(self, *subblocks: "Block | str") -> None:
         """
         Sets the content of a subblock object into the template of the parent block object from which this method
         is called, i.e. replaces the subblock tags in the parent block template with the subblock content.
@@ -481,21 +492,33 @@ class Block:
             Calling this method is equivalent to the call of the :meth:`set` method from the subblock object.
 
         Args:
-            subblocks (:class:`Block`): Subblock object(s) from which the content will be set into parent block
-                object template.
+            subblocks (:class:`Block` | str): Subblock object(s) or names whose content will be set into the
+                parent block object template.
         """
         for subblk in subblocks:
-            subblk.set()
+            if isinstance(subblk, str):
+                if subblk in self.subblocks:
+                    # If subblock is already defined in child subblocks, then set it directly.
+                    self.subblocks[subblk].set()
+                else:
+                    # If subblock is not defined yet, then extract it and then call the set method.
+                    blk_sub = self.get_subblock(subblk)
+                    if blk_sub:
+                        blk_sub.set()
+            else:
+                subblk.set()
 
-    def set(self, variation_idx: int = 0, all_subblocks: bool = False,
+    def set(self, variation_idx: int | bool = 0, all_subblocks: bool = False,
             raw_content: bool | None = None, count: int = -1) -> None:
         """
         Sets the content of the block from which this method is called into its parent block template,
         i.e. replaces the subblock tags in the parent block template with the subblock content.
 
         Args:
-            variation_idx (int, optional): Variation of a block content to be set. Variations are
-                content parts separated by separator tags. Defaults to 0.
+            variation_idx (int | bool, optional): Variation index of a block content to be set starting from 0.
+                Variations are content parts separated by the separator tags. Negative variation number causes
+                the block to be cleared instead of set. A boolean value True represents the first block variation 0
+                and False represents the block variation -1, i.e., it clears the block. Defaults to 0.
             all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block
                 should be set into its parent blocks first before the current block is set into its parent block.
             raw_content (bool | None, optional): Flag indicating that the block content should be set as is without
@@ -506,6 +529,15 @@ class Block:
                 corresponding subblock tags in the parent content will be replaced by the subblock content.
                 Defaults to -1.
         """
+        # Convert potentially boolean variation index to integer.
+        if isinstance(variation_idx, bool):
+            variation_idx = 0 if variation_idx else -1
+
+        # If variation index is below zero, then clear the block and exit.
+        if variation_idx < 0:
+            self.clear(count=count)
+            return
+
         if raw_content is not None:
             self.raw_content = raw_content
 
