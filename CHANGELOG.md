@@ -15,6 +15,13 @@ template engine project.
 *Changes for the upcoming new version.*
 
 
+## [1.1.1] - 2025-02-08
+
+### Fix
+
+- Fix condition for filling object or dictionary values into the template tags in the `fill()` method.
+
+
 ## [1.1.0] - 2025-01-19
 
 ### Added
@@ -32,5 +39,6 @@ template engine project.
 
 
 [unreleased]: https://github.com/lubomilko/blocky
+[1.1.1]: https://github.com/lubomilko/blocky/releases/tag/1.1.1
 [1.1.0]: https://github.com/lubomilko/blocky/releases/tag/1.1.0
 [1.0.0]: https://github.com/lubomilko/blocky/releases/tag/1.0.0
