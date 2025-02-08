@@ -15,6 +15,13 @@ template engine project.
 *Changes for the upcoming new version.*
 
 
+## [1.1.2] - 2025-02-08
+
+### Fix
+
+- Add protection against endless while loops in `set()` and `__set_std_last_first_tag` methods.
+
+
 ## [1.1.1] - 2025-02-08
 
 ### Fix
@@ -39,6 +46,7 @@ template engine project.
 
 
 [unreleased]: https://github.com/lubomilko/blocky
+[1.1.2]: https://github.com/lubomilko/blocky/releases/tag/1.1.2
 [1.1.1]: https://github.com/lubomilko/blocky/releases/tag/1.1.1
 [1.1.0]: https://github.com/lubomilko/blocky/releases/tag/1.1.0
 [1.0.0]: https://github.com/lubomilko/blocky/releases/tag/1.0.0
