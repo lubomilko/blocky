@@ -570,7 +570,7 @@ class Block:
                 self.parent.config.tags.block_start.str_name(self.name),
                 self.parent.config.tags.block_end.str_name(self.name),
                 True)
-            if subblk_start >= 0 and subblk_end >= 0:
+            if 0 <= subblk_start < subblk_end:
                 blk_content = self.__get_variation(self.content, self.name, variation_idx)
                 # If subblock tags are found, then set the current block content into all corresponding subblock tags
                 # in the parent block content.
@@ -811,7 +811,7 @@ class Block:
                     self.config.tags.std_last_first_end.str,
                     True)
             # If *last value* tag is found.
-            if subblk_start >= 0 and subblk_end >= 0:
+            if 0 <= subblk_start < subblk_end:
                 # Extract the content of the *last value* tag without the start/end tags themselves.
                 (subblk_cont_start, subblk_cont_end) = \
                     self.__get_subblock_start_end_pos(
