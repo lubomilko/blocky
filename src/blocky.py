@@ -23,7 +23,7 @@ from typing import Union, Callable
 
 __author__ = "Lubomir Milko"
 __copyright__ = "Copyright (C) 2025 Lubomir Milko"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __license__ = "GPLv3"
 
 
@@ -314,7 +314,7 @@ class Block:
         # Get the block data in form of a dictionary even if it is defined as an object.
         data_dict = block_data if isinstance(block_data, dict) else block_data.__dict__
 
-        # 1. Loop through list items of block data and fill the template blocks that need to be cloned.
+        # 1. Loop through list or tuple items of block data and fill the template blocks that need to be cloned.
         for (attrib, value) in data_dict.items():
             if isinstance(value, (list, tuple)):
                 subblk = self.get_subblock(f"{attrib.upper()}")
@@ -327,9 +327,9 @@ class Block:
                     else:
                         subblk.clear()  # Value is an empty list, i.e., [].
 
-        # 2. Loop through object or dict items of block data and fill the single instance (non-cloned) template blocks.
+        # 2. Loop through other types (None, object or dict) of block data and fill the single instance (non-cloned) template blocks.
         for (attrib, value) in data_dict.items():
-            if isinstance(value, (object, dict)) and attrib != "fill_hndl":
+            if not isinstance(value, (list, tuple, str, int, float, bool)) and attrib != "fill_hndl":
                 subblk = self.get_subblock(f"{attrib.upper()}")
                 if subblk:
                     if value:
