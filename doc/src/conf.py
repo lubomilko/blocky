@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath('../../src'))
 project = 'Blocky template engine'
 copyright = '2025 Lubomir Milko'
 author = 'Lubomir Milko'
-release = '1.1.0'
+release = '1.2.0'
 
 # -- General configuration ---------------------------------------------------
 extensions = [
