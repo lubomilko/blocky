@@ -15,16 +15,26 @@ template engine project.
 *Changes for the upcoming new version.*
 
 
+## [1.2.0] - 2025-03-03
+
+### Added
+
+- Add support for a new optional attribute `vari_idx` in a dictionary or object used as a
+  `block_data` input to the `fill()` method. The new attribute can define the `variation_idx`
+  attribute of the `set()` method used for setting the parent block containing the attribute into
+  the template.
+
+
 ## [1.1.2] - 2025-02-08
 
-### Fix
+### Fixed
 
 - Add protection against endless while loops in `set()` and `__set_std_last_first_tag` methods.
 
 
 ## [1.1.1] - 2025-02-08
 
-### Fix
+### Fixed
 
 - Fix condition for filling object or dictionary values into the template tags in the `fill()` method.
 
@@ -46,6 +56,7 @@ template engine project.
 
 
 [unreleased]: https://github.com/lubomilko/blocky
+[1.2.0]: https://github.com/lubomilko/blocky/releases/tag/1.2.0
 [1.1.2]: https://github.com/lubomilko/blocky/releases/tag/1.1.2
 [1.1.1]: https://github.com/lubomilko/blocky/releases/tag/1.1.1
 [1.1.0]: https://github.com/lubomilko/blocky/releases/tag/1.1.0
