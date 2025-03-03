@@ -23,7 +23,7 @@ from typing import Union, Callable
 
 __author__ = "Lubomir Milko"
 __copyright__ = "Copyright (C) 2025 Lubomir Milko"
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 __license__ = "GPLv3"
 
 
@@ -291,7 +291,7 @@ class Block:
         with open(content_file_path, "w", encoding="utf-8") as file_content:
             file_content.write(self.content)
 
-    def fill(self, block_data: object | dict, __subidx: int = 0) -> None:
+    def fill(self, block_data: object | dict, __subidx: int = 0) -> int | bool:
         """
         Fills the block content using the data from a specified object (:class:`BlockData` recommended) or a
         dictionary. The list below defines the relationships between the object attribute values or dictionary
@@ -304,13 +304,28 @@ class Block:
             a template block.
 
         Args:
-            block_data (object | dict): Object or dictionary with attribute-value or key-value pairs to be used to
-                fill the block template.
+            block_data (object | dict): Object or dictionary with the attribute-value or key-value pairs to be
+                used for filling the block template. The following two special attributes can be defined:
+
+                *   ``fill_hndl``: A function called before the parent template block containing this
+                    attribute is set into the template. Useful for custom low-level modifications of the
+                    template block.
+                *   ``vari_idx``: A *variation index* specifying the variation of the parent template block
+                    containing this attribute to be set into the template. Only valid for blocks having
+                    multiple variations (see the ``variation_idx`` attribute of the :meth:``set`` method).
+
             __subidx (int, optional): Internal value representing the item index for attributes of list type.
                 The index is sent as an argument to the fill handler function (it it's used) to indicate which
                 list item is being used for filling the template block. This parameter shall be left at a
                 default value 0 when this method is called. Defaults to 0.
+
+        Returns:
+            int | bool: Iteration index to be used for setting the parent block containing the elements
+                being filled within the current call of this method.
         """
+        # Returned variation index used for setting the parent block after the execution of this method.
+        ret_vari_idx = 0
+
         # Get the block data in form of a dictionary even if it is defined as an object.
         data_dict = block_data if isinstance(block_data, dict) else block_data.__dict__
 
@@ -327,26 +342,35 @@ class Block:
                     else:
                         subblk.clear()  # Value is an empty list, i.e., [].
 
-        # 2. Loop through other types (None, object or dict) of block data and fill the single instance (non-cloned) template blocks.
+        # 2. Loop through other types (None, object or dict) of block data and fill the single instance (non-cloned)
+        # template blocks.
         for (attrib, value) in data_dict.items():
             if not isinstance(value, (list, tuple, str, int, float, bool)) and attrib != "fill_hndl":
                 subblk = self.get_subblock(f"{attrib.upper()}")
                 if subblk:
                     if value:
-                        subblk.fill(value)
-                        subblk.set()
+                        # Get the variation index from the internal elements if they contain a vari_idx attribute.
+                        vari_idx = subblk.fill(value)
+                        subblk.set(variation_idx=vari_idx)
                     else:
                         subblk.clear()    # Value is a None object or an empty dict, i.e., None or {}.
 
         # 3. Loop through simple data type items of block data and fill the template tags.
         for (attrib, value) in data_dict.items():
             if isinstance(value, (str, int, float, bool)):
-                self.set_variables(**{f"{attrib.upper()}": value})
+                if attrib == "vari_idx":
+                    # If the attribute is vari_idx, then return its value to be used as a variation_idx
+                    # argument of the set method setting the parent block containing this attribute.
+                    ret_vari_idx = value
+                else:
+                    self.set_variables(**{f"{attrib.upper()}": value})
 
         # 4. If an external fill handle is defined within the block data, then call it.
         fill_hndl = data_dict.get("fill_hndl")
         if fill_hndl:
             fill_hndl(self, block_data, __subidx)
+
+        return ret_vari_idx
 
     def reset(self, all_subblocks: bool = True) -> None:
         """
