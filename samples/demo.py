@@ -1,10 +1,12 @@
+# pylint: disable = missing-module-docstring, missing-class-docstring, missing-function-docstring
+
 import sys
 from pathlib import Path
 
 
 sys.path.insert(0, str(Path(Path(__file__).parent.parent, "src").resolve()))
 
-from blocky import Block
+from blocky import Block    # pylint: disable = import-error, wrong-import-position     # noqa: E402
 
 
 def demo_item_list_essential() -> None:
@@ -48,7 +50,7 @@ def demo_item_lists() -> None:
 
     item_numbers = ("2 kg each", 5, "", 10, "")
 
-    blk_file = Block(template="template_item_lists.txt")
+    blk_file = Block(template="samples/template_item_lists.txt")
 
     blk_items = blk_file.get_subblock("ITEMS_1")
     blk_items_row = blk_items.get_subblock("ITEMS_ROW")
@@ -92,12 +94,31 @@ def demo_item_lists() -> None:
         blk_items.clone()
     blk_items.set()
 
-    blk_file.save_content("generated_item_lists.txt")
+    blk_file.save_content("samples/generated_item_lists.txt")
+
+
+def demo_dict_fill() -> None:
+    blk_data = {
+        "struct_name": "SOME_STRUCT_T",
+        "members": (
+            {"type": {"vari_idx": 0, "t": "UNSIGNED8"}, "name": "u8Var", "arr": None},
+            {"type": {"vari_idx": 1, "t": "UNSIGNED16"}, "name": "au16Var", "arr": {"size": 10}},
+            {"type": {"vari_idx": 2, "t": "SIGNED8"}, "name": "ps8Var", "arr": None},
+            {"type": {"vari_idx": 3, "t": "SIGNED16"}, "name": "aps16Var", "arr": {"size": 20}},
+            {"type": {"vari_idx": -1}, "name": "InvalidVar1", "arr": None},
+            {"type": {"vari_idx": False}, "name": "InvalidVar2", "arr": None},
+            {"type": None, "name": "InvalidVar3", "arr": None},
+            {"type": {}, "name": "InvalidVar4", "arr": None})}
+
+    blk_file = Block(template="samples/template_dict_fill.txt")
+    blk_file.fill(blk_data)
+    blk_file.save_content("samples/generated_dict_fill.txt")
 
 
 def main() -> None:
     demo_item_list_essential()
     demo_item_lists()
+    demo_dict_fill()
 
 
 if __name__ == "__main__":

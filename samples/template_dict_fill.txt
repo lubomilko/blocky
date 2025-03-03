@@ -1,0 +1,6 @@
+typedef struct
+{
+<MEMBERS>
+    <TYPE><T> <^TYPE><T> *<^TYPE>const <T> <^TYPE>const <T> *<^TYPE></TYPE><NAME><ARR>[<SIZE>]</ARR>;
+</MEMBERS>
+}<STRUCT_NAME>;
