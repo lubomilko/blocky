@@ -14,6 +14,15 @@ template engine project.
 
 *Changes for the upcoming new version.*
 
+### Added
+
+- Add possibility to fill multiple blocks with the same name, but different template to be
+  filled by the `fill()` method, instead of setting the same filled content into all blocks
+  with the same name.
+- Add option to set the template block by the `fill()` method using any non-empty string,
+  non-zero or true value assigned directly to the block's dictionary or object attribute.
+  Alternatively, a block can be cleared by setting it to an empty string, zero or false value.
+
 
 ## [1.2.0] - 2025-03-03
 
