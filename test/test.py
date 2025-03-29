@@ -20,6 +20,8 @@ def compare_files(gen_file: Path, exp_file: Path) -> bool:
 
 
 def test_lowlevel() -> None:
+    Path("data/content_gen.txt").unlink(missing_ok=True)
+
     blk_file = Block()
 
     blk_file.load_template("data/content_tmpl.txt")
@@ -174,7 +176,29 @@ def test_lowlevel() -> None:
         blk_col.set_variables(VALUE=row_vals)
         blk_row.clone(set_subblocks=True)
     blk_html_table.set(all_subblocks=True)
-
     blk_file.save_content(str("data/content_gen.txt"))
 
-    assert compare_files("data/content_gen.txt", "data/content_exp.txt") is True
+    assert compare_files("data/content_gen.txt", "data/content_exp.txt")
+
+
+def test_dictfill() -> None:
+    Path("data/fill_gen.txt").unlink(missing_ok=True)
+    data = {
+        "to_set": 1,
+        "to_clear": 0,
+        "struct_name": "SOME_STRUCT_T",
+        "members": (
+            {"type": {"vari_idx": 0, "t": "UNSIGNED8"}, "name": "u8Var", "arr": None},
+            {"type": {"vari_idx": 1, "t": "UNSIGNED16"}, "name": "au16Var", "arr": {"size": 10}},
+            {"type": {"vari_idx": 2, "t": "SIGNED8"}, "name": "ps8Var", "arr": None},
+            {"type": {"vari_idx": 3, "t": "SIGNED16"}, "name": "aps16Var", "arr": {"size": 20}},
+            {"type": {"vari_idx": -1}, "name": "InvalidVar1", "arr": None},
+            {"type": {"vari_idx": False}, "name": "InvalidVar2", "arr": None},
+            {"type": None, "name": "InvalidVar3", "arr": None},
+            {"type": {}, "name": "InvalidVar4", "arr": None})}
+
+    blk_file = Block("data/fill_tmpl.txt")
+    blk_file.fill(data)
+    blk_file.save_content("data/fill_gen.txt")
+
+    assert compare_files("data/fill_gen.txt", "data/fill_exp.txt")
