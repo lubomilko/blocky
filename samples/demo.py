@@ -99,6 +99,8 @@ def demo_item_lists() -> None:
 
 def demo_dict_fill() -> None:
     blk_data = {
+        "to_set": 1,
+        "to_clear": 0,
         "struct_name": "SOME_STRUCT_T",
         "members": (
             {"type": {"vari_idx": 0, "t": "UNSIGNED8"}, "name": "u8Var", "arr": None},
