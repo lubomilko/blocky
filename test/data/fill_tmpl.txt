@@ -5,7 +5,7 @@ typedef struct
 </MEMBERS>
 }<STRUCT_NAME>;
 
-/* Generated structure members:
+/*
 <MEMBERS>
 * <NAME>
 </MEMBERS>

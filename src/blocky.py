@@ -23,7 +23,7 @@ from typing import Union, Callable
 
 __author__ = "Lubomir Milko"
 __copyright__ = "Copyright (C) 2025 Lubomir Milko"
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __license__ = "GPLv3"
 
 
@@ -323,6 +323,10 @@ class Block:
             int | bool: Iteration index to be used for setting the parent block containing the elements
                 being filled within the current call of this method.
         """
+        # Do nothing if block_data is not a dictionary or an object.
+        if block_data is None or isinstance(block_data, (list, tuple, str, int, float, bool)):
+            return 0
+
         # Returned variation index used for setting the parent block after the execution of this method.
         ret_vari_idx = 0
 
@@ -332,28 +336,32 @@ class Block:
         # 1. Loop through list or tuple items of block data and fill the template blocks that need to be cloned.
         for (attrib, value) in data_dict.items():
             if isinstance(value, (list, tuple)):
-                subblk = self.get_subblock(f"{attrib.upper()}")
-                if subblk:
+                while True:
+                    subblk = self.get_subblock(f"{attrib.upper()}")
+                    if subblk is None:
+                        break
                     if value:
                         for (i, val) in enumerate(value):
                             subblk.fill(val, i)
                             subblk.clone()
-                        subblk.set()
+                        subblk.set(count=1)
                     else:
-                        subblk.clear()  # Value is an empty list, i.e., [].
+                        subblk.clear(count=1)   # Value is an empty list, i.e., [].
 
         # 2. Loop through other types (None, object or dict) of block data and fill the single instance (non-cloned)
-        # template blocks.
+        #    template blocks.
         for (attrib, value) in data_dict.items():
             if not isinstance(value, (list, tuple, str, int, float, bool)) and attrib != "fill_hndl":
-                subblk = self.get_subblock(f"{attrib.upper()}")
-                if subblk:
+                while True:
+                    subblk = self.get_subblock(f"{attrib.upper()}")
+                    if subblk is None:
+                        break
                     if value:
                         # Get the variation index from the internal elements if they contain a vari_idx attribute.
                         vari_idx = subblk.fill(value)
-                        subblk.set(variation_idx=vari_idx)
+                        subblk.set(variation_idx=vari_idx, count=1)
                     else:
-                        subblk.clear()    # Value is a None object or an empty dict, i.e., None or {}.
+                        subblk.clear(count=1)   # Value is a None object or an empty dict, i.e., None or {}.
 
         # 3. Loop through simple data type items of block data and fill the template tags.
         for (attrib, value) in data_dict.items():
@@ -363,6 +371,14 @@ class Block:
                     # argument of the set method setting the parent block containing this attribute.
                     ret_vari_idx = value
                 else:
+                    while True:
+                        subblk = self.get_subblock(f"{attrib.upper()}")
+                        if subblk is None:
+                            break
+                        if value:
+                            subblk.set(count=1)
+                        else:
+                            subblk.clear(count=1)   # Value is "", 0 or False
                     self.set_variables(**{f"{attrib.upper()}": value})
 
         # 4. If an external fill handle is defined within the block data, then call it.
