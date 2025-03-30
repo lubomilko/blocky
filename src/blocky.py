@@ -355,6 +355,10 @@ class Block:
                 while True:
                     subblk = self.get_subblock(f"{attrib.upper()}")
                     if subblk is None:
+                        # If value is a None object or an empty dict, i.e., None or {} and there is no
+                        # template block with the specified name, then try to clear the variables with that name.
+                        if not value:
+                            self.clear_variables(f"{attrib.upper()}")
                         break
                     if value:
                         # Get the variation index from the internal elements if they contain a vari_idx attribute.
