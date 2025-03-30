@@ -19,7 +19,8 @@ template engine project.
 
 ### Added
 
-- Add a possibility to clear variables by setting them to `None` or `{}`.
+- Add a possibility to clear variables by setting them to `None` or `{}` when filling the
+  template using the `fill()` method.
 
 
 ## [1.3.0] - 2025-03-29
