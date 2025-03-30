@@ -15,6 +15,13 @@ template engine project.
 *Changes for the upcoming new version.*
 
 
+## [1.4.0] - 2025-03-30
+
+### Added
+
+- Add a possibility to clear variables by setting them to `None` or `{}`.
+
+
 ## [1.3.0] - 2025-03-29
 
 ### Added
@@ -68,6 +75,7 @@ template engine project.
 
 
 [unreleased]: https://github.com/lubomilko/blocky
+[1.4.0]: https://github.com/lubomilko/blocky/releases/tag/1.4.0
 [1.3.0]: https://github.com/lubomilko/blocky/releases/tag/1.3.0
 [1.2.0]: https://github.com/lubomilko/blocky/releases/tag/1.2.0
 [1.1.2]: https://github.com/lubomilko/blocky/releases/tag/1.1.2
