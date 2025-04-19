@@ -19,186 +19,32 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from pathlib import Path
-from typing import Union, Callable
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Union
 
 __author__ = "Lubomir Milko"
 __copyright__ = "Copyright (C) 2025 Lubomir Milko"
-__version__ = "1.3.0"
+__version__ = "2.0.0"
 __license__ = "GPLv3"
 
 
-class Tag:
-    """
-    Class representing a generic tag in the template.
-    Each tag consists of tag name surrounded by tag begin and end strings.
-    Example of a possible tag string with the tag name = *"example"*, tag begin
-    string = *"<"* and tag end string = *">"*:
-    *<example>*
-    Tag name is usually variable, but a default name can be assigned.
-    """
-    # pylint: disable=used-before-assignment
-    # rationale: Probably a bug in Pylint, because it assumes that the first "str" type hint is a variable
-    # being used before assignment.
-    def __init__(self, name: str = "", begin_str: str = r"<", end_str: str = r">") -> None:
-        """
-        Tag class constructor.
-
-        Parameters:
-            default_name (str, optional): Default tag name. Defaults to "".
-            begin_str (str, optional): String defining the beginning of a tag. Defaults to "<".
-            end_str (str, optional): String defining the end of a tag. Defaults to ">".
-        """
-        self.begin = begin_str
-        self.end = end_str
-        self.name = name
-
-    def str_name(self, tag_name: str = "") -> str:
-        """
-        Returns complete tag string consisting of provided tag name surrounded by tag begin and
-        tag end strings, i.e. "tag_begin"+"tag_name"+"tag_end".
-
-        Args:
-            tag_name (str): Name of the tag. If not specified, then default tag name is used. Defaults to "".
-
-        Returns:
-            str: Tag string.
-        """
-        name = tag_name if tag_name else self.name
-        return str(f"{self.begin}{name}{self.end}")
-
-    @property
-    def str(self) -> str:
-        """
-        Property method that returns the complete tag string consisting of predefined tag name surrounded by
-        tag begin and tag end strings, i.e. "tag_begin"+"tag_name"+"tag_end".
-
-        Returns:
-            str: Tag string.
-        """
-        return str(f"{self.begin}{self.name}{self.end}")
-
-
-class TagsFormat:
-    """
-    Class defining the format of tags used in template strings.
-    """
-    def __init__(
-            self, variable: Tag, block_start: Tag, block_end: Tag, block_variation: Tag, char_repeat: Tag,
-            std_last_first_start: Tag, std_last_first_end: Tag) -> None:
-        self.variable: Tag = variable
-        self.block_start: Tag = block_start
-        self.block_end: Tag = block_end
-        self.block_variation: Tag = block_variation
-        self.char_repeat: Tag = char_repeat
-        self.std_last_first_start: Tag = std_last_first_start
-        self.std_last_first_end: Tag = std_last_first_end
-
-
+@dataclass
 class BlockConfig:
-    """
-    Block configuration class defining the formatting of blocks within the string template.
-    """
-    def __init__(self, tags: TagsFormat, tab_size: int = 4) -> None:
-        self.tags: TagsFormat = tags
-        self.tab_size: int = tab_size
-
-
-DEFAULT_BLOCK_CONFIG: BlockConfig = BlockConfig(
-    TagsFormat(                             # tags
-        Tag(),                                  # tags.variable
-        Tag(),                                  # tags.block_start
-        Tag(begin_str=r"</"),                   # tags.block_end
-        Tag(begin_str=r"<^"),                   # tags.block_variation
-        Tag(name=r"+"),                         # tags.char_repeat
-        Tag(name=r"."),                         # tags.std_last_first_start
-        Tag(name=r".", begin_str=r"</")),       # tags.std_last_first_end
-    4)                                      # tab_size
-"""
-Object defining default block configuration.
-
-* Below is the default format of template tags with example tag names using upper-case letters:
-
-    * Variable: ``<VAR_NAME>``
-    * Block
-
-        * start: ``<BLOCK_NAME>``
-        * end: ``</BLOCK_NAME>``
-
-    * Right-aligned character repeat: ``<+>``
-    * Standard/last value definition: ``<.>STD_VALUE<^.>LAST_VALUE</.>``
-    * Standard/last/first value definition: ``<.>STD_VALUE<^.>LAST_VALUE<^.>FIRST_VALUE</.>``
-
-* Default tabulator size = 4.
-"""
-
-
-class BlockData(object):
-    """
-    Class for creating objects containing data to be filled into template blocks defined by
-    the :class:`Block` class. The object attributes shall directly correspond to the block and variable tags
-    within the block template. The attribute values can then be used to :meth:`fill` the block template.
-    The list below defines relationships between :class:`BlockData` object attribute types and their use in
-    a block template:
-
-    *   Strings, integers, floats, booleans -> Values set directly as block variables.
-    *   :class:`BlockData` subobject -> Data to be filled into a subblock of the parent block being filled.
-    *   List -> Content of block clones, each list item represents a content to be used in one cloned instance.
-
-    """
-    def __init__(self, data_dict: dict = None, fill_hndl: Callable[["Block", object | dict, int], None] = None) -> None:
-        """
-        Constructor creating new block object data.
-
-        Args:
-            data_dict (dict, optional): Dictionary defining the object attributes to be created using the
-                :meth:`import_dict` method. Defaults to None.
-            fill_hndl (Callable[[Block, object | dict, int], None], optional): Handler function to be called after
-                the values of a corresponding :class:`BlockData` object are set into the block template. The handler
-                can contain special operations to be performed after the regular template filling using the block data
-                values. Defaults to None.
-        """
-        self.fill_hndl: Callable[[Block, object | dict, int], None] = fill_hndl
-        if data_dict:
-            self.import_dict(data_dict)
-
-    def import_dict(self, data_dict: dict) -> None:
-        """
-        Imports data from dictionary, i.e., converts the dictionary key-value pairs into the object attribute-value
-        pairs. The dictionary values are converted according to the following rules:
-
-        *   Strings, integers, floats, booleans -> Directly used as :class:`BlockData` object attribute values.
-        *   Subdictionary with its own key-value pairs -> Subdictionary is added as a :class:`BlockData` subobject
-            into the parent :class:`BlockData` object with internal attributes set according to the key-value
-            pairs of the subdictionary.
-        *   List, tuple -> Added as a list attribute to the parent :class:`BlockData` object. Lists or tuples define
-            instances of template blocks that need to be cloned. Each list or tuple item should consist of a
-            dictionary defining the key-value pairs used for filling a single clone instance.
-            Only one-dimensional lists are supported for filling the template blocks.
-
-        Args:
-            data_dict (dict): Dictionary defining the structure of object attributes to be created.
-        """
-        def get_value(value: any) -> list | BlockData | str:
-            val = None
-            if isinstance(value, (list, tuple)):
-                val = [get_value(v) for v in value]
-            elif isinstance(value, dict):
-                val = BlockData()
-                val.import_dict(value)
-            else:
-                val = value
-            return val
-
-        for (attrib, value) in data_dict.items():
-            setattr(self, attrib, get_value(value))
+    """The template block configuration defining the format of tags and other template elements."""
+    tag_gen_var: Callable[[str], str] = lambda name: f"<{name.upper()}>"
+    tag_gen_blk_start: Callable[[str], str] = lambda name: f"<{name.upper()}>"
+    tag_gen_blk_end: Callable[[str], str] = lambda name: f"</{name.upper()}>"
+    tag_gen_blk_vari: Callable[[str], str] = lambda name: f"<^{name.upper()}>"
+    tag_name_charrep: str = "+"
+    tag_name_stdlastfirst: str = "."
+    tab_size: int = 4
 
 
 class Block:
-    """
-    Class representing a block indicated by block start and block end tags inside parent block template.
-    """
+    """Block corresponding to the part of the template within the block start and end tags."""
     def __init__(self, template: str | Path = "", block_name: str = "",
-                 config: BlockConfig = DEFAULT_BLOCK_CONFIG, parent: "Block" = None) -> None:
+                 config: BlockConfig = BlockConfig(), parent: "Block" = None) -> None:
         """
         Constructor. Creates a new block object.
 
@@ -234,61 +80,22 @@ class Block:
 
     @property
     def template(self) -> str:
-        """
-        Property method that returns the block template string containing the tags representing subblocks and variables.
-
-        Returns:
-            str: Block template.
-        """
         return self.__template
 
     @template.setter
     def template(self, template: str) -> None:
-        """
-        Setter method that sets a block template string containing the tags representing subblocks and variables.
-
-        Args:
-            template (str): Block template string.
-        """
         self.__template = template
         self.content = template
 
-    def load_template(self, template: str | Path, subblock_name: str = "") -> None:
-        """
-        Loads block template from the text file. Alternatively, if the template is provided directly
-        as a string (i.e., not the file path), then the string is directly used as a block template.
+    def load_template(self, file_path: str | Path) -> None:
+        """Loads the block template from a text file."""
+        with open(file_path, "r", encoding="utf-8") as file_template:
+            self.template = file_template.read()
+            self.name = Path(file_path).name
 
-        Args:
-            template (str | Path): Path to the text file containing a string to be used as a block template.
-                Alternatively, a raw string can be provided instead of the file path, to be directly used
-                as a template.
-            subblock_name (str, optional): Name of the subblock to be extracted from the specified template.
-                If not specified, then the whole template string will be set as a template. Defaults to an
-                empty string "".
-        """
-        if Path(template).is_file():
-            with open(template, "r", encoding="utf-8") as file_template:
-                template_str = file_template.read()
-            self.name = Path(template).name
-        else:
-            template_str = template
-
-        if subblock_name:
-            blk_file = Block(template=template_str, config=self.config)
-            self.template = blk_file.get_subblock(subblock_name).template
-            self.name = subblock_name
-            del blk_file
-        else:
-            self.template = template_str
-
-    def save_content(self, content_file_path: str | Path) -> None:
-        """
-        Saves block content to the text file.
-
-        Args:
-            content_file_path (str | Path): Path to the text file in which the block content will be saved.
-        """
-        with open(content_file_path, "w", encoding="utf-8") as file_content:
+    def save_content(self, file_path: str | Path) -> None:
+        """Saves the block content to a text file."""
+        with open(file_path, "w", encoding="utf-8") as file_content:
             file_content.write(self.content)
 
     def fill(self, block_data: object | dict, __subidx: int = 0) -> int | bool:
@@ -493,9 +300,7 @@ class Block:
             # found in the block content and the subblock content can be extracted from them.
             self.clone(passive=True)
             if subblock_name:
-                (subblk_start, subblk_end) = self.__get_subblock_start_end_pos(
-                    self.config.tags.block_start.str_name(subblock_name),
-                    self.config.tags.block_end.str_name(subblock_name))
+                (subblk_start, subblk_end) = self.__get_subblock_pos(subblock_name)
                 if subblk_start >= 0 and subblk_end >= 0:
                     # If subblock tags are found, then create a new subblock and set correct parent-subblock relations.
                     subblk = Block(self.content[subblk_start: subblk_end], subblock_name, self.config, self)
@@ -607,13 +412,10 @@ class Block:
         set_num = 0
         while self.parent and (set_num < count or count < 0):
             # pylint: disable=protected-access
-            # rationale: Private method __get_subblock_start_end_pos is called from non-self object only here and
+            # rationale: Private method __get_subblock_pos is called from non-self object only here and
             # it is easier and simpler to keep it that way instead of rewriting the method to be static and sending
             # parent object data into it for processing.
-            (subblk_start, subblk_end) = self.parent._Block__get_subblock_start_end_pos(
-                self.parent.config.tags.block_start.str_name(self.name),
-                self.parent.config.tags.block_end.str_name(self.name),
-                True)
+            (subblk_start, subblk_end) = self.parent._Block__get_subblock_pos(self.name, True)
             if 0 <= subblk_start < subblk_end:
                 blk_content = self.__get_variation(self.content, self.name, variation_idx)
                 # If subblock tags are found, then set the current block content into all corresponding subblock tags
@@ -679,10 +481,10 @@ class Block:
         # and corresponding values.
         for var_idx in range(pos_arg_start_idx, len(name_value_args), 2):
             if var_idx + 1 < len(name_value_args):
-                var_tags.append(self.config.tags.variable.str_name(name_value_args[var_idx]))
+                var_tags.append(self.config.tag_gen_var(name_value_args[var_idx]))
                 var_values.append(name_value_args[var_idx + 1])
         for var_name, var_value in name_value_kwargs.items():
-            var_tags.append(self.config.tags.variable.str_name(f"{var_name}"))
+            var_tags.append(self.config.tag_gen_var(f"{var_name}"))
             var_values.append(var_value)
 
         iter_idx = 0
@@ -720,21 +522,21 @@ class Block:
             var_names (str): Arguments with variable names to be cleared.
         """
         for var_name in var_names:
-            self.content = self.content.replace(self.config.tags.variable.str_name(var_name), "")
+            self.content = self.content.replace(self.config.tag_gen_var(var_name), "")
 
-    def __get_subblock_start_end_pos(self, start_tag: str, end_tag: str, include_tags: bool = False) -> tuple[int, int]:
-        """
-        Returns start and end position of a subblock string in the block content.
+    def __get_subblock_pos(self, tag_name: str, include_tags: bool = False) -> tuple[int, int]:
+        """Returns start and end position of a subblock string in the block content.
 
         Args:
-            start_tag (str): Subblock start tag string.
-            end_tag (str): Subblock end tag string.
+            tag_name (str): Subblock tag name.
             include_tags (bool, optional): If true, then start-end position takes into account also
-                the subblock tags themselves. Defaults to False.
+                the subblock tag characters themselves. Defaults to False.
 
         Returns:
-            tuple[int, int]: Returned start and end character position of the subblock, i.e. ``(start_pos, end_pos)``.
+            tuple[int, int]: Start and end character position of the subblock, i.e. ``(start_pos, end_pos)``.
         """
+        start_tag = self.config.tag_gen_blk_start(tag_name)
+        end_tag = self.config.tag_gen_blk_end(tag_name)
         subblk_start = self.content.find(start_tag)
         if subblk_start >= 0:
             if not include_tags:
@@ -819,10 +621,11 @@ class Block:
         end_pos = -1
         tag_col_pos = -1
         repeat_char = None
+        charrep_tag = self.config.tag_gen_var(self.config.tag_name_charrep)
         # Get starting position of repeated characters.
-        start_pos = input_string.find(self.config.tags.char_repeat.str, start_index)
+        start_pos = input_string.find(charrep_tag, start_index)
         if start_pos >= 0:
-            end_pos = start_pos + len(self.config.tags.char_repeat.str)
+            end_pos = start_pos + len(charrep_tag)
             # Get character immediately following the *char repeat* tag. This character is going to be repeated.
             repeat_char = input_string[end_pos]
             # Get ending position of repeated characters.
@@ -849,21 +652,14 @@ class Block:
         # Loop through all *last value* tags in block content and replace them with either standard value or last value.
         while True:
             # Get the start and end position of the *last value* tag including the start/end tags.
-            (subblk_start, subblk_end) = \
-                self.__get_subblock_start_end_pos(
-                    self.config.tags.std_last_first_start.str,
-                    self.config.tags.std_last_first_end.str,
-                    True)
+            (subblk_start, subblk_end) = self.__get_subblock_pos(self.config.tag_name_stdlastfirst, True)
             # If *last value* tag is found.
             if 0 <= subblk_start < subblk_end:
                 # Extract the content of the *last value* tag without the start/end tags themselves.
-                (subblk_cont_start, subblk_cont_end) = \
-                    self.__get_subblock_start_end_pos(
-                        self.config.tags.std_last_first_start.str,
-                        self.config.tags.std_last_first_end.str)
+                (subblk_cont_start, subblk_cont_end) = self.__get_subblock_pos(self.config.tag_name_stdlastfirst)
                 value_content = self.content[subblk_cont_start: subblk_cont_end]
                 value_content = self.__get_variation(
-                    value_content, self.config.tags.std_last_first_start.name, 1 if last else 2 if first else 0)
+                    value_content, self.config.tag_name_stdlastfirst, 1 if last else 2 if first else 0)
                 self.content = f"{self.content[: subblk_start]}{value_content}{self.content[subblk_end:]}"
             else:
                 break
@@ -882,8 +678,8 @@ class Block:
             str: Block content string variation corresponding to the specified variation index.
         """
         var = content
-        if self.config.tags.block_variation.str_name(block_name) in content:
-            var_list = content.split(self.config.tags.block_variation.str_name(block_name))
+        if self.config.tag_gen_blk_vari(block_name) in content:
+            var_list = content.split(self.config.tag_gen_blk_vari(block_name))
             if variation_idx < len(var_list):
                 var = var_list[variation_idx]
             else:

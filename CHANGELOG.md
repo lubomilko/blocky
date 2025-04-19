@@ -14,6 +14,18 @@ template engine project.
 
 *Changes for the upcoming new version.*
 
+### Changed
+
+- Rework and simplify the `BlockConfig` class. Use customizable formatter functions for the
+  definition of tag strings.
+- Simplify the `load_template()` method to only load template from a file without setting the
+  template string directly.
+- Refactoring to decrease the amount of code and increase efficiency and clarity.
+
+### Removed
+
+- Remove the `BlockData` class since object of any type can be used for filling the template.
+
 
 ## [1.4.0] - 2025-03-30
 
