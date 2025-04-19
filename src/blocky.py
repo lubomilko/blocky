@@ -96,13 +96,6 @@ class Block:
     def parent(self) -> "Block":
         return self.__parent
 
-    @parent.setter
-    def parent(self, parent: "Block") -> None:
-        self.__parent = parent
-        if self.name:
-            # pylint: disable=protected-access
-            parent.__children.append(self)
-
     @property
     def children(self) -> list["Block"]:
         return self.__children
@@ -332,7 +325,10 @@ class Block:
                 if subblk_start >= 0 and subblk_end >= 0:
                     # If subblock tags are found, then create a new subblock and set correct parent-subblock relations.
                     subblk = Block(self.content[subblk_start: subblk_end], subblock_name, self.config)
-                    subblk.parent = self
+                    # pylint: disable=protected-access, unused-private-member
+                    subblk.__parent = self
+                    self.__children.append(subblk)
+
             ret_blk.append(subblk)
         if ret_blk:
             if len(ret_blk) == 1:
