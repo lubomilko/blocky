@@ -56,19 +56,17 @@ class Block:
 
     Attributes:
         config: A block configuration primarily defining the format of tags within a template.
-        parent: 
-
+        name: A block name. Usually set automatically by the :meth:`get_subblock` method.
+        config: A block configuration (template tags format, tabulator size, etc.)
+        autotags: Enables the automatic tags (char repetition, etc.) to be filled automatically.
     """
     def __init__(self, template: str | Path = "", name: str = "", config: BlockConfig = BlockConfig()) -> None:
-        """
-        Constructor. Creates a new block object.
+        """Initializes a new block object.
 
         Args:
-            template (str, optional): Template to be used for the :class:`Block` object. Defaults to "".
-            block_name (str, optional): Block name. Set automatically to the block tag name from the
-                template when the :meth:`get_subblock` method is used.
-            config (:class:`BlockConfig`, optional): Block configuration (template tags format, tabulator size, etc.)
-            parent: Parent :class:`Block` object.
+            template: Template string or a path to a text file template.
+            name: A block name.
+            config: A block configuration (template tags format, tabulator size, etc.)
         """
         self.config: BlockConfig = config
         self.name: str = name
@@ -77,16 +75,10 @@ class Block:
 
         self.__parent: Block | None = None
         self.__children: list[Block] = []
-
-        # Template with tags to be filled by filling module.
         self.__template: str = ""
-        # Flag indicating that a new clone of the template is going to be automatically added after the
-        # actual content as soon as new template variables or blocks are set.
-        self.__clone_flag: bool = False
-        # Flag indicating that a first value of a special *first-last value* tag should be set.
-        self.__set_first_value: bool = True
+        self.__clone_flag: bool = False     # Enables autoclone when setting new variables or subblocks.
+        self.__stdlastfirst_first: bool = True   # Indicates that the first value of stdlastfirst tag should be set.
 
-        # Set template if it is defined in constructor.
         if Path(template).is_file():
             self.load_template(template)
         else:
@@ -94,14 +86,17 @@ class Block:
 
     @property
     def parent(self) -> "Block":
+        """A parent block."""
         return self.__parent
 
     @property
     def children(self) -> list["Block"]:
+        """A list of child subblocks extracted using a :meth:`get_subblock` method."""
         return self.__children
 
     @property
     def template(self) -> str:
+        """A block template string."""
         return self.__template
 
     @template.setter
@@ -284,8 +279,8 @@ class Block:
             # indicated by the clone_flag.
             if force or self.__clone_flag:
                 if self.autotags:
-                    self.__set_std_last_first_tag(first=self.__set_first_value)
-                    self.__set_first_value = False
+                    self.__set_std_last_first_tag(first=self.__stdlastfirst_first)
+                    self.__stdlastfirst_first = False
                     self.__set_char_repeat_tag()
                 # Perform a clone, i.e. finalize the content and add new template at the end of the content.
                 self.content = f"{self.content}{self.__template}"
@@ -413,9 +408,9 @@ class Block:
             # found in the parent block content and the subblock content can be set into them.
             self.parent.clone(passive=True)
         if self.autotags:
-            # Finalize the block content by setting value of special tags.
+            # Finalize the block content by setting the value of special tags.
             self.__set_std_last_first_tag(last=True)
-            self.__set_first_value = True
+            self.__stdlastfirst_first = True
             self.__set_char_repeat_tag()
         set_num = 0
         while self.parent and (set_num < count or count < 0):
