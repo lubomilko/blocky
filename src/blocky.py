@@ -72,7 +72,7 @@ class Block:
         """
         self.config: BlockConfig = config
         self.name: str = name
-        self.set_autotags: bool = True
+        self.autotags: bool = True
         self.content: str = ""
 
         self.__parent: Block | None = None
@@ -285,7 +285,7 @@ class Block:
             # If cloning is not forced, then the block should be cloned only after it has been filled, which is
             # indicated by the clone_flag.
             if force or self.__clone_flag:
-                if self.set_autotags:
+                if self.autotags:
                     self.__set_std_last_first_tag(first=self.__set_first_value)
                     self.__set_first_value = False
                     self.__set_char_repeat_tag()
@@ -376,7 +376,7 @@ class Block:
                 subblk.set()
 
     def set(self, variation_idx: int | bool = 0, all_subblocks: bool = False,
-            set_autotags: bool | None = None, count: int = -1) -> None:
+            autotags: bool | None = None, count: int = -1) -> None:
         """
         Sets the content of the block from which this method is called into its parent block template,
         i.e. replaces the subblock tags in the parent block template with the subblock content.
@@ -388,8 +388,8 @@ class Block:
                 and False represents the block variation -1, i.e., it clears the block. Defaults to 0.
             all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block
                 should be set into its parent blocks first before the current block is set into its parent block.
-            set_autotags (bool | None, optional): Indicates if automatic tags (e.g. char repeat) should be set.
-                If set to ``None``, then the internal `self.set_autotags` flag is used.
+            autotags (bool | None, optional): Indicates if automatic tags (e.g. char repeat) should be set.
+                If set to ``None``, then the internal `self.autotags` flag is used.
             count (int, optional): Maximum number of block contents to be set. If set to -1, then all
                 corresponding subblock tags in the parent content will be replaced by the subblock content.
                 Defaults to -1.
@@ -403,8 +403,8 @@ class Block:
             self.clear(count=count)
             return
 
-        if set_autotags is not None:
-            self.set_autotags = set_autotags
+        if autotags is not None:
+            self.autotags = autotags
 
         if all_subblocks and self.__children:
             for child in self.__children:
@@ -413,14 +413,14 @@ class Block:
                 # However, in this case it can be used to detect if subblock has been already set to parent block
                 # or not. if clone flag is True, then the subblock needs to be set.
                 if child.__clone_flag:
-                    child.set(variation_idx, all_subblocks, set_autotags)
+                    child.set(variation_idx, all_subblocks, autotags)
 
         if self.parent and self.content != self.__template:
             # If content has been changed from the template, then clone the parent block if
             # its cloning flag is set to true to ensure that the subblock tags can be
             # found in the parent block content and the subblock content can be set into them.
             self.parent.clone(passive=True)
-        if self.set_autotags:
+        if self.autotags:
             # Finalize the block content by setting value of special tags.
             self.__set_std_last_first_tag(last=True)
             self.__set_first_value = True
