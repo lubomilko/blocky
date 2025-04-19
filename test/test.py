@@ -147,13 +147,13 @@ def test_lowlevel() -> None:
     blk_container = blk_file.get_subblock("MULTI2")
     blk_blk = blk_container.get_subblock("BLK")
     blk_blk.set_variables(A=123)
-    blk_blk.set(0, set_autotags=True)
+    blk_blk.set(0, set_autotags=False)
     blk_container.clone()
     blk_blk.set_variables(A=123456)
-    blk_blk.set(1, set_autotags=True)
+    blk_blk.set(1, set_autotags=False)
     blk_container.clone()
     blk_blk.set_variables(A=123456789)
-    blk_blk.set(2, set_autotags=True)
+    blk_blk.set(2, set_autotags=False)
     blk_container.set()
 
     blk_table = blk_file.get_subblock("TABLE")
@@ -171,7 +171,7 @@ def test_lowlevel() -> None:
     blk_html_table = blk_file.get_subblock("HTML_TABLE")
     blk_row = blk_html_table.get_subblock("ROW")
     blk_col = blk_row.get_subblock("COL")
-    blk_col.set_autotags = True
+    blk_col.set_autotags = False
     for row_vals in tab_values:
         blk_col.set_variables(VALUE=row_vals)
         blk_row.clone(set_subblocks=True)
