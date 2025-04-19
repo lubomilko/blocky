@@ -74,7 +74,7 @@ class Block:
         self.autotags: bool = True
 
         self.__parent: Block | None = None
-        self.__children: list[Block] = []
+        self.__children: dict[str, Block] = {}
         self.__template: str = ""
         self.__clone_flag: bool = False     # Enables autoclone when setting new variables or subblocks.
         self.__stdlastfirst_first: bool = True   # Indicates that the first value of stdlastfirst tag should be set.
@@ -90,7 +90,7 @@ class Block:
         return self.__parent
 
     @property
-    def children(self) -> list["Block"]:
+    def children(self) -> dict[str, "Block"]:
         """A list of child subblocks extracted using a :meth:`get_subblock` method."""
         return self.__children
 
@@ -228,7 +228,7 @@ class Block:
         self.content = self.__template
         self.__clone_flag = False
         if all_children:
-            for blk_obj in self.__children:
+            for blk_obj in self.__children.values():
                 blk_obj.reset()
 
     def clear(self, count: int = -1) -> None:
@@ -267,7 +267,7 @@ class Block:
                 set only once before making the first copy of this parent block. Defaults to False.
         """
         if set_children:
-            for child in self.__children:
+            for child in self.__children.values():
                 child.set()
 
         if copies > 1:
@@ -291,7 +291,7 @@ class Block:
                 # Reset all subblocks of the current block and recursively also their subblocks to have
                 # a fresh new instance of all cloned blocks without any remaining unset modified content
                 # strings or cloning flags set to True.
-                for child in self.__children:
+                for child in self.__children.values():
                     child.reset(all_children=True)
 
     def get_subblock(self, *subblock_names: str) -> Union["Block", list["Block"], None]:
@@ -320,7 +320,7 @@ class Block:
                     subblk = Block(self.content[subblk_start: subblk_end], subblock_name, self.config)
                     # pylint: disable=protected-access, unused-private-member
                     subblk.__parent = self
-                    self.__children.append(subblk)
+                    self.__children[subblock_name] = subblk
 
             ret_blk.append(subblk)
         if ret_blk:
@@ -342,7 +342,7 @@ class Block:
         """
         for subblk in subblocks:
             if isinstance(subblk, str):
-                blk_sub = self.get_subblock(subblk)
+                blk_sub = self.children.get(subblk, self.get_subblock(subblk))
                 if blk_sub:
                     blk_sub.clear()
             else:
@@ -362,7 +362,7 @@ class Block:
         """
         for subblk in subblocks:
             if isinstance(subblk, str):
-                blk_sub = self.get_subblock(subblk)
+                blk_sub = self.children.get(subblk, self.get_subblock(subblk))
                 if blk_sub:
                     blk_sub.set()
             else:
@@ -394,7 +394,7 @@ class Block:
             return
 
         if all_children and self.__children:
-            for child in self.__children:
+            for child in self.__children.values():
                 # pylint: disable=protected-access
                 # rationale: Private variable __clone_flag is used primarily internally for cloning operation.
                 # However, in this case it can be used to detect if subblock has been already set to parent block
