@@ -141,7 +141,7 @@ class Block:
                     template block.
                 *   ``vari_idx``: A *variation index* specifying the variation of the parent template block
                     containing this attribute to be set into the template. Only valid for blocks having
-                    multiple variations (see the ``variation_idx`` attribute of the :meth:``set`` method).
+                    multiple variations (see the ``vari_idx`` attribute of the :meth:``set`` method).
 
             __subidx (int, optional): Internal value representing the item index for attributes of list type.
                 The index is sent as an argument to the fill handler function (it it's used) to indicate which
@@ -192,7 +192,7 @@ class Block:
                     if value:
                         # Get the variation index from the internal elements if they contain a vari_idx attribute.
                         vari_idx = subblk.fill(value)
-                        subblk.set(variation_idx=vari_idx, count=1)
+                        subblk.set(vari_idx=vari_idx, count=1)
                     else:
                         subblk.clear(count=1)   # Value is a None object or an empty dict, i.e., None or {}.
 
@@ -200,7 +200,7 @@ class Block:
         for (attrib, value) in data_dict.items():
             if isinstance(value, (str, int, float, bool)):
                 if attrib == "vari_idx":
-                    # If the attribute is vari_idx, then return its value to be used as a variation_idx
+                    # If the attribute is vari_idx, then return its value to be used as a variation idx
                     # argument of the set method setting the parent block containing this attribute.
                     ret_vari_idx = value
                 else:
@@ -221,36 +221,34 @@ class Block:
 
         return ret_vari_idx
 
-    def reset(self, all_subblocks: bool = True) -> None:
+    def reset(self, all_children: bool = True) -> None:
         """
         Resets block content to the initial template.
 
         Args:
-            all_subblocks (bool, optional): Flag indicating that all subblocks, i.e. child :class:`Block` objects
+            all_children (bool, optional): Flag indicating that all subblocks, i.e. child :class:`Block` objects
                 are reset together with the parent current block. Defaults to True.
         """
         # Reset block by setting the content to the initial template string.
         self.content = self.__template
         self.__clone_flag = False
-        if all_subblocks:
+        if all_children:
             for blk_obj in self.__children:
                 blk_obj.reset()
 
     def clear(self, count: int = -1) -> None:
         """
-        Clears subblock from parent block, i.e. the content of the subblock is erased from the parent content.
+        Clears this block from a parent block, i.e. the content of the subblock is erased from the parent content.
 
         Args:
-            count (int, optional): Maximum number of subblocks to be cleared (if there are multiple blocks using
-                the same tag names). If set to -1, then all corresponding subblock tags in the parent content will
-                be replaced by empty string. Defaults to -1.
+            count (int, optional): Maximum number of block instances to be cleared, -1 = all (if there are multiple
+                blocks using the same tag name). Defaults to -1.
         """
         # Set the content to empty string and remove the block from parent's dictionary of subblocks.
         self.content = ""
         self.set(count=count)
 
-    def clone(self, num_copies: int = 1, force: bool = False, passive: bool = False,
-              set_subblocks: bool = False) -> None:
+    def clone(self, copies: int = 1, force: bool = False, passive: bool = False, set_children: bool = False) -> None:
         """
         Clones block by adding the template after the actual block content. Then subblocks and variables in
         the added template can be filled again with values.
@@ -260,25 +258,25 @@ class Block:
             and only if there is an already previously indicated need, then the actual cloning is performed.
 
         Args:
-            num_copies (int, optional): Number of copies to be created. Defaults to 1.
+            copies (int, optional): Number of copies to be created. Defaults to 1.
             force (bool, optional): Switch forcing the cloning to be performed immediately regardless of whether
                 it will be actually needed for setting subblocks and variables or not, i.e., new template is
-                forcefully added after the block content. If the ``num_copies`` parameter is higher than 1, then
+                forcefully added after the block content. If the ``copies`` parameter is higher than 1, then
                 this switch is always set to False. Defaults to False.
             passive (bool, optional): Switch to perform the cloning only if a need for the clone
                 has already been indicated previously, otherwise no new cloning need is indicated. If the
-                ``num_copies`` parameter is higher than 1, then this switch is always set to False.
+                ``copies`` parameter is higher than 1, then this switch is always set to False.
                 Defaults to False.
-            set_subblocks (bool, optional): Switch to set all subblocks to this parent block first, before
-                cloning this block. If the ``num_copies`` parameter is higher than 1, then the subblocks are
+            set_children (bool, optional): Switch to set all subblocks to this parent block first, before
+                cloning this block. If the ``copies`` parameter is higher than 1, then the subblocks are
                 set only once before making the first copy of this parent block. Defaults to False.
         """
-        if set_subblocks:
+        if set_children:
             for child in self.__children:
                 child.set()
 
-        if num_copies > 1:
-            for _ in range(num_copies):
+        if copies > 1:
+            for _ in range(copies):
                 self.clone(1, False, False, False)
         else:
             # Check if cloning flag indicates that the cloning shall be actually performed.
@@ -299,7 +297,7 @@ class Block:
                 # a fresh new instance of all cloned blocks without any remaining unset modified content
                 # strings or cloning flags set to True.
                 for child in self.__children:
-                    child.reset(all_subblocks=True)
+                    child.reset(all_children=True)
 
     def get_subblock(self, *subblock_names: str) -> Union["Block", list["Block"], None]:
         """
@@ -375,39 +373,39 @@ class Block:
             else:
                 subblk.set()
 
-    def set(self, variation_idx: int | bool = 0, all_subblocks: bool = False, count: int = -1) -> None:
+    def set(self, vari_idx: int | bool = 0, all_children: bool = False, count: int = -1) -> None:
         """
         Sets the content of the block from which this method is called into its parent block template,
         i.e. replaces the subblock tags in the parent block template with the subblock content.
 
         Args:
-            variation_idx (int | bool, optional): Variation index of a block content to be set starting from 0.
+            vari_idx (int | bool, optional): Variation index of a block content to be set starting from 0.
                 Variations are content parts separated by the separator tags. Negative variation number causes
                 the block to be cleared instead of set. A boolean value True represents the first block variation 0
                 and False represents the block variation -1, i.e., it clears the block. Defaults to 0.
-            all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block
+            all_children(bool, optional): Flag indicating that all subsequent child subblocks of current block
                 should be set into its parent blocks first before the current block is set into its parent block.
             count (int, optional): Maximum number of block contents to be set. If set to -1, then all
                 corresponding subblock tags in the parent content will be replaced by the subblock content.
                 Defaults to -1.
         """
         # Convert potentially boolean variation index to integer.
-        if isinstance(variation_idx, bool):
-            variation_idx = 0 if variation_idx else -1
+        if isinstance(vari_idx, bool):
+            vari_idx = 0 if vari_idx else -1
 
         # If variation index is below zero, then clear the block and exit.
-        if variation_idx < 0:
+        if vari_idx < 0:
             self.clear(count=count)
             return
 
-        if all_subblocks and self.__children:
+        if all_children and self.__children:
             for child in self.__children:
                 # pylint: disable=protected-access
                 # rationale: Private variable __clone_flag is used primarily internally for cloning operation.
                 # However, in this case it can be used to detect if subblock has been already set to parent block
                 # or not. if clone flag is True, then the subblock needs to be set.
                 if child.__clone_flag:
-                    child.set(variation_idx, all_subblocks)
+                    child.set(vari_idx, all_children=True)
 
         if self.parent and self.content != self.__template:
             # If content has been changed from the template, then clone the parent block if
@@ -427,7 +425,7 @@ class Block:
             # parent object data into it for processing.
             (subblk_start, subblk_end) = self.parent._Block__get_subblock_pos(self.name, True)
             if 0 <= subblk_start < subblk_end:
-                blk_content = self.__get_variation(self.content, self.name, variation_idx)
+                blk_content = self.__get_variation(self.content, self.name, vari_idx)
                 # If subblock tags are found, then set the current block content into all corresponding subblock tags
                 # in the parent block content.
                 self.parent.content = \
@@ -674,7 +672,7 @@ class Block:
             else:
                 break
 
-    def __get_variation(self, content: str, block_name: str, variation_idx: int) -> str:
+    def __get_variation(self, content: str, block_name: str, vari_idx: int) -> str:
         """
         Returns a block content string corresponding to the specified variation of a block content from
         all variations defined using special *block variation* tags.
@@ -682,7 +680,7 @@ class Block:
         Args:
             content (str): Content string with multiple variations formatted using *block variation* tags.
             block_name (str): Block name that is used in *block variation* tags.
-            variation_idx (int): Index of a variation (starting from 0) to be returned by this method.
+            vari_idx (int): Index of a variation (starting from 0) to be returned by this method.
 
         Returns:
             str: Block content string variation corresponding to the specified variation index.
@@ -690,8 +688,8 @@ class Block:
         var = content
         if self.config.tag_gen_blk_vari(block_name) in content:
             var_list = content.split(self.config.tag_gen_blk_vari(block_name))
-            if variation_idx < len(var_list):
-                var = var_list[variation_idx]
+            if vari_idx < len(var_list):
+                var = var_list[vari_idx]
             else:
                 var = var_list[0]
             # Remove initial empty space up to the first new line char "\n", including the "\n" if present.
