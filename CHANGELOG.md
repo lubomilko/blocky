@@ -12,7 +12,7 @@ template engine project.
 
 ## [unreleased] - 202y-mm-dd
 
-*Changes for the upcoming new version.*
+*General refactoring.*
 
 ### Changed
 
@@ -20,7 +20,8 @@ template engine project.
   definition of tag strings.
 - Simplify the `load_template()` method to only load template from a file without setting the
   template string directly.
-- Refactoring to decrease the amount of code and increase efficiency and clarity.
+- Change the standard `subclass` attribute to a `children` property attribute.
+- Global refactoring to decrease the amount of code and increase efficiency and clarity.
 
 ### Removed
 
