@@ -75,8 +75,10 @@ class Block:
         self.subblocks: dict[str, Block] = {}
 
         # Set template if it is defined in constructor.
-        if template:
+        if Path(template).is_file():
             self.load_template(template)
+        else:
+            self.template = template
 
     @property
     def template(self) -> str:
