@@ -146,14 +146,15 @@ def test_lowlevel() -> None:
 
     blk_container = blk_file.get_subblock("MULTI2")
     blk_blk = blk_container.get_subblock("BLK")
+    blk_blk.autotags = False
     blk_blk.set_variables(A=123)
-    blk_blk.set(0, autotags=False)
+    blk_blk.set(0)
     blk_container.clone()
     blk_blk.set_variables(A=123456)
-    blk_blk.set(1, autotags=False)
+    blk_blk.set(1)
     blk_container.clone()
     blk_blk.set_variables(A=123456789)
-    blk_blk.set(2, autotags=False)
+    blk_blk.set(2)
     blk_container.set()
 
     blk_table = blk_file.get_subblock("TABLE")

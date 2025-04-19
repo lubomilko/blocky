@@ -72,8 +72,8 @@ class Block:
         """
         self.config: BlockConfig = config
         self.name: str = name
-        self.autotags: bool = True
         self.content: str = ""
+        self.autotags: bool = True
 
         self.__parent: Block | None = None
         self.__children: list[Block] = []
@@ -375,8 +375,7 @@ class Block:
             else:
                 subblk.set()
 
-    def set(self, variation_idx: int | bool = 0, all_subblocks: bool = False,
-            autotags: bool | None = None, count: int = -1) -> None:
+    def set(self, variation_idx: int | bool = 0, all_subblocks: bool = False, count: int = -1) -> None:
         """
         Sets the content of the block from which this method is called into its parent block template,
         i.e. replaces the subblock tags in the parent block template with the subblock content.
@@ -388,8 +387,6 @@ class Block:
                 and False represents the block variation -1, i.e., it clears the block. Defaults to 0.
             all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block
                 should be set into its parent blocks first before the current block is set into its parent block.
-            autotags (bool | None, optional): Indicates if automatic tags (e.g. char repeat) should be set.
-                If set to ``None``, then the internal `self.autotags` flag is used.
             count (int, optional): Maximum number of block contents to be set. If set to -1, then all
                 corresponding subblock tags in the parent content will be replaced by the subblock content.
                 Defaults to -1.
@@ -403,9 +400,6 @@ class Block:
             self.clear(count=count)
             return
 
-        if autotags is not None:
-            self.autotags = autotags
-
         if all_subblocks and self.__children:
             for child in self.__children:
                 # pylint: disable=protected-access
@@ -413,7 +407,7 @@ class Block:
                 # However, in this case it can be used to detect if subblock has been already set to parent block
                 # or not. if clone flag is True, then the subblock needs to be set.
                 if child.__clone_flag:
-                    child.set(variation_idx, all_subblocks, autotags)
+                    child.set(variation_idx, all_subblocks)
 
         if self.parent and self.content != self.__template:
             # If content has been changed from the template, then clone the parent block if
