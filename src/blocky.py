@@ -93,7 +93,7 @@ class Block:
             self.template = template
 
     @property
-    def parent(self) -> str:
+    def parent(self) -> "Block":
         return self.__parent
 
     @parent.setter
@@ -104,7 +104,7 @@ class Block:
             parent.__children.append(self)
 
     @property
-    def children(self) -> str:
+    def children(self) -> list["Block"]:
         return self.__children
 
     @property
