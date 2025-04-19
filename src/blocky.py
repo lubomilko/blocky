@@ -146,7 +146,7 @@ class Block:
         for (attrib, value) in data_dict.items():
             if isinstance(value, (list, tuple)):
                 while True:
-                    subblk = self.get_subblock(f"{attrib.upper()}")
+                    subblk = self.get_subblock(attrib)
                     if subblk is None:
                         break
                     if value:
@@ -162,12 +162,12 @@ class Block:
         for (attrib, value) in data_dict.items():
             if not isinstance(value, (list, tuple, str, int, float, bool)) and attrib != "fill_hndl":
                 while True:
-                    subblk = self.get_subblock(f"{attrib.upper()}")
+                    subblk = self.get_subblock(attrib)
                     if subblk is None:
                         # If value is a None object or an empty dict, i.e., None or {} and there is no
                         # template block with the specified name, then try to clear the variables with that name.
                         if not value:
-                            self.clear_variables(f"{attrib.upper()}")
+                            self.clear_variables(attrib)
                         break
                     if value:
                         # Get the variation index from the internal elements if they contain a vari_idx attribute.
@@ -185,14 +185,14 @@ class Block:
                     ret_vari_idx = value
                 else:
                     while True:
-                        subblk = self.get_subblock(f"{attrib.upper()}")
+                        subblk = self.get_subblock(attrib)
                         if subblk is None:
                             break
                         if value:
                             subblk.set(count=1)
                         else:
                             subblk.clear(count=1)   # Value is "", 0 or False
-                    self.set_variables(**{f"{attrib.upper()}": value})
+                    self.set_variables(**{attrib: value})
 
         # 4. If an external fill handle is defined within the block data, then call it.
         fill_hndl = data_dict.get("fill_hndl")
