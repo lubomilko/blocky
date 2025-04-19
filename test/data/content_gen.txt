@@ -84,21 +84,21 @@ jklmnopqrabc_123456789.									further text
 <table>
     <tr>
         <th>name<th>
-        <td>surname<td>
-        <td>age<td>
+        <th>surname<th>
+        <th>age<th>
     </tr>
     <tr>
-        <th>Johnny<th>
+        <td>Johnny<td>
         <td>Mnemonic<td>
         <td>35<td>
     </tr>
     <tr>
-        <th>Mr.<th>
+        <td>Mr.<td>
         <td>Bean<td>
         <td>33<td>
     </tr>
     <tr>
-        <th>T-1000<th>
+        <td>T-1000<td>
         <td>Terminator<td>
         <td>30<td>
     </tr>
