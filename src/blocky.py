@@ -72,7 +72,7 @@ class Block:
         """
         self.config: BlockConfig = config
         self.name: str = name
-        self.set_autotags: bool = False
+        self.set_autotags: bool = True
         self.content: str = ""
 
         self.__parent: Block | None = None
@@ -285,7 +285,7 @@ class Block:
             # If cloning is not forced, then the block should be cloned only after it has been filled, which is
             # indicated by the clone_flag.
             if force or self.__clone_flag:
-                if not self.set_autotags:
+                if self.set_autotags:
                     self.__set_std_last_first_tag(first=self.__set_first_value)
                     self.__set_first_value = False
                     self.__set_char_repeat_tag()
@@ -420,7 +420,7 @@ class Block:
             # its cloning flag is set to true to ensure that the subblock tags can be
             # found in the parent block content and the subblock content can be set into them.
             self.parent.clone(passive=True)
-        if not self.set_autotags:
+        if self.set_autotags:
             # Finalize the block content by setting value of special tags.
             self.__set_std_last_first_tag(last=True)
             self.__set_first_value = True
