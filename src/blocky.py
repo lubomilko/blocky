@@ -142,17 +142,16 @@ class Block:
         Returns:
             int | bool: Internally used variation index for variation blocks being filled.
         """
-        # Do nothing if data is not a dictionary or an object.
         if data is None or isinstance(data, (list, tuple, str, int, float, bool)):
-            return 0
+            return 0    # Do nothing if data is not a dictionary or an object.
 
-        # Returned variation index used for setting the parent block after the execution of this method.
+        # Returned variation index for a block filled with data having the special vari_idx attribute.
         ret_vari_idx = 0
 
         # Get the block data in form of a dictionary even if it is defined as an object.
         data_dict = data if isinstance(data, dict) else data.__dict__
 
-        # 1. Loop through list or tuple items of block data and fill the template blocks that need to be cloned.
+        # 1. Loop through list or tuple elements of block data and fill the cloned blocks.
         for (attrib, value) in data_dict.items():
             if isinstance(value, (list, tuple)):
                 while True:
@@ -167,15 +166,13 @@ class Block:
                     else:
                         subblk.clear(count=1)   # Value is an empty list, i.e., [].
 
-        # 2. Loop through other types (None, object or dict) of block data and fill the single instance (non-cloned)
-        #    template blocks.
+        # 2. Loop through object or dict elements of block data and fill the single instance (non-cloned) blocks.
         for (attrib, value) in data_dict.items():
             if not isinstance(value, (list, tuple, str, int, float, bool)) and attrib != "fill_hndl":
                 while True:
                     subblk = self.get_subblock(attrib)
                     if subblk is None:
-                        # If value is a None object or an empty dict, i.e., None or {} and there is no
-                        # template block with the specified name, then try to clear the variables with that name.
+                        # If no block is found and data are empty, then try to clear the variables.
                         if not value:
                             self.clear_variables(attrib)
                         break
@@ -184,7 +181,7 @@ class Block:
                         vari_idx = subblk.fill(value)
                         subblk.set(vari_idx=vari_idx, count=1)
                     else:
-                        subblk.clear(count=1)   # Value is a None object or an empty dict, i.e., None or {}.
+                        subblk.clear(count=1)   # Clear block if empty data are provided.
 
         # 3. Loop through simple data type items of block data and fill the template tags.
         for (attrib, value) in data_dict.items():
@@ -212,14 +209,11 @@ class Block:
         return ret_vari_idx
 
     def reset(self, all_children: bool = True) -> None:
-        """
-        Resets block content to the initial template.
+        """Resets the block content to the initial template.
 
         Args:
-            all_children (bool, optional): Flag indicating that all subblocks, i.e. child :class:`Block` objects
-                are reset together with the parent current block. Defaults to True.
+            all_children: Enables a reset of all child blocks too.
         """
-        # Reset block by setting the content to the initial template string.
         self.content = self.__template
         self.__clone_flag = False
         if all_children:
@@ -227,39 +221,28 @@ class Block:
                 blk_obj.reset()
 
     def clear(self, count: int = -1) -> None:
-        """
-        Clears this block from a parent block, i.e. the content of the subblock is erased from the parent content.
+        """Clears the block from its parent block, i.e., sets the block to an empty string.
 
         Args:
-            count (int, optional): Maximum number of block instances to be cleared, -1 = all (if there are multiple
-                blocks using the same tag name). Defaults to -1.
+            count: Maximum number of blocks with the same name to be cleared, -1 = all.
         """
-        # Set the content to empty string and remove the block from parent's dictionary of subblocks.
         self.content = ""
         self.set(count=count)
 
     def clone(self, copies: int = 1, force: bool = False, passive: bool = False, set_children: bool = False) -> None:
-        """
-        Clones block by adding the template after the actual block content. Then subblocks and variables in
-        the added template can be filled again with values.
+        """Clones the block, i.e., virtually adds another copy of a block template after the
+        existing block content making the new template copy ready to be filled with other values.
 
-        .. note::
-            This method actually only internaly indicates that there is a need to perform the template cloning
-            and only if there is an already previously indicated need, then the actual cloning is performed.
+        The clone is created only if blocks and variables are set after cloning. The child blocks
+        are reset after cloning, unless the ``passive`` argument is set to ``True``.
 
         Args:
-            copies (int, optional): Number of copies to be created. Defaults to 1.
-            force (bool, optional): Switch forcing the cloning to be performed immediately regardless of whether
-                it will be actually needed for setting subblocks and variables or not, i.e., new template is
-                forcefully added after the block content. If the ``copies`` parameter is higher than 1, then
-                this switch is always set to False. Defaults to False.
-            passive (bool, optional): Switch to perform the cloning only if a need for the clone
-                has already been indicated previously, otherwise no new cloning need is indicated. If the
-                ``copies`` parameter is higher than 1, then this switch is always set to False.
-                Defaults to False.
-            set_children (bool, optional): Switch to set all subblocks to this parent block first, before
-                cloning this block. If the ``copies`` parameter is higher than 1, then the subblocks are
-                set only once before making the first copy of this parent block. Defaults to False.
+            copies: Then umber of template copies to be prepared. If > 1, then ``force`` and
+                ``passive`` arguments are automatically ``False``.
+            force: Forces the clone to be created even if no variable or block is then set.
+            passive: Enables cloning only if an active (non-passive) clone has been requested
+                previously and no further clone is created.
+            set_children: Enables setting of all child blocks to this parent block before cloning.
         """
         if set_children:
             for child in self.__children.values():
@@ -269,71 +252,53 @@ class Block:
             for _ in range(copies):
                 self.clone(1, False, False, False)
         else:
-            # Check if cloning flag indicates that the cloning shall be actually performed.
-            # If cloning is not forced, then the block should be cloned only after it has been filled, which is
-            # indicated by the clone_flag.
+            # Check if cloning flag indicates that the cloning should be actually performed.
             if force or self.__clone_flag:
                 if self.autotags:
                     self.__set_std_last_first_tag(first=self.__stdlastfirst_first)
                     self.__stdlastfirst_first = False
                     self.__set_char_repeat_tag()
-                # Perform a clone, i.e. finalize the content and add new template at the end of the content.
+                # Perform cloning.
                 self.content = f"{self.content}{self.__template}"
                 self.__clone_flag = False
             if not passive:
                 if not force:
                     self.__clone_flag = True
-                # Reset all subblocks of the current block and recursively also their subblocks to have
-                # a fresh new instance of all cloned blocks without any remaining unset modified content
-                # strings or cloning flags set to True.
+                # Reset all child blocks to make their content ready to be filled with new values.
                 for child in self.__children.values():
                     child.reset(all_children=True)
 
     def get_subblock(self, *subblock_names: str) -> Union["Block", list["Block"], None]:
-        """
-        Returns a subblock object defined by block start and end tags within the actual block template.
+        """Returns child blocks from a current block content. Each subblock is added into the
+        ``children`` attribute of the current block.
 
         Args:
-            subblock_names (str): Name(s) of the subblock tags in the actual block template. The string between
-                the subblock tags is used as a template for the returned subblock object.
+            subblock_names: Tag names of blocks to be extracted from a current block content.
 
         Returns:
-            :class:`CodeBlock`: Subblock object or a list of subblock objects in case of multiple subblock names
-            specified in the input arguments. If the specified subblock is not found, then ``None`` is returned.
+            A :class`Block` object or a list of blocks for multiple subblock names. ``None``
+            is returned if the specified block tags are not found.
         """
         ret_blk = []
         for subblock_name in subblock_names:
-            # Init subblock object to None, so if subblock name is not found, then None is returned.
             subblk = None
-            # Clone block if the cloning flag is set to true to ensure that the subblock tags can be
-            # found in the block content and the subblock content can be extracted from them.
+            # Clone block if the cloning flag is set to true to ensure that the subblock tags
+            # can be found in the block content and the subblock can be extracted from them.
             self.clone(passive=True)
             if subblock_name:
                 (subblk_start, subblk_end) = self.__get_subblock_pos(subblock_name)
                 if subblk_start >= 0 and subblk_end >= 0:
-                    # If subblock tags are found, then create a new subblock and set correct parent-subblock relations.
                     subblk = Block(self.content[subblk_start: subblk_end], subblock_name, self.config)
-                    # pylint: disable=protected-access, unused-private-member
-                    subblk.__parent = self
+                    subblk.__parent = self      # pylint: disable=protected-access, unused-private-member
                     self.__children[subblock_name] = subblk
-
             ret_blk.append(subblk)
-        if ret_blk:
-            if len(ret_blk) == 1:
-                ret_blk = ret_blk[0]
-        else:
-            ret_blk = None
-        return ret_blk
+        return None if not ret_blk else ret_blk[0] if len(ret_blk) == 1 else ret_blk
 
     def clear_subblock(self, *subblocks: "Block | str") -> None:
-        """
-        Clears subblock with given name, i.e. the content of the subblock is erased from the parent content.
-
-        .. note::
-            Subblock can be cleared only if it has not been :meth:`set` to the parent block yet.
+        """Clears child blocks from a current block content.
 
         Args:
-            subblocks (:class:`Block` | str): Subblock object(s) to be cleared from the current block content.
+            subblocks: Subblock object(s) or their names to be cleared.
         """
         for subblk in subblocks:
             if isinstance(subblk, str):
@@ -344,16 +309,10 @@ class Block:
                 subblk.clear()
 
     def set_subblock(self, *subblocks: "Block | str") -> None:
-        """
-        Sets the content of a subblock object into the template of the parent block object from which this method
-        is called, i.e. replaces the subblock tags in the parent block template with the subblock content.
-
-        .. note::
-            Calling this method is equivalent to the call of the :meth:`set` method from the subblock object.
+        """Sets the content of child blocks into the content of the current block.
 
         Args:
-            subblocks (:class:`Block` | str): Subblock object(s) or names whose content will be set into the
-                parent block object template.
+            subblocks: Subblock object(s) or their names to be set.
         """
         for subblk in subblocks:
             if isinstance(subblk, str):
