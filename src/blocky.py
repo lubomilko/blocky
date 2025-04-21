@@ -57,7 +57,7 @@ class Block:
     Attributes:
         config: A block configuration primarily defining the format of tags within a template.
         name: A block name. Usually set automatically by the :meth:`get_subblock` method.
-        config: A block configuration (template tags format, tabulator size, etc.)
+        content: Generated block content, i.e., a template filled with data.
         autotags: Enables the automatic tags (char repetition, etc.) to be filled automatically.
     """
     def __init__(self, template: str | Path = "", name: str = "", config: BlockConfig = BlockConfig()) -> None:
@@ -115,47 +115,42 @@ class Block:
         with open(file_path, "w", encoding="utf-8") as file_content:
             file_content.write(self.content)
 
-    def fill(self, block_data: object | dict, __subidx: int = 0) -> int | bool:
-        """
-        Fills the block content using the data from an object recommended) or a
-        dictionary. The list below defines the relationships between the object attribute values or dictionary
-        values and their use in a block template:
+    def fill(self, data: dict | object, __clone_idx: int = 0) -> int | bool:
+        """Fills the block content using the data from a dictionary or an object.
 
-        *   Strings, integers, floats, booleans -> Values set directly as block variables into the template tags.
-        *   Subobject or subdictionary -> Data to be filled into a subblock of the parent block being filled.
-        *   List or tuple -> Content of block clones. Each list or tuple item should consist of another subobject or
-            a subdictionary representing attributes and their values to be used in one cloned instance of
-            a template block.
+        The dictionary keys or object attribute names define the template variable or a block to
+        be set. The dictionary or object attribute values are used according to the rules below:
+
+        *   Strings, integers, floats, booleans -> Variable values.
+        *   Dictionary or object -> Data to be filled into a child block in a current block.
+        *   List or tuple -> Content of block clones. Each element must be a dictionary or object
+            with data used a for filling one cloned instance of a block.
+
+        Two special key/attribute-value pairs can be used in a data dictionary or object:
+
+        *   ``fill_hndl`` - ``func(block: Block, data: dict | object, clone_subidx: int) -> None``
+            function: A user-defined handler function with an access to the template block object
+            and a data being filled usable for special low-level operations.
+
+        *   ``vari_idx`` - int: A variation index to be set for a variation block type
+            (see the ``vari_idx`` attribute of the :meth:``set`` method).
 
         Args:
-            block_data (object | dict): Object or dictionary with the attribute-value or key-value pairs to be
-                used for filling the block template. The following two special attributes can be defined:
-
-                *   ``fill_hndl``: A function called before the parent template block containing this
-                    attribute is set into the template. Useful for custom low-level modifications of the
-                    template block.
-                *   ``vari_idx``: A *variation index* specifying the variation of the parent template block
-                    containing this attribute to be set into the template. Only valid for blocks having
-                    multiple variations (see the ``vari_idx`` attribute of the :meth:``set`` method).
-
-            __subidx (int, optional): Internal value representing the item index for attributes of list type.
-                The index is sent as an argument to the fill handler function (it it's used) to indicate which
-                list item is being used for filling the template block. This parameter shall be left at a
-                default value 0 when this method is called. Defaults to 0.
+            data: A dictionary or object with to be used for filling a block template.
+            __clone_idx: Internal index of a block clone being filled.
 
         Returns:
-            int | bool: Iteration index to be used for setting the parent block containing the elements
-                being filled within the current call of this method.
+            int | bool: Internally used variation index for variation blocks being filled.
         """
-        # Do nothing if block_data is not a dictionary or an object.
-        if block_data is None or isinstance(block_data, (list, tuple, str, int, float, bool)):
+        # Do nothing if data is not a dictionary or an object.
+        if data is None or isinstance(data, (list, tuple, str, int, float, bool)):
             return 0
 
         # Returned variation index used for setting the parent block after the execution of this method.
         ret_vari_idx = 0
 
         # Get the block data in form of a dictionary even if it is defined as an object.
-        data_dict = block_data if isinstance(block_data, dict) else block_data.__dict__
+        data_dict = data if isinstance(data, dict) else data.__dict__
 
         # 1. Loop through list or tuple items of block data and fill the template blocks that need to be cloned.
         for (attrib, value) in data_dict.items():
@@ -212,7 +207,7 @@ class Block:
         # 4. If an external fill handle is defined within the block data, then call it.
         fill_hndl = data_dict.get("fill_hndl")
         if fill_hndl:
-            fill_hndl(self, block_data, __subidx)
+            fill_hndl(self, data, __clone_idx)
 
         return ret_vari_idx
 
