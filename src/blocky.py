@@ -34,11 +34,11 @@ class BlockConfig:
     """The template block configuration defining the format of tags and other template parts.
 
     Attributes:
-        tag_gen_var: A tag generator function for a variable tag. Defaults to "<name>".
-        tag_gen_blk_start: A tag generator function for a block start tag. Defaults to "<name>".
-        tag_gen_blk_end: A tag generator function for a block end tag. Defaults to "</name>".
-        tag_gen_blk_vari: A tag generator function for a block variation tag. Defaults to "<^name>".
-        autotag_charrep: The "char repetition" automatic tag name. Defaults to "+".
+        tag_gen_var: A tag generator function for a variable tag. Defaults to "<NAME>".
+        tag_gen_blk_start: A tag generator function for a block start tag. Defaults to "<NAME>".
+        tag_gen_blk_end: A tag generator function for a block end tag. Defaults to "</NAME>".
+        tag_gen_blk_vari: A tag generator function for a block variation tag. Defaults to "<^NAME>".
+        autotag_charrep: The "char repeat" automatic tag name. Defaults to "+".
         autotag_stdlastfirst: The "standard/last/first" automatic tag name. Defaults to ".".
         tab_size: A tabulator size in number of space characters.
     """
@@ -58,7 +58,7 @@ class Block:
         config: A block configuration primarily defining the format of tags within a template.
         name: A block name. Usually set automatically by the :meth:`get_subblock` method.
         content: The generated block content, i.e., a template filled with data.
-        autotags: Enables the automatic tags (char repetition, etc.) to be filled automatically.
+        autotags: Enables the automatic tags (char repeat, etc.) to be filled automatically.
     """
     def __init__(self, template: str | Path = "", name: str = "", config: BlockConfig = BlockConfig()) -> None:
         """Initializes a new block object.
@@ -428,7 +428,7 @@ class Block:
         """Returns the position of the specified block within the content of this block.
 
         Args:
-            block_name: Name of the block whose position should be returned.
+            block_name: The name of the block whose position should be returned.
             include_tags: Enables the inclusion of the block tags themselves in the returned
                 position.
 
@@ -467,8 +467,8 @@ class Block:
         return (subblk_start, subblk_end)
 
     def __set_char_repeat_tag(self) -> None:
-        """Sets the value of the "char repetition" automatic tags in this block maintaining the
-        predefined right-alignement to the next character different from the repeated one.
+        """Sets the value of the "char repeat" automatic tags in this block maintaining the
+        predefined right-alignment to the next character different from the repeated one.
         """
         last_pos = 0
         # Loop through all *char repeat* tags in block template and replace them with the correct
@@ -495,63 +495,55 @@ class Block:
             else:
                 break
 
-    def __get_char_repeat_data(self, input_string: str, expand_tabs: bool = False, start_index: int = 0) \
+    def __get_char_repeat_data(self, text: str, expand_tabs: bool = False, start_pos: int = 0) \
             -> tuple[int, int, int, str]:
-        """
-        Returns data about special *char repeat* tag, i.e. its start, end position, column index in line and
-        the character to be repeated.
+        """Returns the information about the first found "char repeat" automatic tag.
 
         Args:
-            input_string (str): String in which the special tag is searched.
-            expand_tabs (bool, optional): If true, then tabulators are replaced with spaces for consistent
-                character position counting. Defaults to False.
-            start_index (int, optional): Start character index from which the special tag is searched.
-                Defaults to 0.
+            text: A string in which the "char repeat" automatic tag is searched.
+            expand_tabs: Enables the replacement of tabulators with spaces for consistent
+                character position counting.
+            start_pos: The start character position for searching the "char repeat" automatic tag.
 
         Returns:
-            tuple[int, int, int, str]: *char repeat* tag data in form of a following tuple:
-                ``(start_pos, end_pos, column_pos, repeated_char)``.
+            A tuple with the following information about the "char repeat" automatic tag:
+            start char position, end char position, line column index, character to be repeated.
         """
         if expand_tabs:
-            input_string = input_string.expandtabs(self.config.tab_size)
+            text = text.expandtabs(self.config.tab_size)
         end_pos = -1
         tag_col_pos = -1
         repeat_char = None
         charrep_tag = self.config.tag_gen_var(self.config.autotag_charrep)
         # Get starting position of repeated characters.
-        start_pos = input_string.find(charrep_tag, start_index)
-        if start_pos >= 0:
-            end_pos = start_pos + len(charrep_tag)
+        st_pos = text.find(charrep_tag, start_pos)
+        if st_pos >= 0:
+            end_pos = st_pos + len(charrep_tag)
             # Get character immediately following the *char repeat* tag. This character is going to be repeated.
-            repeat_char = input_string[end_pos]
-            # Get ending position of repeated characters.
-            while input_string[end_pos] == repeat_char:
+            repeat_char = text[end_pos]
+            while text[end_pos] == repeat_char:
                 end_pos += 1
-            # Get position of the line start in which the *char repeat* tag is located.
-            line_start_pos = input_string.rfind("\n", 0, start_pos)
-            line_start_pos = 0 if line_start_pos < 0 or line_start_pos > start_pos else line_start_pos + 1
-            # Get column position of *char repeat* tag, i.e. the position of the *char repeat* tag within its line.
-            tag_col_pos = len(input_string[line_start_pos: start_pos].expandtabs(self.config.tab_size))
-        return (start_pos, end_pos, tag_col_pos, repeat_char)
+            # Get position of the last newline char before the *char repeat* tag.
+            line_st_pos = text.rfind("\n", 0, st_pos)
+            line_st_pos = 0 if line_st_pos < 0 or line_st_pos > st_pos else line_st_pos + 1
+            # Get the line column position of the *char repeat* tag.
+            tag_col_pos = len(text[line_st_pos: st_pos].expandtabs(self.config.tab_size))
+        return (st_pos, end_pos, tag_col_pos, repeat_char)
 
     def __set_std_last_first_tag(self, first: bool = False, last: bool = False) -> None:
-        """
-        Replaces special *last value* tag in the block content with either the standard value or the last value.
+        """Sets the correct variation of the "standard/last/first" automatic tags in this block
+        content with the *standard* variation being set by default.
 
         Args:
-            first (bool, optional):  Switch to set the *first* value in place of the *std last first* tag. If False,
-                then the standard value is used. Defaults to False.
-            last (bool, optional): Switch to set the *last* value in place of the *std last first* tag. If False,
-                then the standard value is used. This switch has a priority over the ``first`` switch argument.
-                Defaults to False.
+            first: Enables setting of the *first* value variation of the "standard/last/first"
+                automatic tag.
+            last: Enables setting of the *last* value variation of the "standard/last/first"
+                automatic tag.
         """
         # Loop through all *last value* tags in block content and replace them with either standard value or last value.
         while True:
-            # Get the start and end position of the *last value* tag including the start/end tags.
             (subblk_start, subblk_end) = self.__get_block_pos(self.config.autotag_stdlastfirst, True)
-            # If *last value* tag is found.
             if 0 <= subblk_start < subblk_end:
-                # Extract the content of the *last value* tag without the start/end tags themselves.
                 (subblk_cont_start, subblk_cont_end) = self.__get_block_pos(self.config.autotag_stdlastfirst)
                 value_content = self.content[subblk_cont_start: subblk_cont_end]
                 value_content = self.__get_variation(
@@ -560,33 +552,29 @@ class Block:
             else:
                 break
 
-    def __get_variation(self, content: str, block_name: str, vari_idx: int) -> str:
-        """
-        Returns a block content string corresponding to the specified variation of a block content from
-        all variations defined using special *block variation* tags.
+    def __get_variation(self, text: str, block_name: str, vari_idx: int) -> str:
+        """Finds the specified variation block and returns the required content variation from it.
 
         Args:
-            content (str): Content string with multiple variations formatted using *block variation* tags.
-            block_name (str): Block name that is used in *block variation* tags.
-            vari_idx (int): Index of a variation (starting from 0) to be returned by this method.
+            text: A string where the variation block is searched.
+            block_name: The variation block name being searched.
+            vari_idx: The content variation index (starting from 0) to be returned. Variation 0
+                is returned if the specified index is higher than the number of defined variations.
 
         Returns:
-            str: Block content string variation corresponding to the specified variation index.
+            A string representing the content variation corresponding to the specified variation
+            index. The whole ``text`` argument is returned if the variation block is not found.
         """
-        var = content
-        if self.config.tag_gen_blk_vari(block_name) in content:
-            var_list = content.split(self.config.tag_gen_blk_vari(block_name))
-            if vari_idx < len(var_list):
-                var = var_list[vari_idx]
-            else:
-                var = var_list[0]
-            # Remove initial empty space up to the first new line char "\n", including the "\n" if present.
-            first_nl = var.find("\n") + 1
-            if first_nl > 0 and var[: first_nl].strip() == "":
-                var = var[first_nl:]
-            # Remove trailing empty space after the final new line char "\n", not including the final "\n" if present).
-            last_nl = var.rfind("\n") + 1
-            if last_nl > 0 and var[last_nl:].strip() == "":
-                var = var[0: last_nl]
-
-        return var
+        content_vari = text
+        if self.config.tag_gen_blk_vari(block_name) in text:
+            var_list = text.split(self.config.tag_gen_blk_vari(block_name))
+            content_vari = var_list[vari_idx] if vari_idx < len(var_list) else var_list[0]
+            # Remove the initial empty space up to the first newline char "\n", including the "\n" if present.
+            first_nl = content_vari.find("\n") + 1
+            if first_nl > 0 and content_vari[: first_nl].strip() == "":
+                content_vari = content_vari[first_nl:]
+            # Remove trailing empty space after the final newline char "\n", not including the final "\n" if present).
+            last_nl = content_vari.rfind("\n") + 1
+            if last_nl > 0 and content_vari[last_nl:].strip() == "":
+                content_vari = content_vari[0: last_nl]
+        return content_vari
