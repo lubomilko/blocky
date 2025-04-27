@@ -123,7 +123,7 @@ def demo_shoplist() -> None:
         "  Items                                                       Quantity\n"
         "----------------------------------------------------------------------\n"
         "<ITEMS>\n"
-        "* <FLAG>! <^FLAG>? </FLAG><ITEM><+>                           <QTY>\n"
+        "* <FLAG>IMPORTANT! <^FLAG>MAYBE? </FLAG><ITEM><+>             <QTY>\n"
         "<ALT_WRAP>\n"
         "  - alternatives: <ALTS><ITEM><.>, <^.></.></ALTS>\n"
         "</ALT_WRAP>\n"
