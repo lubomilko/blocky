@@ -286,7 +286,7 @@ class Block:
             # can be found in the block content and the subblock can be extracted from them.
             self.clone(passive=True)
             if subblock_name:
-                (subblk_start, subblk_end) = self.__get_subblock_pos(subblock_name)
+                (subblk_start, subblk_end) = self.__get_block_pos(subblock_name)
                 if subblk_start >= 0 and subblk_end >= 0:
                     subblk = Block(self.content[subblk_start: subblk_end], subblock_name, self.config)
                     subblk.__parent = self      # pylint: disable=protected-access, unused-private-member
@@ -363,10 +363,10 @@ class Block:
         set_num = 0
         while self.parent and (set_num < count or count < 0):
             # pylint: disable=protected-access
-            # rationale: Private method __get_subblock_pos is called from non-self object only here and
+            # rationale: Private method __get_block_pos is called from non-self object only here and
             # it is easier and simpler to keep it that way instead of rewriting the method to be static and sending
             # parent object data into it for processing.
-            (subblk_start, subblk_end) = self.parent._Block__get_subblock_pos(self.name, True)
+            (subblk_start, subblk_end) = self.parent._Block__get_block_pos(self.name, True)
             if 0 <= subblk_start < subblk_end:
                 blk_content = self.__get_variation(self.content, self.name, vari_idx)
                 # If subblock tags are found, then set the current block content into all corresponding subblock tags
@@ -424,19 +424,19 @@ class Block:
         for var_name in var_names:
             self.content = self.content.replace(self.config.tag_gen_var(var_name), "")
 
-    def __get_subblock_pos(self, tag_name: str, include_tags: bool = False) -> tuple[int, int]:
-        """Returns start and end position of a subblock string in the block content.
+    def __get_block_pos(self, block_name: str, include_tags: bool = False) -> tuple[int, int]:
+        """Returns the position of the specified block within the content of this block.
 
         Args:
-            tag_name (str): Subblock tag name.
-            include_tags (bool, optional): If true, then start-end position takes into account also
-                the subblock tag characters themselves. Defaults to False.
+            block_name: Name of the block whose position should be returned.
+            include_tags: Enables the inclusion of the block tags themselves in the returned
+                position.
 
         Returns:
-            tuple[int, int]: Start and end character position of the subblock, i.e. ``(start_pos, end_pos)``.
+            A tuple with the start and end character position of the block.
         """
-        start_tag = self.config.tag_gen_blk_start(tag_name)
-        end_tag = self.config.tag_gen_blk_end(tag_name)
+        start_tag = self.config.tag_gen_blk_start(block_name)
+        end_tag = self.config.tag_gen_blk_end(block_name)
         subblk_start = self.content.find(start_tag)
         if subblk_start >= 0:
             if not include_tags:
@@ -467,22 +467,18 @@ class Block:
         return (subblk_start, subblk_end)
 
     def __set_char_repeat_tag(self) -> None:
-        """
-        Replaces special tags representing repeated characters in the block content with the correct amount of
-        repeated characters (usually spaces or tabulators) to keep predefined right-alignement.
+        """Sets the value of the "char repetition" automatic tags in this block maintaining the
+        predefined right-alignement to the next character different from the repeated one.
         """
         last_pos = 0
         # Loop through all *char repeat* tags in block template and replace them with the correct
         # number of repeated characters.
         while True:
-            # Get data about char repeat in the block content.
             (cont_start, cont_end, new_col, repeat_char) = self.__get_char_repeat_data(self.content)
             if cont_start >= 0:
-                # Get data about char repeat in the block template, i.e. the content before it has been filled.
-                (templ_start, templ_end, orig_col, _) = self.__get_char_repeat_data(
-                    self.__template, True, last_pos)
+                (templ_start, templ_end, orig_col, _) = self.__get_char_repeat_data(self.__template, True, last_pos)
                 orig_len = templ_end - templ_start
-                # Calculate new length of repeated characters in the filled content.
+                # Calculate the new length of the repeated characters in the filled content.
                 new_len = orig_len + (orig_col - new_col)
                 if repeat_char == "\t":
                     temp_len = new_len
@@ -491,9 +487,9 @@ class Block:
                         new_len += 1
                 if new_len <= 0:
                     new_len = 1
-                # Set repeated characters into the block content instead of the *char repeat* tag.
+                # Set the repeated characters into the block content instead of the *char repeat* tag.
                 self.content = f"{self.content[0: cont_start]}{new_len * repeat_char}{self.content[cont_end:]}"
-                # Remember last *char repeat* tag position in the template, because if there are more of these tags,
+                # Remember the last *char repeat* tag position in the template, because if there are more of these tags,
                 # then we need to start searching only after the previous tag position, not again from the start.
                 last_pos = templ_end
             else:
@@ -552,11 +548,11 @@ class Block:
         # Loop through all *last value* tags in block content and replace them with either standard value or last value.
         while True:
             # Get the start and end position of the *last value* tag including the start/end tags.
-            (subblk_start, subblk_end) = self.__get_subblock_pos(self.config.autotag_stdlastfirst, True)
+            (subblk_start, subblk_end) = self.__get_block_pos(self.config.autotag_stdlastfirst, True)
             # If *last value* tag is found.
             if 0 <= subblk_start < subblk_end:
                 # Extract the content of the *last value* tag without the start/end tags themselves.
-                (subblk_cont_start, subblk_cont_end) = self.__get_subblock_pos(self.config.autotag_stdlastfirst)
+                (subblk_cont_start, subblk_cont_end) = self.__get_block_pos(self.config.autotag_stdlastfirst)
                 value_content = self.content[subblk_cont_start: subblk_cont_end]
                 value_content = self.__get_variation(
                     value_content, self.config.autotag_stdlastfirst, 1 if last else 2 if first else 0)
