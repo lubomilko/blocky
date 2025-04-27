@@ -57,7 +57,7 @@ class Block:
     Attributes:
         config: A block configuration primarily defining the format of tags within a template.
         name: A block name. Usually set automatically by the :meth:`get_subblock` method.
-        content: Generated block content, i.e., a template filled with data.
+        content: The generated block content, i.e., a template filled with data.
         autotags: Enables the automatic tags (char repetition, etc.) to be filled automatically.
     """
     def __init__(self, template: str | Path = "", name: str = "", config: BlockConfig = BlockConfig()) -> None:
@@ -137,7 +137,7 @@ class Block:
 
         Args:
             data: A dictionary or object with to be used for filling a block template.
-            __clone_idx: Internal index of a block clone being filled.
+            __clone_idx: An internal index of a block clone being filled.
 
         Returns:
             int | bool: Internally used variation index for variation blocks being filled.
@@ -224,7 +224,7 @@ class Block:
         """Clears the block from its parent block, i.e., sets the block to an empty string.
 
         Args:
-            count: Maximum number of blocks with the same name to be cleared, -1 = all.
+            count: The maximum number of blocks with the same name to be cleared, -1 = all.
         """
         self.content = ""
         self.set(count=count)
@@ -237,7 +237,7 @@ class Block:
         are reset after cloning, unless the ``passive`` argument is set to ``True``.
 
         Args:
-            copies: Then umber of template copies to be prepared. If > 1, then ``force`` and
+            copies: The number of template copies to be prepared. If > 1, then ``force`` and
                 ``passive`` arguments are automatically ``False``.
             force: Forces the clone to be created even if no variable or block is then set.
             passive: Enables cloning only if an active (non-passive) clone has been requested
@@ -269,15 +269,15 @@ class Block:
                     child.reset(all_children=True)
 
     def get_subblock(self, *subblock_names: str) -> Union["Block", list["Block"], None]:
-        """Returns child blocks from a current block content. Each subblock is added into the
-        ``children`` attribute of the current block.
+        """Returns the specified child block object from the current block content. Each child
+        is also automatically added into the ``children`` attribute of the current block.
 
         Args:
-            subblock_names: Tag names of blocks to be extracted from a current block content.
+            subblock_names: The tag names of blocks to be extracted from a current block content.
 
         Returns:
-            A :class`Block` object or a list of blocks for multiple subblock names. ``None``
-            is returned if the specified block tags are not found.
+            A :class`Block` object or a list of blocks if multiple subblock names are specified.
+            ``None`` is returned if the specified block tags are not found.
         """
         ret_blk = []
         for subblock_name in subblock_names:
@@ -295,7 +295,7 @@ class Block:
         return None if not ret_blk else ret_blk[0] if len(ret_blk) == 1 else ret_blk
 
     def clear_subblock(self, *subblocks: "Block | str") -> None:
-        """Clears child blocks from a current block content.
+        """Clears the content of specified child blocks from a current block content.
 
         Args:
             subblocks: Subblock object(s) or their names to be cleared.
@@ -309,10 +309,10 @@ class Block:
                 subblk.clear()
 
     def set_subblock(self, *subblocks: "Block | str") -> None:
-        """Sets the content of child blocks into the content of the current block.
+        """Sets the content of specified child blocks into the content of the current block.
 
         Args:
-            subblocks: Subblock object(s) or their names to be set.
+            subblocks: The subblock object(s) or their names to be set.
         """
         for subblk in subblocks:
             if isinstance(subblk, str):
@@ -323,20 +323,14 @@ class Block:
                 subblk.set()
 
     def set(self, vari_idx: int | bool = 0, all_children: bool = False, count: int = -1) -> None:
-        """
-        Sets the content of the block from which this method is called into its parent block template,
-        i.e. replaces the subblock tags in the parent block template with the subblock content.
+        """Sets the content of this block into its parent block content.
 
         Args:
-            vari_idx (int | bool, optional): Variation index of a block content to be set starting from 0.
-                Variations are content parts separated by the separator tags. Negative variation number causes
-                the block to be cleared instead of set. A boolean value True represents the first block variation 0
-                and False represents the block variation -1, i.e., it clears the block. Defaults to 0.
-            all_children(bool, optional): Flag indicating that all subsequent child subblocks of current block
-                should be set into its parent blocks first before the current block is set into its parent block.
-            count (int, optional): Maximum number of block contents to be set. If set to -1, then all
-                corresponding subblock tags in the parent content will be replaced by the subblock content.
-                Defaults to -1.
+            vari_idx: An index of a variation block content (if any) to be set starting from 0.
+                A negative index or boolean false causes the block to be cleared. A boolean true
+                is the same as index 0.
+            all_children: Enables setting of all child blocks of this block before setting it.
+            count: The maximum number of blocks with the same name to be set (-1 = no limit).
         """
         # Convert potentially boolean variation index to integer.
         if isinstance(vari_idx, bool):
@@ -384,66 +378,16 @@ class Block:
             else:
                 break
 
-    def set_variables(self, *name_value_args: str, autoclone: bool = False, **name_value_kwargs) -> None:
-        """
-        Sets values into the variables inside the block template, i.e. replaces the tags representing
-        variables with the specified values.
-        Only positional or only keyword arguments described below or both at the same time can be used
-        to define the variables and their values.
+    def set_variables(self, autoclone: bool = False, **name_value_kwargs) -> None:
+        """Sets values into the specified variables within this block content.
 
         Args:
-            name_value_args (str): Positional arguments representing variable *name*-*value* pairs. The
-                following example illustrates setting the ``var1`` variable to value ``1`` and the ``var2``
-                variable to value ``2``.
-
-                .. code-block::
-
-                    some_block.set_variables("var1", "1", "var2", "2")
-
-                .. important::
-                    Positional arguments ``name_value_args`` are supported only for backward compatibility
-                    purposes. Usage of keyword arguments ``name_value_kwargs`` instead of positional arguments
-                    is strongly recommended.
-
-            autoclone (bool, optional): Flag indicating that the block containing the variable tags
-                being set should be automatically cloned after the variable is set to its value.
-            name_value_kwargs : Keyword arguments representing variable *name*-*value* pairs, e.g.:
-
-                .. code-block::
-
-                    some_block.set_variables(var1="1", var2="2")
-
-        .. note::
-            Non-string variable value types are allowed, if they have a string representation, i.e. they
-            can be automatically converted to the string. Following example shows setting variable ``var`` to
-            value ``1`` by specifying the value as an integer number:
-
-            .. code-block::
-
-                some_block.set_variables(var=1)
+            autoclone: Enables automatic clone of this block after setting all variables.
+            name_value_kwargs: Keyword arguments representing variable name-value pairs, e.g.,
+                ``name="Thomas", surname="Anderson", age=37``. Tuples or lists can be used as
+                variable values, making this block to be automatically cloned after setting each
+                element value.
         """
-        # If this method is called with the first positional argument set to something else than a string,
-        # then assume that it is a boolean flag for the autoclone argument, e.g.: set_variables(True, VARIABLE=value).
-        # Set the non-string argument into the the autoclone argument and increment the start index of the usable
-        # positional arguments.
-        pos_arg_start_idx = 0
-        if name_value_args:
-            if not isinstance(name_value_args[0], str):
-                autoclone = bool(name_value_args[0])
-                pos_arg_start_idx = 1
-
-        var_tags = []
-        var_values = []
-        # Loop through variable name-value positional and keyword arguments and extract the variable tags
-        # and corresponding values.
-        for var_idx in range(pos_arg_start_idx, len(name_value_args), 2):
-            if var_idx + 1 < len(name_value_args):
-                var_tags.append(self.config.tag_gen_var(name_value_args[var_idx]))
-                var_values.append(name_value_args[var_idx + 1])
-        for var_name, var_value in name_value_kwargs.items():
-            var_tags.append(self.config.tag_gen_var(f"{var_name}"))
-            var_values.append(var_value)
-
         iter_idx = 0
         detected_iters_num = 1
         while iter_idx < detected_iters_num:
@@ -451,32 +395,31 @@ class Block:
             # found in the block content and the variable values can be set into them.
             self.clone(passive=True)
             # Loop through variable tags and replace them with the corresponding variable values.
-            for var_idx, var_tag in enumerate(var_tags):
-                if isinstance(var_values[var_idx], str):
-                    var_value = var_values[var_idx]
+            for (tag, val) in [(self.config.tag_gen_var(f"{name}"), val) for (name, val) in name_value_kwargs.items()]:
+                if isinstance(val, str):
+                    var_value = val
                 else:
+                    # Check if the val is iterable and if so, then set its individual elements.
                     try:
-                        _ = iter(var_values[var_idx])
-                        if len(var_values[var_idx]) > detected_iters_num:
-                            detected_iters_num = len(var_values[var_idx])
-                        if len(var_values[var_idx]) > iter_idx:
-                            var_value = var_values[var_idx][iter_idx]
+                        _ = iter(val)
+                        detected_iters_num = max(detected_iters_num, len(val))
+                        if len(val) > iter_idx:
+                            var_value = val[iter_idx]
                         else:
-                            var_value = var_values[var_idx][-1]
+                            var_value = val[-1]
                     except TypeError:
-                        var_value = var_values[var_idx]
-                self.content = self.content.replace(var_tag, f"{var_value}")
+                        var_value = val
+                self.content = self.content.replace(tag, f"{var_value}")
             iter_idx += 1
             if detected_iters_num > 1 or autoclone:
                 self.clone()
 
     def clear_variables(self, *var_names: str) -> None:
-        """
-        Removes specified variables from the block template, i.e. replaces the tags representing variables with
-        the empty strings.
+        """Clears the specified variables from this block content. Has the same effect as setting
+        the variables to an empty string.
 
         Args:
-            var_names (str): Arguments with variable names to be cleared.
+            var_names: Names of the variables to be cleared.
         """
         for var_name in var_names:
             self.content = self.content.replace(self.config.tag_gen_var(var_name), "")
