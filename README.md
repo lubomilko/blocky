@@ -1,43 +1,51 @@
 # Blocky template engine
 
-[Blocky](https://github.com/lubomilko/blocky) is a lightweight Python templating engine able to generate various types
-of text-based files or strings, e.g., source code in various languages, markdown or reStructuredText files, HTML pages,
-XML or JSON data files, etc.
+[Blocky](https://github.com/lubomilko/blocky) is a minimalistic generic Python template engine
+able to generate various types of text-based content, e.g., standard text, source code in various
+languages, markdown or reStructuredText files, HTML pages, XML or JSON data files, etc.
 
 
 # Quick start
 
-The following Python script illustrates most of the high-level template filling features.
-The template is loaded from the `template` string and a content is generated from it using the
-values provided by the `data` dictionary and then the generated content is printed at the end.
+The following Python script illustrates most of the high-level automated template filling features.
+The template is loaded from the `template` string and filled using the `data` dictionary. Then the
+generated content is printed at the end.
 
 ``` python
-template = (
-    "                            SHOPPING LIST\n"
-    "  Items                                                       Quantity\n"
-    "----------------------------------------------------------------------\n"
-    "<ITEMS>\n"
-    "* <FLAG>! <^FLAG>? </FLAG><ITEM><+>                           <QTY>\n"
-    "<ALT_WRAP>\n"
-    "  - alternatives: <ALTS><ITEM><.>, <^.></.></ALTS>\n"
-    "</ALT_WRAP>\n"
-    "</ITEMS>\n"
-    "\n"
-    "Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>\n"
-)
+import sys
+
+sys.path.insert(0, f"{sys.path[0]}/relative/path/to/dir/with/blocky")
+
+from blocky import Block
+
+
+template = """
+                            SHOPPING LIST
+  Items                                                        Quantity
+-----------------------------------------------------------------------
+<ITEMS>
+* <FLAG>IMPORTANT! <^FLAG>MAYBE? </FLAG><ITEM><+>              <QTY>
+<ALT_WRAP>
+  - alternatives: <ALTS><ITEM><.>, <^.></.></ALTS>
+</ALT_WRAP>
+</ITEMS>
+
+
+Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>
+"""
 
 data = {
     "items": [
         {"flag": None, "item": "apples", "qty": "1 kg", "alt_wrap":
-            {"alts": [{"item": "pears"}]}},
+          {"alts": [{"item": "pears"}]}},
         {"flag": {"vari_idx": 0}, "item": "potatoes", "qty": "2 kg", "alt_wrap": None},
         {"flag": None, "item": "rice", "qty": "1 kg", "alt_wrap":
-            {"alts": [{"item": "pasta"}, {"item": "quinoa"}, {"item": "couscous"}]}},
+          {"alts": [{"item": "pasta"}, {"item": "quinoa"}, {"item": "couscous"}]}},
         {"flag": {"vari_idx": 1}, "item": "cooking magazine", "qty": None, "alt_wrap": None},
     ]
 }
 
-blk = Block(list_tmpl)
+blk = Block(template)
 blk.fill(data)
 print(blk.content)
 ```
@@ -46,14 +54,15 @@ Prints the following generated content:
 
 ``` text
                             SHOPPING LIST
-  Items                                                       Quantity
-----------------------------------------------------------------------
-* apples                                                      1 kg
+  Items                                                        Quantity
+-----------------------------------------------------------------------
+* apples                                                       1 kg
   - alternatives: pears
-* ! potatoes                                                  2 kg
-* rice                                                        1 kg
+* IMPORTANT! potatoes                                          2 kg
+* rice                                                         1 kg
   - alternatives: pasta, quinoa, couscous
-* ? cooking magazine
+* MAYBE? cooking magazine
+
 
 Short list: apples, potatoes, rice, cooking magazine
 ```
@@ -65,12 +74,12 @@ The template contains the following important elements:
 * **Variables** consisting of a single XML-like tag, i.e.: `<VARIABLE>`. Useful for simple string
   replacement.
 
-* **Blocks** consisting of XML-like tag pairs: `<BLOCK> content </BLOCK>`. The whole template is
+* **Blocks** consisting of XML-like tag pairs: `<BLOCK>content</BLOCK>`. The whole template is
   a block too, just an unnamed one. Blocks can contain variables and other subblocks. Blocks can
   be cloned, i.e., duplicated as many times as needed.
 
 * **Variation blocks** providing a selectable content:
-  `<BLOCK> content variation 1 <^BLOCK> content variation 2 </BLOCK>`.
+  `<BLOCK>content variation 1<^BLOCK>content variation 2</BLOCK>`.
 
   There can be two or more variations of the content separated by the `<^BLOCK>` tags.
 
@@ -81,13 +90,13 @@ The template contains the following important elements:
   right after this tag until another character is detected. Useful for text alignment.
   Can repeat also non-whitespace characters, e.g. dots: `<ITEM><+>...................<QTY>`.
 
-* **Autovariation** blocks: `<.> std <^.> last </.>`. Special variation-like blocks to be
+* **Autovariation** blocks: `<.>std<^.>last</.>`. Special variation-like blocks to be
   placed in a parent block being cloned. All clones except for the last one will automatically
   have the first variation - `std` defined by the autovariation block and the last clone will
   have the second variation - `last`.
 
   It is possible to define an autovariation block with three variants of content:
-  `<.> std <^.> last <^.> first </.>`, where the `first` variation of a content is applied
+  `<.>std<^.>last<^.>first</.>`, where the `first` variation of a content is applied
   only in the first clone of a parent block.
 
 > *Note:* All tags must use uppercase letters, but can be referenced by lowercase letters
