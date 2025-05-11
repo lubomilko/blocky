@@ -1,34 +1,32 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring, missing-function-docstring
 import sys
+from dataclasses import dataclass
 
 sys.path.insert(0, f"{sys.path[0]}/../src")
 
 from blocky import Block    # pylint: disable = wrong-import-position   # noqa E402
 
 
-def demo_shoplist() -> None:
+def demo_shoplist_basic() -> None:
     template = """
                             SHOPPING LIST
-  Items                                                        Quantity
------------------------------------------------------------------------
+  Items                                                         Quantity
+------------------------------------------------------------------------
 <ITEMS>
-* <FLAG>IMPORTANT! <^FLAG>MAYBE? </FLAG><ITEM><+>              <QTY>
-<ALT_WRAP>
-  - alternatives: <ALTS><ITEM><.>, <^.></.></ALTS>
-</ALT_WRAP>
+* <ITEM><+>                                                     <QTY>
 </ITEMS>
+
 
 Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>
 """
 
     data = {
         "items": [
-            {"flag": None, "item": "apples", "qty": "1 kg", "alt_wrap":
-             {"alts": [{"item": "pears"}]}},
-            {"flag": {"vari_idx": 0}, "item": "potatoes", "qty": "2 kg", "alt_wrap": None},
-            {"flag": None, "item": "rice", "qty": "1 kg", "alt_wrap":
-             {"alts": [{"item": "pasta"}, {"item": "quinoa"}, {"item": "couscous"}]}},
-            {"flag": {"vari_idx": 1}, "item": "cooking magazine", "qty": None, "alt_wrap": None},
+            {"item": "apples", "qty": "1 kg"},
+            {"item": "potatoes", "qty": "2 kg"},
+            {"item": "rice", "qty": "1 kg"},
+            {"item": "orange juice", "qty": "1 l"},
+            {"item": "cooking magazine", "qty": 1},
         ]
     }
 
@@ -37,22 +35,63 @@ Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>
     print(blk.content)
 
 
-def demo_shoplist_1() -> None:
+def demo_shoplist_basic_obj() -> None:
     template = """
                             SHOPPING LIST
-  Items
------------------------------------------------------------------------
+  Items                                                         Quantity
+------------------------------------------------------------------------
 <ITEMS>
-* <ITEM>
+* <ITEM><+>                                                     <QTY>
 </ITEMS>
+
+
+Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>
+"""
+
+    @dataclass
+    class ItemAttribs:
+        item: str = ""
+        qty: str | int = ""
+
+    @dataclass
+    class Data:
+        items: list[ItemAttribs] | None = None
+
+    data = Data(
+        [
+            ItemAttribs("apples", "1 kg"),
+            ItemAttribs("potatoes", "2 kg"),
+            ItemAttribs("rice", "1 kg"),
+            ItemAttribs("orange juice", "1 l"),
+            ItemAttribs("cooking magazine", 1)
+        ]
+    )
+
+    blk = Block(template)
+    blk.fill(data)
+    print(blk.content)
+
+
+def demo_shoplist() -> None:
+    template = """
+                            SHOPPING LIST
+  Items                                                         Quantity
+------------------------------------------------------------------------
+<ITEMS>
+* <FLAG>IMPORTANT! <^FLAG>MAYBE? </FLAG><ITEM><+>               <QTY><UNIT> kg<^UNIT> l</UNIT>
+</ITEMS>
+
+
+Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>
 """
 
     data = {
         "items": [
-            {"item": "apples", "qty": "1 kg"},
-            {"item": "potatoes", "qty": "2 kg"},
-            {"item": "rice", "qty": "1 kg"},
-            {"item": "cooking magazine", "qty": None},
+            {"flag": None, "item": "apples", "qty": "1", "unit": True},
+            {"flag": True, "item": "potatoes", "qty": "2", "unit": {"vari_idx": 0}},
+            {"flag": None, "item": "rice", "qty": "1", "unit": {"vari_idx": 0}},
+            {"flag": None, "item": "orange juice", "qty": "1", "unit": {"vari_idx": 1}},
+            {"flag": {"vari_idx": 1}, "item": "cooking magazine", "qty": None, "unit": None},
         ]
     }
 
@@ -62,5 +101,6 @@ def demo_shoplist_1() -> None:
 
 
 if __name__ == "__main__":
-    demo_shoplist_1()
+    demo_shoplist_basic()
+    demo_shoplist_basic_obj()
     demo_shoplist()
