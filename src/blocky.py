@@ -34,13 +34,22 @@ class BlockConfig:
     """The template block configuration defining the format of tags and other template parts.
 
     Attributes:
-        tag_gen_var: A tag generator function for a variable tag. Defaults to "<NAME>".
-        tag_gen_blk_start: A tag generator function for a block start tag. Defaults to "<NAME>".
-        tag_gen_blk_end: A tag generator function for a block end tag. Defaults to "</NAME>".
-        tag_gen_blk_vari: A tag generator function for a block variation tag. Defaults to "<^NAME>".
-        autotag_charrep: The "char repeat" automatic tag name. Defaults to "+".
-        autotag_stdlastfirst: The "standard/last/first" automatic tag name. Defaults to ".".
-        tab_size: A tabulator size in number of space characters.
+        tag_gen_var (Callable[[str], str]): A tag generator function for a variable tag.
+            Defaults to a lamba function converting a tag name ``name`` to a variable tag string
+            ``<NAME>``.
+        tag_gen_blk_start (Callable[[str], str]): A tag generator function for a block start tag.
+            Defaults to a lamba function converting a tag name ``name`` to a block start tag
+            string ``<NAME>``.
+        tag_gen_blk_end (Callable[[str], str]): A tag generator function for a block end tag.
+            Defaults to a lamba function converting a tag name ``name`` to a block end tag string
+            ``</NAME>``.
+        tag_gen_blk_vari (Callable[[str], str]): A tag generator function for a block variation
+            tag.
+            Defaults to a lamba function converting a tag name ``name`` to a block variation tag
+            string ``<^NAME>``.
+        autotag_charrep: The *char repeat* automatic tag name. Defaults to ``+``.
+        autotag_stdlastfirst: The *standard/last/first* automatic tag name. Defaults to ``.``.
+        tab_size: A tabulator size in number of space characters. Defaults to 4.
     """
     tag_gen_var: Callable[[str], str] = lambda name: f"<{name.upper()}>"
     tag_gen_blk_start: Callable[[str], str] = lambda name: f"<{name.upper()}>"
@@ -55,18 +64,20 @@ class Block:
     """Block data corresponding to a part of the template within a block start and end tags.
 
     Attributes:
-        config: A block configuration primarily defining the format of tags within a template.
-        name: A block name. Usually set automatically by the :meth:`get_subblock` method.
-        content: The generated block content, i.e., a template filled with data.
-        autotags: Enables the automatic tags (char repeat, etc.) to be filled automatically.
+        config (BlockConfig): A block configuration primarily defining the format of tags within
+            a template.
+        name (str): A block name. Usually set automatically by the :meth:`get_subblock` method.
+        content (str): The generated block content, i.e., a template filled with data.
+        autotags (bool): Enables the automatic tags (char repeat, etc.) to be filled automatically.
     """
     def __init__(self, template: str | Path = "", name: str = "", config: BlockConfig = BlockConfig()) -> None:
         """Initializes a new block object.
 
         Args:
-            template: Template string or a path to a text file template.
-            name: A block name.
-            config: A block configuration (template tags format, tabulator size, etc.)
+            template (str | Path): Template string or a path to a text file template.
+            name (str): A block name.
+            config (BlockConfig): A block configuration (template tags format, tabulator size,
+                etc.)
         """
         self.config: BlockConfig = config
         self.name: str = name
@@ -276,7 +287,7 @@ class Block:
             subblock_names: The tag names of blocks to be extracted from a current block content.
 
         Returns:
-            A :class`Block` object or a list of blocks if multiple subblock names are specified.
+            A :class:`Block` object or a list of blocks if multiple subblock names are specified.
             ``None`` is returned if the specified block tags are not found.
         """
         ret_blk = []
@@ -467,7 +478,7 @@ class Block:
         return (subblk_start, subblk_end)
 
     def __set_char_repeat_tag(self) -> None:
-        """Sets the value of the "char repeat" automatic tags in this block maintaining the
+        """Sets the value of the *char repeat* automatic tags in this block maintaining the
         predefined right-alignment to the next character different from the repeated one.
         """
         last_pos = 0
@@ -497,16 +508,16 @@ class Block:
 
     def __get_char_repeat_data(self, text: str, expand_tabs: bool = False, start_pos: int = 0) \
             -> tuple[int, int, int, str]:
-        """Returns the information about the first found "char repeat" automatic tag.
+        """Returns the information about the first found *char repeat* automatic tag.
 
         Args:
-            text: A string in which the "char repeat" automatic tag is searched.
+            text: A string in which the *char repeat* automatic tag is searched.
             expand_tabs: Enables the replacement of tabulators with spaces for consistent
                 character position counting.
-            start_pos: The start character position for searching the "char repeat" automatic tag.
+            start_pos: The start character position for searching the *char repeat* automatic tag.
 
         Returns:
-            A tuple with the following information about the "char repeat" automatic tag:
+            A tuple with the following information about the *char repeat* automatic tag:
             start char position, end char position, line column index, character to be repeated.
         """
         if expand_tabs:
@@ -531,13 +542,13 @@ class Block:
         return (st_pos, end_pos, tag_col_pos, repeat_char)
 
     def __set_std_last_first_tag(self, first: bool = False, last: bool = False) -> None:
-        """Sets the correct variation of the "standard/last/first" automatic tags in this block
+        """Sets the correct variation of the *standard/last/first* automatic tags in this block
         content with the *standard* variation being set by default.
 
         Args:
-            first: Enables setting of the *first* value variation of the "standard/last/first"
+            first: Enables setting of the *first* value variation of the *standard/last/first*
                 automatic tag.
-            last: Enables setting of the *last* value variation of the "standard/last/first"
+            last: Enables setting of the *last* value variation of the *standard/last/first*
                 automatic tag.
         """
         # Loop through all *last value* tags in block content and replace them with either standard value or last value.
