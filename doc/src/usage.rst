@@ -14,13 +14,13 @@ principles used in the :ref:`automatic template filling <tgt_auto_fill>`.
 Template tags
 ***************************************************************************************************
 
-.. important:::
+.. important::
     Blocky uses templates containing *tags* to indicate variable parts of the template. By
-    default, the tags have an XML-like form using uppercase letters for names, e.g.,
+    default, the tags have an XML-like form using the uppercase letters for names, e.g.,
     ``<TAG_NAME>`` is a tag named ``TAG_NAME``.
 
-    The tag names in a Python filling script are automatically converted to an uppercase format
-    by default, i.e., it is possible to refer to the ``<TAG_NAME>`` tag using a lowercase name
+    The tag names in a Python filling script are automatically converted to the uppercase format
+    by default, i.e., it is possible to refer to the ``<TAG_NAME>`` tag using the lowercase name
     ``tag_name`` in the script.
 
     This tag format and automatic uppercase conversion is used in almost all examples within this

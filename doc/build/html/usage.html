@@ -95,6 +95,18 @@ and for filling them with data to generate an output content.</p>
 principles used in the <a class="reference internal" href="#tgt-auto-fill"><span class="std std-ref">automatic template filling</span></a>.</p>
 <section id="template-tags">
 <h2>Template tags<a class="headerlink" href="#template-tags" title="Link to this heading"></a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Blocky uses templates containing <em>tags</em> to indicate variable parts of the template. By
+default, the tags have an XML-like form using the uppercase letters for names, e.g.,
+<code class="docutils literal notranslate"><span class="pre">&lt;TAG_NAME&gt;</span></code> is a tag named <code class="docutils literal notranslate"><span class="pre">TAG_NAME</span></code>.</p>
+<p>The tag names in a Python filling script are automatically converted to the uppercase format
+by default, i.e., it is possible to refer to the <code class="docutils literal notranslate"><span class="pre">&lt;TAG_NAME&gt;</span></code> tag using the lowercase name
+<code class="docutils literal notranslate"><span class="pre">tag_name</span></code> in the script.</p>
+<p>This tag format and automatic uppercase conversion is used in almost all examples within this
+document. However, the tag format is <a class="reference internal" href="config.html#tgt-config"><span class="std std-ref">configurable</span></a>, as will be described
+later.</p>
+</div>
 <section id="basic-tags">
 <span id="tgt-basic-tags"></span><h3>Basic tags<a class="headerlink" href="#basic-tags" title="Link to this heading"></a></h3>
 <p>The templates used by Blocky contain two primary elements:</p>
