@@ -1,25 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Introduction &mdash; Blocky template engine 1.0.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>Introduction &mdash; Blocky 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8d563738"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Usage principles" href="usage.html" />
+    <link rel="next" title="Usage" href="usage.html" />
     <link rel="prev" title="Blocky template engine" href="index.html" /> 
 </head>
 
@@ -32,7 +32,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Blocky template engine
+            Blocky
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -45,9 +45,8 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage principles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#manual-template-filling">Manual template filling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#automated-template-filling">Automated template filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -57,7 +56,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Blocky template engine</a>
+          <a href="index.html">Blocky</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -77,43 +76,31 @@
              
   <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
-<p><a class="reference external" href="https://github.com/lubomilko/blocky">Blocky</a> is a lightweight Python templating engine able to generate various types
-of text-based files or strings, e.g., source code in various languages, markdown or reStructuredText files, HTML pages,
-XML or JSON data files, etc.</p>
-<p>Blocky has its name derived from its operational principle - variable parts of a template are enclosed using special
-tags into so called <em>blocks</em> of strings which can be nested together creating a multi-layered structure of blocks and
-their subblocks. Each block in a template can contain multiple variables represented also by appropriate tags. Blocky is
-able to extract the string blocks from a template into the Python <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects that provide multipe methods
-(<a class="reference internal" href="api.html#blocky.Block.set_variables" title="blocky.Block.set_variables"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_variables()</span></code></a>, <a class="reference internal" href="api.html#blocky.Block.clone" title="blocky.Block.clone"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clone()</span></code></a>, <a class="reference internal" href="api.html#blocky.Block.clear" title="blocky.Block.clear"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear()</span></code></a>, etc.) to generate the output scontent
-using a simple user-defined Python script.</p>
-<p>Blocky is developed around the following ideas:</p>
-<ul class="simple">
-<li><p><strong>Logic-less templates</strong> - Templates define primarily the formatting part of the content to be generated. Logic to
-fill the data into the variable parts of a template is defined separately in a user-defined Python script.</p></li>
-<li><p><strong>No custom templating language</strong> - Rendering logic is defined by the Python script importing the <code class="xref py py-mod docutils literal notranslate"><span class="pre">blocky</span></code>
-module, i.e., no proprietary language model is used.</p></li>
-<li><p><strong>No custom data model</strong> - Python script is directly used to read any input data needed to fill the variable parts
-of templates or to control the rendering logic.</p></li>
-<li><p><strong>Minimalism</strong> - Blocky is a single Python module with no external dependencies. Even usage of built-in Python
-modules is limited to minimum.</p></li>
-<li><p><strong>Versatility</strong> - There are no restrictions regarding the generated content as long as it is text-based. Data used
-for filling the variable parts of templates do not need to have any predefined format. Template filling logic is
-defined purely by the user-defined Python script, which allows great flexibility.</p></li>
-</ul>
-<p>The logic of the templated content generation heavily relies on the user-defined Python script provided for the
-specified template. The following diagram illustrates the processing flow of the content generation:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span> template           input data
-     |                  |
-     V                  V
-python template filling script &lt;- blocky
-               |
-               V
-       generated content
+<p><a class="reference external" href="https://github.com/lubomilko/blocky">Blocky</a> is a minimalistic generic Python template engine
+able to generate various types of text-based content, e.g., standard text, source code in various
+languages, markdown or reStructuredText files, HTML pages, XML or JSON data files, etc.</p>
+<p>The form of a content to be generated is defined by the templates and the logic of filling the
+template with data is defined by a user-defined Python script as illustrated on a diagram below:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>+----------+   +------------+
+| template |   | input data |
++----------+   +------------+
+      |               |
+      V               V
+  +-----------------------+
+  | Python filling script |
+  |     using blocky      |
+  +-----------------------+
+              |
+              V
+    +-------------------+
+    | generated content |
+    +-------------------+
 </pre></div>
 </div>
-<p>The <em>python template filling script</em> uses <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects provided by the imported <code class="xref py py-mod docutils literal notranslate"><span class="pre">blocky</span></code> module
-to fill the variable parts of the <em>template</em> with the variable content extracted from the <em>input data</em> to generate
-the output <em>generated content</em>.</p>
+<p>The template and input data can be external (i.e., suitable input files) or they can be a part of
+the filling script itself.</p>
+<p><strong>No custom template engine language is used</strong>. The filling logic is controlled purely by Python
+using a few methods from the blocky module.</p>
 </section>
 
 
@@ -121,13 +108,13 @@ the output <em>generated content</em>.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Blocky template engine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="usage.html" class="btn btn-neutral float-right" title="Usage principles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Lubomir Milko.</p>
+    <p>&#169; Copyright 2025 Lubomir Milko.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,147 +1,57 @@
-########################################################################################################################
-Usage principles
-########################################################################################################################
+###################################################################################################
+Usage
+###################################################################################################
 
-Using *blocky* to generate a text-based content can be described by the following main steps:
-
-#.  Define the template of the content to be generated. The template consists of static parts and dynamic parts
-    defined using :ref:`tags <ref-tags>`.
-#.  Define custom python script using the *blocky* module to load the template into the :py:class:`.Block` objects
-    and filling the dynamic parts with the required values.
-#.  Save the generated content of filled :py:class:`.Block` objects.
-
-.. _ref-tags:
-
-
-************************************************************************************************************************
+***************************************************************************************************
 Template tags
-************************************************************************************************************************
+***************************************************************************************************
 
-All tags defining the dynamic parts of a template belong to one of the three main categories:
+.. important:::
+    Blocky uses templates containing *tags* to indicate variable parts of the template. By
+    default, the tags have an XML-like form using uppercase letters for names, e.g.,
+    ``<TAG_NAME>`` is a tag named ``TAG_NAME``.
 
-*   **Variables** - Tags to be directly substituted by the required values. Default tag format:
+    The tag names in a Python filling script are automatically converted to an uppercase format
+    by default, i.e., it is possible to refer to the ``<TAG_NAME>`` tag using a lowercase name
+    ``tag_name`` in the script.
 
-    .. code-block:: text
+    This tag format and automatic uppercase conversion is used in almost all examples within this
+    document. However, the tag format is :ref:`configurable <tgt_config>`, as will be described
+    later.
 
-        <VARIABLE_NAME>
+The templates used by Blocky contain two primary elements:
 
-*   **Blocks** - Tags defining the parts of the template that can be extraced into the :py:class:`.Block` objects and
-    then processed further, e.g., the blocks can be cloned (duplicated), cleared, etc. The blocks in a template can be
-    nested, i.e., it is possible to have multiple layers of subblocks. Block area is defined using two tags indicating
-    the beginning and end of the block, except the whole template string that is considered to be a block of its own
-    even without the block tags. Default tag format:
+*   **Variables** consisting of a single tag, e.g., ``<VARIABLE>`` representing a variable named
+    ``VARIABLE`` that can be set to the required value using a simple string replacement.
 
-    .. code-block:: text
+*   **Blocks** consisting of a tag start-end pair, e.g., ``<BLOCK>content</BLOCK>`` representing a
+    block named ``BLOCK`` having an internal content consisting of a simple string ``content``.
+    Apart from string constants, a block can also contain *variables* and other *subblocks*.
 
-        <BLOCK_NAME>
-        ...
-        </BLOCK_NAME>
-    
-    where the three dots ``...`` represent a block content with static parts and dynamic variables and potentially
-    other subblocks.
-    
-    alternative for single-line blocks:
+    The block content can be *cloned*, i.e., duplicated as many times as needed, and variables in
+    each clone can be filled with different values.
 
-    .. code-block:: text
+    The whole template is a block too, just an unnamed one, i.e, it is not marked by any tag pair.
 
-        <BLOCK_NAME>...</BLOCK_NAME>
+*Example:*
 
-*   **Special** - Tags with predefined special formatting or other purposes. These tags are handled automatically
-    by blocky, i.e., they are typically not meant to be processed manually by the user-defined template filling script.
+The following template string contains a single block ``ITEMS`` which contains a single variable
+``ITEM`` in its content:
 
-.. note::
-    The template tag names in this documentation and examples use uppercase letters with underscores for word
-    separation, e.g., ``<TAG_NAME>``. However, this convention is not mandatory.
+.. code-block::
 
-    The angle brackets ``<>`` and other characters used for the tag definition can be customized, i.e., changed
-    with other characters (or strings) by the :py:class:`.TagsFormat` subobject of the :py:class:`.BlockConfig`
-    object which can then be assigned to the :py:attr:`.Block.config` attribute of the :py:class:`.Block` object.
-    The details of tag customization will be described later.
-
-
-########################################################################################################################
-Manual template filling
-########################################################################################################################
-
-Blocky provides the :py:class:`.Block` class to define objects corresponding to the blocks defined within the template.
-The :py:class:`.Block` objects can then be used in the user-defined script to "fill" the template with required values.
-Manually using the :py:class:`.Block` object methods and attributes provides a precise control over the generated
-content creation and allows to use any data to fill the dynamic parts of the template.
-
-************************************************************************************************************************
-Loading the block template
-************************************************************************************************************************
-
-The template string needs to be loaded into the primary :py:class:`.Block` object first. This object can then be used to
-fill the template, i.e., to create the required generated content. It often makes sense to define the template in a
-text-based file, which can then be loaded using the :py:meth:`.load_template` method as illustrated below:
-
-*C:/template.txt* file content:
-
-.. code-block:: text
-
-    List of items:
+    template = """
+                                SHOPPING LIST
+    Items
+    -----------------------------------------------------------------------
     <ITEMS>
     * <ITEM>
     </ITEMS>
-
-User defined Python script:
-
-.. code-block:: python
-
-    from blocky import Block
-
-    # Create the main Block object.
-    blk_main = Block()
-    # Load the Block object template from file.
-    blk_main.load_template("C:/template.txt")
-
-Alternatively, the template can be set in the :py:class:`.Block` object definition, through the :py:attr:`.template`
-attribute or using the :py:meth:`.load_template` method which also supports string arguments:
-
-.. code-block:: python
-
-    from blocky import Block
-
-    # Option 1: Set the template file in the Block object definition.
-    blk_main = Block("C:/template.txt")
-    # Option 2: Set the template string in the Block object definition.
-    blk_main = Block("Name: <NAME> <SURNAME>, Age: <AGE>")
-    # Option 3: Set the template string through an attribute.
-    blk_main.template = "Name: <NAME> <SURNAME>, Age: <AGE>"
-    # Option 4: Load the template from a string instead of the file.
-    blk_main.load_template("Name: <NAME> <SURNAME>, Age: <AGE>")
+    """
 
 
-************************************************************************************************************************
-Getting subblocks
-************************************************************************************************************************
+***************************************************************************************************
+Automatic template filling
+***************************************************************************************************
 
-
-************************************************************************************************************************
-Setting and clearing block variables
-************************************************************************************************************************
-
-
-************************************************************************************************************************
-Cloning blocks
-************************************************************************************************************************
-
-
-************************************************************************************************************************
-Setting, clearing and resetting blocks
-************************************************************************************************************************
-
-
-************************************************************************************************************************
-Saving the generated block content
-************************************************************************************************************************
-
-
-########################################################################################################################
-Automated template filling
-########################################################################################################################
-
-.. warning::
-    The documentation is in progress. In the meantime please see some basic examples of use in the *samples* and also
-    *test* directories in the `Blocky repository <https://github.com/lubomilko/blocky>`_.
+TBD

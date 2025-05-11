@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blocky template engine &mdash; Blocky template engine 1.0.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>Blocky template engine &mdash; Blocky 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8d563738"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +31,7 @@
           
           
           <a href="#" class="icon icon-home">
-            Blocky template engine
+            Blocky
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -44,9 +44,8 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage principles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#manual-template-filling">Manual template filling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#automated-template-filling">Automated template filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -56,7 +55,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Blocky template engine</a>
+          <a href="#">Blocky</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -80,30 +79,19 @@
 <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage principles</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#template-tags">Template tags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#automatic-template-filling">Automatic template filling</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#manual-template-filling">Manual template filling</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#loading-the-block-template">Loading the block template</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#getting-subblocks">Getting subblocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#setting-and-clearing-block-variables">Setting and clearing block variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#cloning-blocks">Cloning blocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#setting-clearing-and-resetting-blocks">Setting, clearing and resetting blocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#saving-the-generated-block-content">Saving the generated block content</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#automated-template-filling">Automated template filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#block-and-block-data-classes">Block and block data classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#block-class">Block class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockData"><code class="docutils literal notranslate"><span class="pre">BlockData</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#block-configuration-classes">Block configuration classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#block-configuration-class">Block configuration class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig"><code class="docutils literal notranslate"><span class="pre">BlockConfig</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.TagsFormat"><code class="docutils literal notranslate"><span class="pre">TagsFormat</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Tag"><code class="docutils literal notranslate"><span class="pre">Tag</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -122,7 +110,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Lubomir Milko.</p>
+    <p>&#169; Copyright 2025 Lubomir Milko.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

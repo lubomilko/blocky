@@ -1,25 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; Blocky template engine 1.0.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>API &mdash; Blocky 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8d563738"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Usage principles" href="usage.html" /> 
+    <link rel="prev" title="Configuration" href="config.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -31,7 +31,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Blocky template engine
+            Blocky
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -44,13 +44,18 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage principles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#manual-template-filling">Manual template filling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#automated-template-filling">Automated template filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#block-and-block-data-classes">Block and block data classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#block-class">Block class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#blocky.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.Block.config"><code class="docutils literal notranslate"><span class="pre">Block.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.Block.name"><code class="docutils literal notranslate"><span class="pre">Block.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.Block.content"><code class="docutils literal notranslate"><span class="pre">Block.content</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.Block.autotags"><code class="docutils literal notranslate"><span class="pre">Block.autotags</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blocky.Block.__init__"><code class="docutils literal notranslate"><span class="pre">Block.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.Block.parent"><code class="docutils literal notranslate"><span class="pre">Block.parent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.Block.children"><code class="docutils literal notranslate"><span class="pre">Block.children</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blocky.Block.template"><code class="docutils literal notranslate"><span class="pre">Block.template</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blocky.Block.load_template"><code class="docutils literal notranslate"><span class="pre">Block.load_template()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blocky.Block.save_content"><code class="docutils literal notranslate"><span class="pre">Block.save_content()</span></code></a></li>
@@ -66,26 +71,17 @@
 <li class="toctree-l4"><a class="reference internal" href="#blocky.Block.clear_variables"><code class="docutils literal notranslate"><span class="pre">Block.clear_variables()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#blocky.BlockData"><code class="docutils literal notranslate"><span class="pre">BlockData</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockData.__init__"><code class="docutils literal notranslate"><span class="pre">BlockData.__init__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockData.import_dict"><code class="docutils literal notranslate"><span class="pre">BlockData.import_dict()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#block-configuration-classes">Block configuration classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#block-configuration-class">Block configuration class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#blocky.BlockConfig"><code class="docutils literal notranslate"><span class="pre">BlockConfig</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.__init__"><code class="docutils literal notranslate"><span class="pre">BlockConfig.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#blocky.TagsFormat"><code class="docutils literal notranslate"><span class="pre">TagsFormat</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#blocky.TagsFormat.__init__"><code class="docutils literal notranslate"><span class="pre">TagsFormat.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#blocky.Tag"><code class="docutils literal notranslate"><span class="pre">Tag</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#blocky.Tag.__init__"><code class="docutils literal notranslate"><span class="pre">Tag.__init__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#blocky.Tag.str_name"><code class="docutils literal notranslate"><span class="pre">Tag.str_name()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#blocky.Tag.str"><code class="docutils literal notranslate"><span class="pre">Tag.str</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.tag_gen_var"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_var</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.tag_gen_blk_start"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_blk_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.tag_gen_blk_end"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_blk_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.tag_gen_blk_vari"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_blk_vari</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.autotag_charrep"><code class="docutils literal notranslate"><span class="pre">BlockConfig.autotag_charrep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.autotag_stdlastfirst"><code class="docutils literal notranslate"><span class="pre">BlockConfig.autotag_stdlastfirst</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blocky.BlockConfig.tab_size"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tab_size</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -100,7 +96,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Blocky template engine</a>
+          <a href="index.html">Blocky</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -120,108 +116,146 @@
              
   <section id="api">
 <h1>API<a class="headerlink" href="#api" title="Link to this heading"></a></h1>
-<section id="block-and-block-data-classes">
-<h2>Block and block data classes<a class="headerlink" href="#block-and-block-data-classes" title="Link to this heading"></a></h2>
+<section id="block-class">
+<h2>Block class<a class="headerlink" href="#block-class" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="blocky.Block">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~pathlib.Path</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config:</span> <span class="pre">~blocky.BlockConfig</span> <span class="pre">=</span> <span class="pre">&lt;blocky.BlockConfig</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent:</span> <span class="pre">~blocky.Block</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blocky.html#Block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block" title="Link to this definition"></a></dt>
-<dd><p>Class representing a block indicated by block start and block end tags inside parent block template.</p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~pathlib.Path</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config:</span> <span class="pre">~blocky.BlockConfig</span> <span class="pre">=</span> <span class="pre">BlockConfig(tag_gen_var=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_gen_blk_start=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_gen_blk_end=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_gen_blk_vari=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autotag_charrep='+'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autotag_stdlastfirst='.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_size=4)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blocky.html#Block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block" title="Link to this definition"></a></dt>
+<dd><p>Block data corresponding to a part of the template within a block start and end tags.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.Block.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#blocky.Block.config" title="Link to this definition"></a></dt>
+<dd><p>A block configuration primarily defining the format of tags within
+a template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#blocky.BlockConfig" title="blocky.BlockConfig">BlockConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.Block.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#blocky.Block.name" title="Link to this definition"></a></dt>
+<dd><p>A block name. Usually set automatically by the <a class="reference internal" href="#blocky.Block.get_subblock" title="blocky.Block.get_subblock"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_subblock()</span></code></a> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.Block.content">
+<span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#blocky.Block.content" title="Link to this definition"></a></dt>
+<dd><p>The generated block content, i.e., a template filled with data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.Block.autotags">
+<span class="sig-name descname"><span class="pre">autotags</span></span><a class="headerlink" href="#blocky.Block.autotags" title="Link to this definition"></a></dt>
+<dd><p>Enables the automatic tags (char repeat, etc.) to be filled automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~pathlib.Path</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config:</span> <span class="pre">~blocky.BlockConfig</span> <span class="pre">=</span> <span class="pre">&lt;blocky.BlockConfig</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent:</span> <span class="pre">~blocky.Block</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.__init__" title="Link to this definition"></a></dt>
-<dd><p>Constructor. Creates a new block object.</p>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~pathlib.Path</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config:</span> <span class="pre">~blocky.BlockConfig</span> <span class="pre">=</span> <span class="pre">BlockConfig(tag_gen_var=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_gen_blk_start=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_gen_blk_end=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_gen_blk_vari=&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autotag_charrep='+'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autotag_stdlastfirst='.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_size=4)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes a new block object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>template</strong> (<em>str</em><em>, </em><em>optional</em>) – Template to be used for the <a class="reference internal" href="#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object. Defaults to “”.</p></li>
-<li><p><strong>block_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Block name. Set automatically to the block tag name from the
-template when the <a class="reference internal" href="#blocky.Block.get_subblock" title="blocky.Block.get_subblock"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_subblock()</span></code></a> method is used.</p></li>
-<li><p><strong>config</strong> (<a class="reference internal" href="#blocky.BlockConfig" title="blocky.BlockConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockConfig</span></code></a>, optional) – Block configuration (template tags format, tabulator size, etc.)</p></li>
-<li><p><strong>parent</strong> – Parent <a class="reference internal" href="#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object.</p></li>
+<li><p><strong>template</strong> (<em>str</em><em> | </em><em>Path</em>) – Template string or a path to a text file template.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – A block name.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#blocky.BlockConfig" title="blocky.BlockConfig"><em>BlockConfig</em></a>) – A block configuration (template tags format, tabulator size,
+etc.)</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="blocky.Block.parent">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a></em><a class="headerlink" href="#blocky.Block.parent" title="Link to this definition"></a></dt>
+<dd><p>A parent block.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="blocky.Block.children">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">children</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#blocky.Block.children" title="Link to this definition"></a></dt>
+<dd><p>A list of child subblocks extracted using a <a class="reference internal" href="#blocky.Block.get_subblock" title="blocky.Block.get_subblock"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_subblock()</span></code></a> method.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="blocky.Block.template">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#blocky.Block.template" title="Link to this definition"></a></dt>
-<dd><p>Property method that returns the block template string containing the tags representing subblocks and variables.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Block template.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#blocky.Block.template" title="Link to this definition"></a></dt>
+<dd><p>A block template string.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.load_template">
-<span class="sig-name descname"><span class="pre">load_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subblock_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.load_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.load_template" title="Link to this definition"></a></dt>
-<dd><p>Loads block template from the text file. Alternatively, if the template is provided directly
-as a string (i.e., not the file path), then the string is directly used as a block template.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>template</strong> (<em>str</em><em> | </em><em>Path</em>) – Path to the text file containing a string to be used as a block template.
-Alternatively, a raw string can be provided instead of the file path, to be directly used
-as a template.</p></li>
-<li><p><strong>subblock_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the subblock to be extracted from the specified template.
-If not specified, then the whole template string will be set as a template. Defaults to an
-empty string “”.</p></li>
-</ul>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">load_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.load_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.load_template" title="Link to this definition"></a></dt>
+<dd><p>Loads the block template from a text file.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.save_content">
-<span class="sig-name descname"><span class="pre">save_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.save_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.save_content" title="Link to this definition"></a></dt>
-<dd><p>Saves block content to the text file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>content_file_path</strong> (<em>str</em><em> | </em><em>Path</em>) – Path to the text file in which the block content will be saved.</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">save_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.save_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.save_content" title="Link to this definition"></a></dt>
+<dd><p>Saves the block content to a text file.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.fill">
-<span class="sig-name descname"><span class="pre">fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_Block__subidx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.fill" title="Link to this definition"></a></dt>
-<dd><p>Fills the block content using the data from a specified object (<a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> recommended) or a
-dictionary. The list below defines the relationships between the object attribute values or dictionary
-values and their use in a block template:</p>
+<span class="sig-name descname"><span class="pre">fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_Block__clone_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.fill" title="Link to this definition"></a></dt>
+<dd><p>Fills the block content using the data from a dictionary or an object.</p>
+<p>The dictionary keys or object attribute names define the template variable or a block to
+be set. The dictionary or object attribute values are used according to the rules below:</p>
 <ul class="simple">
-<li><p>Strings, integers, floats, booleans -&gt; Values set directly as block variables into the template tags.</p></li>
-<li><p>Subobject or subdictionary -&gt; Data to be filled into a subblock of the parent block being filled.</p></li>
-<li><p>List or tuple -&gt; Content of block clones. Each list or tuple item should consist of another subobject or
-a subdictionary representing attributes and their values to be used in one cloned instance of
-a template block.</p></li>
+<li><p>Strings, integers, floats, booleans -&gt; Variable values.</p></li>
+<li><p>Dictionary or object -&gt; Data to be filled into a child block in a current block.</p></li>
+<li><p>List or tuple -&gt; Content of block clones. Each element must be a dictionary or object
+with data used a for filling one cloned instance of a block.</p></li>
+</ul>
+<p>Two special key/attribute-value pairs can be used in a data dictionary or object:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fill_hndl</span></code> - <code class="docutils literal notranslate"><span class="pre">func(block:</span> <span class="pre">Block,</span> <span class="pre">data:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">object,</span> <span class="pre">clone_subidx:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>
+function: A user-defined handler function with an access to the template block object
+and a data being filled usable for special low-level operations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vari_idx</span></code> - int: A variation index to be set for a variation block type
+(see the <code class="docutils literal notranslate"><span class="pre">vari_idx</span></code> attribute of the :meth:<code class="docutils literal notranslate"><span class="pre">set</span></code> method).</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>block_data</strong> (<em>object</em><em> | </em><em>dict</em>) – Object or dictionary with attribute-value or key-value pairs to be used to
-fill the block template.</p></li>
-<li><p><strong>__subidx</strong> (<em>int</em><em>, </em><em>optional</em>) – Internal value representing the item index for attributes of list type.
-The index is sent as an argument to the fill handler function (it it’s used) to indicate which
-list item is being used for filling the template block. This parameter shall be left at a
-default value 0 when this method is called. Defaults to 0.</p></li>
+<li><p><strong>data</strong> – A dictionary or object with to be used for filling a block template.</p></li>
+<li><p><strong>__clone_idx</strong> – An internal index of a block clone being filled.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Internally used variation index for variation blocks being filled.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int | bool</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_subblocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.reset" title="Link to this definition"></a></dt>
-<dd><p>Resets block content to the initial template.</p>
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.reset" title="Link to this definition"></a></dt>
+<dd><p>Resets the block content to the initial template.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>all_subblocks</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating that all subblocks, i.e. child <a class="reference internal" href="#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects
-are reset together with the parent current block. Defaults to True.</p>
+<dd class="field-odd"><p><strong>all_children</strong> – Enables a reset of all child blocks too.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,41 +263,30 @@ are reset together with the parent current block. Defaults to True.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.clear">
 <span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.clear" title="Link to this definition"></a></dt>
-<dd><p>Clears subblock from parent block, i.e. the content of the subblock is erased from the parent content.</p>
+<dd><p>Clears the block from its parent block, i.e., sets the block to an empty string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>count</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of subblocks to be cleared (if there are multiple blocks using
-the same tag names). If set to -1, then all corresponding subblock tags in the parent content will
-be replaced by empty string. Defaults to -1.</p>
+<dd class="field-odd"><p><strong>count</strong> – The maximum number of blocks with the same name to be cleared, -1 = all.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.clone">
-<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_copies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_subblocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.clone" title="Link to this definition"></a></dt>
-<dd><p>Clones block by adding the template after the actual block content. Then subblocks and variables in
-the added template can be filled again with values.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This method actually only internaly indicates that there is a need to perform the template cloning
-and only if there is an already previously indicated need, then the actual cloning is performed.</p>
-</div>
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.clone" title="Link to this definition"></a></dt>
+<dd><p>Clones the block, i.e., virtually adds another copy of a block template after the
+existing block content making the new template copy ready to be filled with other values.</p>
+<p>The clone is created only if blocks and variables are set after cloning. The child blocks
+are reset after cloning, unless the <code class="docutils literal notranslate"><span class="pre">passive</span></code> argument is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_copies</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of copies to be created. Defaults to 1.</p></li>
-<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – Switch forcing the cloning to be performed immediately regardless of whether
-it will be actually needed for setting subblocks and variables or not, i.e., new template is
-forcefully added after the block content. If the <code class="docutils literal notranslate"><span class="pre">num_copies</span></code> parameter is higher than 1, then
-this switch is always set to False. Defaults to False.</p></li>
-<li><p><strong>passive</strong> (<em>bool</em><em>, </em><em>optional</em>) – Switch to perform the cloning only if a need for the clone
-has already been indicated previously, otherwise no new cloning need is indicated. If the
-<code class="docutils literal notranslate"><span class="pre">num_copies</span></code> parameter is higher than 1, then this switch is always set to False.
-Defaults to False.</p></li>
-<li><p><strong>set_subblocks</strong> (<em>bool</em><em>, </em><em>optional</em>) – Switch to set all subblocks to this parent block first, before
-cloning this block. If the <code class="docutils literal notranslate"><span class="pre">num_copies</span></code> parameter is higher than 1, then the subblocks are
-set only once before making the first copy of this parent block. Defaults to False.</p></li>
+<li><p><strong>copies</strong> – The number of template copies to be prepared. If &gt; 1, then <code class="docutils literal notranslate"><span class="pre">force</span></code> and
+<code class="docutils literal notranslate"><span class="pre">passive</span></code> arguments are automatically <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>force</strong> – Forces the clone to be created even if no variable or block is then set.</p></li>
+<li><p><strong>passive</strong> – Enables cloning only if an active (non-passive) clone has been requested
+previously and no further clone is created.</p></li>
+<li><p><strong>set_children</strong> – Enables setting of all child blocks to this parent block before cloning.</p></li>
 </ul>
 </dd>
 </dl>
@@ -272,33 +295,26 @@ set only once before making the first copy of this parent block. Defaults to Fal
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.get_subblock">
 <span class="sig-name descname"><span class="pre">get_subblock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">subblock_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.get_subblock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.get_subblock" title="Link to this definition"></a></dt>
-<dd><p>Returns a subblock object defined by block start and end tags within the actual block template.</p>
+<dd><p>Returns the specified child block object from the current block content. Each child
+is also automatically added into the <code class="docutils literal notranslate"><span class="pre">children</span></code> attribute of the current block.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>subblock_names</strong> (<em>str</em>) – Name(s) of the subblock tags in the actual block template. The string between
-the subblock tags is used as a template for the returned subblock object.</p>
+<dd class="field-odd"><p><strong>subblock_names</strong> – The tag names of blocks to be extracted from a current block content.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Subblock object or a list of subblock objects in case of multiple subblock names
-specified in the input arguments. If the specified subblock is not found, then <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">CodeBlock</span></code></p>
+<dd class="field-even"><p>A <a class="reference internal" href="#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object or a list of blocks if multiple subblock names are specified.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> is returned if the specified block tags are not found.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.clear_subblock">
-<span class="sig-name descname"><span class="pre">clear_subblock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">subblock_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.clear_subblock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.clear_subblock" title="Link to this definition"></a></dt>
-<dd><p>Clears subblock with given name, i.e. the content of the subblock is erased from the parent content.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Subblock can be cleared only if it has not been <a class="reference internal" href="#blocky.Block.set" title="blocky.Block.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> to the parent block yet.</p>
-</div>
+<span class="sig-name descname"><span class="pre">clear_subblock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">subblocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.clear_subblock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.clear_subblock" title="Link to this definition"></a></dt>
+<dd><p>Clears the content of specified child blocks from a current block content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>subblock_names</strong> (<em>str</em>) – Subblock name(s) to be cleared from the current block content.</p>
+<dd class="field-odd"><p><strong>subblocks</strong> – Subblock object(s) or their names to be cleared.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -306,41 +322,26 @@ specified in the input arguments. If the specified subblock is not found, then <
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.set_subblock">
 <span class="sig-name descname"><span class="pre">set_subblock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">subblocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.set_subblock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.set_subblock" title="Link to this definition"></a></dt>
-<dd><p>Sets the content of a subblock object into the template of the parent block object from which this method
-is called, i.e. replaces the subblock tags in the parent block template with the subblock content.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Calling this method is equivalent to the call of the <a class="reference internal" href="#blocky.Block.set" title="blocky.Block.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> method from the subblock object.</p>
-</div>
+<dd><p>Sets the content of specified child blocks into the content of the current block.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>subblocks</strong> (<a class="reference internal" href="#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> | str) – Subblock object(s) or names whose content will be set into the
-parent block object template.</p>
+<dd class="field-odd"><p><strong>subblocks</strong> – The subblock object(s) or their names to be set.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.set">
-<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variation_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_subblocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.set" title="Link to this definition"></a></dt>
-<dd><p>Sets the content of the block from which this method is called into its parent block template,
-i.e. replaces the subblock tags in the parent block template with the subblock content.</p>
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vari_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.set" title="Link to this definition"></a></dt>
+<dd><p>Sets the content of this block into its parent block content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>variation_idx</strong> (<em>int</em><em> | </em><em>bool</em><em>, </em><em>optional</em>) – Variation index of a block content to be set starting from 0.
-Variations are content parts separated by the separator tags. Negative variation number causes
-the block to be cleared instead of set. A boolean value True represents the first block variation 0
-and False represents the block variation -1, i.e., it clears the block. Defaults to 0.</p></li>
-<li><p><strong>all_subblocks</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating that all subsequent child subblocks of current block
-should be set into its parent blocks first before the current block is set into its parent block.</p></li>
-<li><p><strong>raw_content</strong> (<em>bool</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Flag indicating that the block content should be set as is without
-any processing, i.e., without setting values for special tags. If set to <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the
-internal raw content flag for a block is unchanged and it is used to determine if the special tag values
-are set or not. Defaults to None.</p></li>
-<li><p><strong>count</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of block contents to be set. If set to -1, then all
-corresponding subblock tags in the parent content will be replaced by the subblock content.
-Defaults to -1.</p></li>
+<li><p><strong>vari_idx</strong> – An index of a variation block content (if any) to be set starting from 0.
+A negative index or boolean false causes the block to be cleared. A boolean true
+is the same as index 0.</p></li>
+<li><p><strong>all_children</strong> – Enables setting of all child blocks of this block before setting it.</p></li>
+<li><p><strong>count</strong> – The maximum number of blocks with the same name to be set (-1 = no limit).</p></li>
 </ul>
 </dd>
 </dl>
@@ -348,111 +349,29 @@ Defaults to -1.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.set_variables">
-<span class="sig-name descname"><span class="pre">set_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">name_value_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoclone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">name_value_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.set_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.set_variables" title="Link to this definition"></a></dt>
-<dd><p>Sets values into the variables inside the block template, i.e. replaces the tags representing
-variables with the specified values.
-Only positional or only keyword arguments described below or both at the same time can be used
-to define the variables and their values.</p>
+<span class="sig-name descname"><span class="pre">set_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autoclone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">name_value_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.set_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.set_variables" title="Link to this definition"></a></dt>
+<dd><p>Sets values into the specified variables within this block content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name_value_args</strong> (<em>str</em>) – <p>Positional arguments representing variable <em>name</em>-<em>value</em> pairs. The
-following example illustrates setting the <code class="docutils literal notranslate"><span class="pre">var1</span></code> variable to value <code class="docutils literal notranslate"><span class="pre">1</span></code> and the <code class="docutils literal notranslate"><span class="pre">var2</span></code>
-variable to value <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">some_block</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span><span class="s2">&quot;var1&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;var2&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Positional arguments <code class="docutils literal notranslate"><span class="pre">name_value_args</span></code> are supported only for backward compatibility
-purposes. Usage of keyword arguments <code class="docutils literal notranslate"><span class="pre">name_value_kwargs</span></code> instead of positional arguments
-is strongly recommended.</p>
-</div>
-</p></li>
-<li><p><strong>autoclone</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating that the block containing the variable tags
-being set should be automatically cloned after the variable is set to its value.</p></li>
-<li><p><strong>name_value_kwargs</strong> – <p>Keyword arguments representing variable <em>name</em>-<em>value</em> pairs, e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">some_block</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span><span class="n">var1</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">var2</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</p></li>
+<li><p><strong>autoclone</strong> – Enables automatic clone of this block after setting all variables.</p></li>
+<li><p><strong>name_value_kwargs</strong> – Keyword arguments representing variable name-value pairs, e.g.,
+<code class="docutils literal notranslate"><span class="pre">name=&quot;Thomas&quot;,</span> <span class="pre">surname=&quot;Anderson&quot;,</span> <span class="pre">age=37</span></code>. Tuples or lists can be used as
+variable values, making this block to be automatically cloned after setting each
+element value.</p></li>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Non-string variable value types are allowed, if they have a string representation, i.e. they
-can be automatically converted to the string. Following example shows setting variable <code class="docutils literal notranslate"><span class="pre">var</span></code> to
-value <code class="docutils literal notranslate"><span class="pre">1</span></code> by specifying the value as an integer number:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">some_block</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="blocky.Block.clear_variables">
 <span class="sig-name descname"><span class="pre">clear_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">var_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Block.clear_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Block.clear_variables" title="Link to this definition"></a></dt>
-<dd><p>Removes specified variables from the block template, i.e. replaces the tags representing variables with
-the empty strings.</p>
+<dd><p>Clears the specified variables from this block content. Has the same effect as setting
+the variables to an empty string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>var_names</strong> (<em>str</em>) – Arguments with variable names to be cleared.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="blocky.BlockData">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlockData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_hndl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blocky.html#BlockData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.BlockData" title="Link to this definition"></a></dt>
-<dd><p>Class for creating objects containing data to be filled into template blocks defined by
-the <a class="reference internal" href="#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> class. The object attributes shall directly correspond to the block and variable tags
-within the block template. The attribute values can then be used to <code class="xref py py-meth docutils literal notranslate"><span class="pre">fill()</span></code> the block template.
-The list below defines relationships between <a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> object attribute types and their use in
-a block template:</p>
-<ul class="simple">
-<li><p>Strings, integers, floats, booleans -&gt; Values set directly as block variables.</p></li>
-<li><p><a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> subobject -&gt; Data to be filled into a subblock of the parent block being filled.</p></li>
-<li><p>List -&gt; Content of block clones, each list item represents a content to be used in one cloned instance.</p></li>
-</ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="blocky.BlockData.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_hndl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#blocky.Block" title="blocky.Block"><span class="pre">Block</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#BlockData.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.BlockData.__init__" title="Link to this definition"></a></dt>
-<dd><p>Constructor creating new block object data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary defining the object attributes to be created using the
-<a class="reference internal" href="#blocky.BlockData.import_dict" title="blocky.BlockData.import_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">import_dict()</span></code></a> method. Defaults to None.</p></li>
-<li><p><strong>fill_hndl</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#blocky.Block" title="blocky.Block"><em>Block</em></a><em>, </em><em>object</em><em> | </em><em>dict</em><em>, </em><em>int</em><em>]</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – Handler function to be called after
-the values of a corresponding <a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> object are set into the block template. The handler
-can contain special operations to be performed after the regular template filling using the block data
-values. Defaults to None.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="blocky.BlockData.import_dict">
-<span class="sig-name descname"><span class="pre">import_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#BlockData.import_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.BlockData.import_dict" title="Link to this definition"></a></dt>
-<dd><p>Imports data from dictionary, i.e., converts the dictionary key-value pairs into the object attribute-value
-pairs. The dictionary values are converted according to the following rules:</p>
-<ul class="simple">
-<li><p>Strings, integers, floats, booleans -&gt; Directly used as <a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> object attribute values.</p></li>
-<li><p>Subdictionary with its own key-value pairs -&gt; Subdictionary is added as a <a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> subobject
-into the parent <a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> object with internal attributes set according to the key-value
-pairs of the subdictionary.</p></li>
-<li><p>List, tuple -&gt; Added as a list attribute to the parent <a class="reference internal" href="#blocky.BlockData" title="blocky.BlockData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockData</span></code></a> object. Lists or tuples define
-instances of template blocks that need to be cloned. Each list or tuple item should consist of a
-dictionary defining the key-value pairs used for filling a single clone instance.
-Only one-dimensional lists are supported for filling the template blocks.</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data_dict</strong> (<em>dict</em>) – Dictionary defining the structure of object attributes to be created.</p>
+<dd class="field-odd"><p><strong>var_names</strong> – Names of the variables to be cleared.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -460,83 +379,94 @@ Only one-dimensional lists are supported for filling the template blocks.</p></l
 </dd></dl>
 
 </section>
-<section id="block-configuration-classes">
-<h2>Block configuration classes<a class="headerlink" href="#block-configuration-classes" title="Link to this heading"></a></h2>
+<section id="block-configuration-class">
+<h2>Block configuration class<a class="headerlink" href="#block-configuration-class" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="blocky.BlockConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlockConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.TagsFormat" title="blocky.TagsFormat"><span class="pre">TagsFormat</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blocky.html#BlockConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.BlockConfig" title="Link to this definition"></a></dt>
-<dd><p>Block configuration class defining the formatting of blocks within the string template.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="blocky.BlockConfig.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.TagsFormat" title="blocky.TagsFormat"><span class="pre">TagsFormat</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#BlockConfig.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.BlockConfig.__init__" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="blocky.TagsFormat">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TagsFormat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_variation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">char_repeat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_last_first_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_last_first_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blocky.html#TagsFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.TagsFormat" title="Link to this definition"></a></dt>
-<dd><p>Class defining the format of tags used in template strings.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="blocky.TagsFormat.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_variation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">char_repeat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_last_first_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_last_first_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blocky.Tag" title="blocky.Tag"><span class="pre">Tag</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#TagsFormat.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.TagsFormat.__init__" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="blocky.Tag">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">begin_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&lt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&gt;'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blocky.html#Tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Tag" title="Link to this definition"></a></dt>
-<dd><p>Class representing a generic tag in the template.
-Each tag consists of tag name surrounded by tag begin and end strings.
-Example of a possible tag string with the tag name = <em>“example”</em>, tag begin
-string = <em>“&lt;”</em> and tag end string = <em>“&gt;”</em>:
-<em>&lt;example&gt;</em>
-Tag name is usually variable, but a default name can be assigned.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="blocky.Tag.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">begin_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&lt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&gt;'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/blocky.html#Tag.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Tag.__init__" title="Link to this definition"></a></dt>
-<dd><p>Tag class constructor.</p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlockConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">tag_gen_var:</span> <span class="pre">~collections.abc.Callable[[str],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;,</span> <span class="pre">tag_gen_blk_start:</span> <span class="pre">~collections.abc.Callable[[str],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;,</span> <span class="pre">tag_gen_blk_end:</span> <span class="pre">~collections.abc.Callable[[str],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;,</span> <span class="pre">tag_gen_blk_vari:</span> <span class="pre">~collections.abc.Callable[[str],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">BlockConfig.&lt;lambda&gt;&gt;,</span> <span class="pre">autotag_charrep:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'+',</span> <span class="pre">autotag_stdlastfirst:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'.',</span> <span class="pre">tab_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blocky.html#BlockConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.BlockConfig" title="Link to this definition"></a></dt>
+<dd><p>The template block configuration defining the format of tags and other template parts.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.BlockConfig.tag_gen_var">
+<span class="sig-name descname"><span class="pre">tag_gen_var</span></span><a class="headerlink" href="#blocky.BlockConfig.tag_gen_var" title="Link to this definition"></a></dt>
+<dd><p>A tag generator function for a variable tag.
+Defaults to a lamba function converting a tag name <code class="docutils literal notranslate"><span class="pre">name</span></code> to a variable tag string
+<code class="docutils literal notranslate"><span class="pre">&lt;NAME&gt;</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>default_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Default tag name. Defaults to “”.</p></li>
-<li><p><strong>begin_str</strong> (<em>str</em><em>, </em><em>optional</em>) – String defining the beginning of a tag. Defaults to “&lt;”.</p></li>
-<li><p><strong>end_str</strong> (<em>str</em><em>, </em><em>optional</em>) – String defining the end of a tag. Defaults to “&gt;”.</p></li>
-</ul>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[str], str]</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="blocky.Tag.str_name">
-<span class="sig-name descname"><span class="pre">str_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/blocky.html#Tag.str_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blocky.Tag.str_name" title="Link to this definition"></a></dt>
-<dd><p>Returns complete tag string consisting of provided tag name surrounded by tag begin and
-tag end strings, i.e. “tag_begin”+”tag_name”+”tag_end”.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.BlockConfig.tag_gen_blk_start">
+<span class="sig-name descname"><span class="pre">tag_gen_blk_start</span></span><a class="headerlink" href="#blocky.BlockConfig.tag_gen_blk_start" title="Link to this definition"></a></dt>
+<dd><p>A tag generator function for a block start tag.
+Defaults to a lamba function converting a tag name <code class="docutils literal notranslate"><span class="pre">name</span></code> to a block start tag
+string <code class="docutils literal notranslate"><span class="pre">&lt;NAME&gt;</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tag_name</strong> (<em>str</em>) – Name of the tag. If not specified, then default tag name is used. Defaults to “”.</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[str], str]</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Tag string.</p>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.BlockConfig.tag_gen_blk_end">
+<span class="sig-name descname"><span class="pre">tag_gen_blk_end</span></span><a class="headerlink" href="#blocky.BlockConfig.tag_gen_blk_end" title="Link to this definition"></a></dt>
+<dd><p>A tag generator function for a block end tag.
+Defaults to a lamba function converting a tag name <code class="docutils literal notranslate"><span class="pre">name</span></code> to a block end tag string
+<code class="docutils literal notranslate"><span class="pre">&lt;/NAME&gt;</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[str], str]</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.BlockConfig.tag_gen_blk_vari">
+<span class="sig-name descname"><span class="pre">tag_gen_blk_vari</span></span><a class="headerlink" href="#blocky.BlockConfig.tag_gen_blk_vari" title="Link to this definition"></a></dt>
+<dd><p>A tag generator function for a block variation
+tag.
+Defaults to a lamba function converting a tag name <code class="docutils literal notranslate"><span class="pre">name</span></code> to a block variation tag
+string <code class="docutils literal notranslate"><span class="pre">&lt;^NAME&gt;</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[str], str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.BlockConfig.autotag_charrep">
+<span class="sig-name descname"><span class="pre">autotag_charrep</span></span><a class="headerlink" href="#blocky.BlockConfig.autotag_charrep" title="Link to this definition"></a></dt>
+<dd><p>The <em>char repeat</em> automatic tag name. Defaults to <code class="docutils literal notranslate"><span class="pre">+</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="blocky.Tag.str">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">str</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#blocky.Tag.str" title="Link to this definition"></a></dt>
-<dd><p>Property method that returns the complete tag string consisting of predefined tag name surrounded by
-tag begin and tag end strings, i.e. “tag_begin”+”tag_name”+”tag_end”.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.BlockConfig.autotag_stdlastfirst">
+<span class="sig-name descname"><span class="pre">autotag_stdlastfirst</span></span><a class="headerlink" href="#blocky.BlockConfig.autotag_stdlastfirst" title="Link to this definition"></a></dt>
+<dd><p>The <em>standard/last/first</em> automatic tag name. Defaults to <code class="docutils literal notranslate"><span class="pre">.</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tag string.</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blocky.BlockConfig.tab_size">
+<span class="sig-name descname"><span class="pre">tab_size</span></span><a class="headerlink" href="#blocky.BlockConfig.tab_size" title="Link to this definition"></a></dt>
+<dd><p>A tabulator size in number of space characters. Defaults to 4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -550,13 +480,13 @@ tag begin and tag end strings, i.e. “tag_begin”+”tag_name”+”tag_end”
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="usage.html" class="btn btn-neutral float-left" title="Usage principles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="config.html" class="btn btn-neutral float-left" title="Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Lubomir Milko.</p>
+    <p>&#169; Copyright 2025 Lubomir Milko.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
