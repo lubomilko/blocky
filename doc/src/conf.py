@@ -22,10 +22,6 @@ extensions = [
     'sphinx.ext.napoleon'
 ]
 
-autodoc_default_options = {
-    'member-order': 'bysource'
-}
-
-add_module_names = False
+# add_module_names = False
 
 html_theme = 'sphinx_rtd_theme'

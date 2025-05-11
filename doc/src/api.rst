@@ -7,6 +7,7 @@ Block class
 ************************************************************************************************************************
 
 .. autoclass:: blocky.Block
+    :member-order: bysource
     :special-members: __init__
     :members:
 
@@ -15,3 +16,4 @@ Block configuration class
 ************************************************************************************************************************
 
 .. autoclass:: blocky.BlockConfig
+    :member-order: bysource
