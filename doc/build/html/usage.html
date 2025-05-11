@@ -1,25 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage principles &mdash; Blocky template engine 1.0.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>Usage &mdash; Blocky 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8d563738"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API" href="api.html" />
+    <link rel="next" title="Configuration" href="config.html" />
     <link rel="prev" title="Introduction" href="intro.html" /> 
 </head>
 
@@ -32,7 +32,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Blocky template engine
+            Blocky
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -45,20 +45,20 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage principles</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#template-tags">Template tags</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#template-tags">Template tags</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-tags">Basic tags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#special-automatic-tags">Special automatic tags</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#manual-template-filling">Manual template filling</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#loading-the-block-template">Loading the block template</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#getting-subblocks">Getting subblocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-and-clearing-block-variables">Setting and clearing block variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cloning-blocks">Cloning blocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-clearing-and-resetting-blocks">Setting, clearing and resetting blocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#saving-the-generated-block-content">Saving the generated block content</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#automatic-filling">Automatic filling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-automatic-filling">Basic automatic filling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-automatic-filling">Advanced automatic filling</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#automated-template-filling">Automated template filling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -68,7 +68,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Blocky template engine</a>
+          <a href="index.html">Blocky</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -76,7 +76,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Usage principles</li>
+      <li class="breadcrumb-item active">Usage</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -86,121 +86,254 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="usage-principles">
-<h1>Usage principles<a class="headerlink" href="#usage-principles" title="Link to this heading"></a></h1>
-<p>Using <em>blocky</em> to generate a text-based content can be described by the following main steps:</p>
-<ol class="arabic simple">
-<li><p>Define the template of the content to be generated. The template consists of static parts and dynamic parts
-defined using <a class="reference internal" href="#ref-tags"><span class="std std-ref">tags</span></a>.</p></li>
-<li><p>Define custom python script using the <em>blocky</em> module to load the template into the <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects
-and filling the dynamic parts with the required values.</p></li>
-<li><p>Save the generated content of filled <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects.</p></li>
-</ol>
+  <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
+<p>The following chapters describe the essential concepts needed for the creation of templates
+and for filling them with data to generate an output content.</p>
+<p>However, it is also possible to quickly jump to the <a class="reference internal" href="#tgt-auto-fill-basic-example"><span class="std std-ref">basic</span></a> or
+<a class="reference internal" href="#tgt-auto-fill-advanced-example"><span class="std std-ref">advanced</span></a> example to get a quick overview of all the
+principles used in the <a class="reference internal" href="#tgt-auto-fill"><span class="std std-ref">automatic template filling</span></a>.</p>
 <section id="template-tags">
-<span id="ref-tags"></span><h2>Template tags<a class="headerlink" href="#template-tags" title="Link to this heading"></a></h2>
-<p>All tags defining the dynamic parts of a template belong to one of the three main categories:</p>
+<h2>Template tags<a class="headerlink" href="#template-tags" title="Link to this heading"></a></h2>
+<section id="basic-tags">
+<span id="tgt-basic-tags"></span><h3>Basic tags<a class="headerlink" href="#basic-tags" title="Link to this heading"></a></h3>
+<p>The templates used by Blocky contain two primary elements:</p>
 <ul>
-<li><p><strong>Variables</strong> - Tags to be directly substituted by the required values. Default tag format:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;VARIABLE_NAME&gt;
-</pre></div>
-</div>
+<li><p><strong>Variables</strong> consisting of a single tag, e.g., <code class="docutils literal notranslate"><span class="pre">&lt;VARIABLE&gt;</span></code> representing a variable named
+<code class="docutils literal notranslate"><span class="pre">VARIABLE</span></code> that can be set to the required value using a simple string replacement.</p></li>
+<li><p><strong>Blocks</strong> consisting of a tag start-end pair, e.g., <code class="docutils literal notranslate"><span class="pre">&lt;BLOCK&gt;content&lt;/BLOCK&gt;</span></code> representing a
+block named <code class="docutils literal notranslate"><span class="pre">BLOCK</span></code> having an internal content consisting of a simple string <code class="docutils literal notranslate"><span class="pre">content</span></code>.
+Apart from string constants, a block can also contain <em>variables</em> and other <em>subblocks</em>.</p>
+<p>A block can have multiple predefined <strong>content variations</strong> with each variation separated by
+a special tag, which by default has a <code class="docutils literal notranslate"><span class="pre">&lt;^BLOCK&gt;</span></code> format (this is also
+<a class="reference internal" href="config.html#tgt-config"><span class="std std-ref">configurable</span></a>). For example, the
+<code class="docutils literal notranslate"><span class="pre">&lt;BLOCK&gt;content</span> <span class="pre">1&lt;^BLOCK&gt;content</span> <span class="pre">2&lt;^BLOCK&gt;content</span> <span class="pre">3&lt;/BLOCK&gt;</span></code> defines a block with three
+variations of a content selectable by the filling script.</p>
+<p>The standard (non-variation) block content can be <strong>cloned</strong>, i.e., duplicated as many times
+as needed, and variables in each clone can be filled with different values.</p>
 </li>
-<li><p><strong>Blocks</strong> - Tags defining the parts of the template that can be extraced into the <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects and
-then processed further, e.g., the blocks can be cloned (duplicated), cleared, etc. The blocks in a template can be
-nested, i.e., it is possible to have multiple layers of subblocks. Block area is defined using two tags indicating
-the beginning and end of the block, except the whole template string that is considered to be a block of its own
-even without the block tags. Default tag format:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;BLOCK_NAME&gt;
-...
-&lt;/BLOCK_NAME&gt;
-</pre></div>
-</div>
-<p>where the three dots <code class="docutils literal notranslate"><span class="pre">...</span></code> represent a block content with static parts and dynamic variables and potentially
-other subblocks.</p>
-<p>alternative for single-line blocks:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;BLOCK_NAME&gt;...&lt;/BLOCK_NAME&gt;
-</pre></div>
-</div>
-</li>
-<li><p><strong>Special</strong> - Tags with predefined special formatting or other purposes. These tags are handled automatically
-by blocky, i.e., they are typically not meant to be processed manually by the user-defined template filling script.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The template tag names in this documentation and examples use uppercase letters with underscores for word
-separation, e.g., <code class="docutils literal notranslate"><span class="pre">&lt;TAG_NAME&gt;</span></code>. However, this convention is not mandatory.</p>
-<p>The angle brackets <code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code> and other characters used for the tag definition can be customized, i.e., changed
-with other characters (or strings) by the <a class="reference internal" href="api.html#blocky.TagsFormat" title="blocky.TagsFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">TagsFormat</span></code></a> subobject of the <a class="reference internal" href="api.html#blocky.BlockConfig" title="blocky.BlockConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockConfig</span></code></a>
-object which can then be assigned to the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Block.config</span></code> attribute of the <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object.
-The details of tag customization will be described later.</p>
+<p>The whole template is a block too, just an unnamed one, i.e, it is not marked by any tag pair.</p>
 </div>
 </section>
-</section>
-<section id="manual-template-filling">
-<h1>Manual template filling<a class="headerlink" href="#manual-template-filling" title="Link to this heading"></a></h1>
-<p>Blocky provides the <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> class to define objects corresponding to the blocks defined within the template.
-The <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> objects can then be used in the user-defined script to “fill” the template with required values.
-Manually using the <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object methods and attributes provides a precise control over the generated
-content creation and allows to use any data to fill the dynamic parts of the template.</p>
-<section id="loading-the-block-template">
-<h2>Loading the block template<a class="headerlink" href="#loading-the-block-template" title="Link to this heading"></a></h2>
-<p>The template string needs to be loaded into the primary <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object first. This object can then be used to
-fill the template, i.e., to create the required generated content. It often makes sense to define the template in a
-text-based file, which can then be loaded using the <a class="reference internal" href="api.html#blocky.Block.load_template" title="blocky.Block.load_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_template()</span></code></a> method as illustrated below:</p>
-<p><em>C:/template.txt</em> file content:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>List of items:
-&lt;ITEMS&gt;
-* &lt;ITEM&gt;
-&lt;/ITEMS&gt;
+<section id="special-automatic-tags">
+<span id="tgt-auto-tags"></span><h3>Special automatic tags<a class="headerlink" href="#special-automatic-tags" title="Link to this heading"></a></h3>
+<p>The template can contain special tags that are filled automatically (i.e., without any values
+implicitly assigned in the filling script). These special autotags are described below:</p>
+<ul>
+<li><p><strong>Alignment character repeat</strong> tag <code class="docutils literal notranslate"><span class="pre">&lt;+&gt;</span></code>: A special tag automatically repeating the first
+character located right after this tag until another character is detected in the template
+regardless of the length of a content located before the tag. This special autotag is useful
+for the text alignment.</p>
+<p>Example of a template using the character repeat autotag:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;NAME&gt;&lt;+&gt;               &lt;SURNAME&gt;
 </pre></div>
 </div>
-<p>User defined Python script:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">blocky</span> <span class="kn">import</span> <span class="n">Block</span>
+<p>repeats the space character located after the <code class="docutils literal notranslate"><span class="pre">&lt;+&gt;</span></code> tag right until the beginning of a
+surname. This effectively keeps the surname start column always the same, regardless of the
+length of the <code class="docutils literal notranslate"><span class="pre">NAME</span></code> variable value, i.e., filling the template using name-surname pairs
+<code class="docutils literal notranslate"><span class="pre">John</span></code>, <code class="docutils literal notranslate"><span class="pre">Connor</span></code> and <code class="docutils literal notranslate"><span class="pre">Thomas</span></code>, <code class="docutils literal notranslate"><span class="pre">Anderson</span></code> results in both surnames aligned to the
+same column:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>John                    Connor
+Thomas                  Anderson
+</pre></div>
+</div>
+</li>
+<li><p><strong>Clone variation</strong> blocks <code class="docutils literal notranslate"><span class="pre">&lt;.&gt;standard&lt;^.&gt;last&lt;/.&gt;</span></code>: Special
+<a class="reference internal" href="#tgt-basic-tags"><span class="std std-ref">variation-like blocks</span></a> that can be placed in a block being cloned.
+All content clones, except for the last one, will have the <code class="docutils literal notranslate"><span class="pre">standard</span></code> content of the
+<em>clone variation</em> autoblock, while the last clone will have the second variation - <code class="docutils literal notranslate"><span class="pre">last</span></code>.</p>
+<p>It is also possible to define the <em>clone variation</em> autoblock with three variants of content:
+<code class="docutils literal notranslate"><span class="pre">&lt;.&gt;standard&lt;^.&gt;last&lt;^.&gt;first&lt;/.&gt;</span></code>, where the <code class="docutils literal notranslate"><span class="pre">first</span></code> variation of a content will be
+applied only in the first clone of a parent block. This autoblock can be useful for example
+for the comma-separation of variables within a cloned block.</p>
+<p>Example of a template with the clone variation blocks having the <em>standard</em> content set to a
+comma <code class="docutils literal notranslate"><span class="pre">,</span> <span class="pre">``</span> <span class="pre">and</span> <span class="pre">the</span> <span class="pre">*last*</span> <span class="pre">content</span> <span class="pre">set</span> <span class="pre">to</span> <span class="pre">an</span> <span class="pre">empty</span> <span class="pre">string</span> <span class="pre">``</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;VALUE_LIST&gt;&lt;VALUE&gt;&lt;.&gt;, &lt;^.&gt;&lt;/.&gt;&lt;/VALUE_LIST&gt;
+</pre></div>
+</div>
+<p>Cloning the <code class="docutils literal notranslate"><span class="pre">VALUE_LIST</span></code> block with values <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">3</span></code>, <code class="docutils literal notranslate"><span class="pre">4</span></code> set to the <code class="docutils literal notranslate"><span class="pre">VALUE</span></code>
+variable of each cloned content will result in a following string (notice that the last
+value <code class="docutils literal notranslate"><span class="pre">4</span></code> is not followed by a comma):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1, 2, 3, 4
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The format of the automatic tags can also be customized by the
+<a class="reference internal" href="config.html#tgt-config"><span class="std std-ref">configuration object</span></a>.</p>
+</div>
+</section>
+</section>
+<section id="automatic-filling">
+<span id="tgt-auto-fill"></span><h2>Automatic filling<a class="headerlink" href="#automatic-filling" title="Link to this heading"></a></h2>
+<p>The automatic template filling is the simplest way to generate a templated content. The data used
+for setting the values in a template is defined by a Python dictionary with keys representing the
+template <a class="reference internal" href="#tgt-basic-tags"><span class="std std-ref">variable and block tag names</span></a>.</p>
+<p>To fill the template variables and blocks with data, it is first necessary to load the whole
+template into the primary <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object. This can be done by setting a template string
+text or a text file in the <a class="reference internal" href="api.html#blocky.Block.__init__" title="blocky.Block.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Block.__init__()</span></code></a> constructor. Alternatively, the
+<a class="reference internal" href="api.html#blocky.Block.template" title="blocky.Block.template"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Block.template</span></code></a> attribute, or the <a class="reference internal" href="api.html#blocky.Block.load_template" title="blocky.Block.load_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Block.load_template()</span></code></a> method can be used.</p>
+<section id="basic-automatic-filling">
+<span id="tgt-auto-fill-basic"></span><h3>Basic automatic filling<a class="headerlink" href="#basic-automatic-filling" title="Link to this heading"></a></h3>
+<p>The template can be filled by the <a class="reference internal" href="api.html#blocky.Block.fill" title="blocky.Block.fill"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Block.fill()</span></code></a> method with the required data dictionary
+provided as an argument.</p>
+<p>The dictionary values can perform one of the operations in a list below depending on the data
+type of the dictionary value:</p>
+<ul class="simple">
+<li><p><strong>Setting a variable value</strong> using a <strong>basic data type</strong> (i.e., <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">bool</span></code>). For example, the key-value dictionary pair <code class="docutils literal notranslate"><span class="pre">name:</span> <span class="pre">&quot;John&quot;</span></code> sets the variable
+<code class="docutils literal notranslate"><span class="pre">name</span></code> to the value <code class="docutils literal notranslate"><span class="pre">John</span></code>.</p></li>
+<li><p><strong>Setting a block content</strong> using a <strong>dictionary</strong> (i.e., <code class="docutils literal notranslate"><span class="pre">{...}</span></code>. For example, the
+<code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">{day:</span> <span class="pre">24,</span> <span class="pre">month:</span> <span class="pre">December}</span></code> sets the <code class="docutils literal notranslate"><span class="pre">date</span></code> block containing two variables <code class="docutils literal notranslate"><span class="pre">day</span></code>
+and <code class="docutils literal notranslate"><span class="pre">month</span></code> set to values <code class="docutils literal notranslate"><span class="pre">24</span></code>, <code class="docutils literal notranslate"><span class="pre">December</span></code> respectively.</p></li>
+<li><p><strong>Cloning blocks and setting their content</strong> using a <strong>list or tuple of dictionaries</strong>. As an
+example, the <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">[{day:</span> <span class="pre">24,</span> <span class="pre">month:</span> <span class="pre">12},</span> <span class="pre">{day:</span> <span class="pre">25,</span> <span class="pre">month:</span> <span class="pre">12}]</span></code> key-value pairt creates
+and sets two clones of a <code class="docutils literal notranslate"><span class="pre">date</span></code> block with the <code class="docutils literal notranslate"><span class="pre">day</span></code> and <code class="docutils literal notranslate"><span class="pre">month</span></code> variables in each block
+clone set to the values <code class="docutils literal notranslate"><span class="pre">24</span></code>, <code class="docutils literal notranslate"><span class="pre">12</span></code> in the first clone and to the <code class="docutils literal notranslate"><span class="pre">25</span></code>, <code class="docutils literal notranslate"><span class="pre">12</span></code> in the
+second clone.</p></li>
+</ul>
+<p id="tgt-auto-fill-basic-example">The following filling script example shows all simple concepts described above, i.e., the template
+containing the <a class="reference internal" href="#tgt-basic-tags"><span class="std std-ref">basic tags</span></a> and also <a class="reference internal" href="#tgt-auto-tags"><span class="std std-ref">automatic tags</span></a>
+filled using the <a class="reference internal" href="#tgt-auto-fill-basic"><span class="std std-ref">basic principles</span></a> of automatic filling. The template
+is defined directly by the <code class="docutils literal notranslate"><span class="pre">template</span></code> string and the data to fill the template with are defined
+by the <code class="docutils literal notranslate"><span class="pre">data</span></code> dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="c1"># Create the main Block object.</span>
-<span class="n">blk_main</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
-<span class="c1"># Load the Block object template from file.</span>
-<span class="n">blk_main</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="s2">&quot;C:/template.txt&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Alternatively, the template can be set in the <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object definition, through the <a class="reference internal" href="api.html#blocky.Block.template" title="blocky.Block.template"><code class="xref py py-attr docutils literal notranslate"><span class="pre">template</span></code></a>
-attribute or using the <a class="reference internal" href="api.html#blocky.Block.load_template" title="blocky.Block.load_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_template()</span></code></a> method which also supports string arguments:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">blocky</span> <span class="kn">import</span> <span class="n">Block</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/relative/path/to/dir/with/blocky&quot;</span><span class="p">)</span>
 
-<span class="c1"># Option 1: Set the template file in the Block object definition.</span>
-<span class="n">blk_main</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="s2">&quot;C:/template.txt&quot;</span><span class="p">)</span>
-<span class="c1"># Option 2: Set the template string in the Block object definition.</span>
-<span class="n">blk_main</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="s2">&quot;Name: &lt;NAME&gt; &lt;SURNAME&gt;, Age: &lt;AGE&gt;&quot;</span><span class="p">)</span>
-<span class="c1"># Option 3: Set the template string through an attribute.</span>
-<span class="n">blk_main</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;Name: &lt;NAME&gt; &lt;SURNAME&gt;, Age: &lt;AGE&gt;&quot;</span>
-<span class="c1"># Option 4: Load the template from a string instead of the file.</span>
-<span class="n">blk_main</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="s2">&quot;Name: &lt;NAME&gt; &lt;SURNAME&gt;, Age: &lt;AGE&gt;&quot;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">blocky</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+
+
+<span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                            SHOPPING LIST</span>
+<span class="s2">  Items                                                         Quantity</span>
+<span class="s2">------------------------------------------------------------------------</span>
+<span class="s2">&lt;ITEMS&gt;</span>
+<span class="s2">* &lt;ITEM&gt;&lt;+&gt;                                                     &lt;QTY&gt;</span>
+<span class="s2">&lt;/ITEMS&gt;</span>
+
+
+<span class="s2">Short list: &lt;ITEMS&gt;&lt;ITEM&gt;&lt;.&gt;, &lt;^.&gt;&lt;/.&gt;&lt;/ITEMS&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;apples&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;1 kg&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;potatoes&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;2 kg&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;rice&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;1 kg&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;orange juice&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;1 l&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;cooking magazine&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">blk</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+<span class="n">blk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">blk</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The script prints the following generated content:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                            SHOPPING LIST
+  Items                                                         Quantity
+------------------------------------------------------------------------
+* apples                                                        1 kg
+* potatoes                                                      2 kg
+* rice                                                          1 kg
+* orange juice                                                  1 l
+* cooking magazine                                              1
+
+
+Short list: apples, potatoes, rice, orange juice, cooking magazine
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Notice that the template contains two <code class="docutils literal notranslate"><span class="pre">ITEMS</span></code> blocks containing the variable <code class="docutils literal notranslate"><span class="pre">ITEM</span></code> and
+that both blocks are automatically filled by the same data, since they have the same name.</p>
+</div>
+</section>
+<section id="advanced-automatic-filling">
+<span id="tgt-auto-fill-advanced"></span><h3>Advanced automatic filling<a class="headerlink" href="#advanced-automatic-filling" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Setting a block content without setting any of its child elements</strong> by setting the block
+value to a <strong>non-empty string, non-zero numeric value or a boolean true</strong>, i.e.,
+<code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">&quot;anything&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">True</span></code> all set the content of a block amed <code class="docutils literal notranslate"><span class="pre">date</span></code>
+into the final generated output without explicitly setting any of its internal values or other
+subblocks (it is expected that the block is either constant, i.e., without variables, or the
+variables have been already set).</p></li>
+<li><p><strong>Setting a block content variation</strong> by a <strong>dictionary with an artificial variable</strong>
+<code class="docutils literal notranslate"><span class="pre">vari_idx</span></code> set to a numeric or boolean value with the following meaning:</p>
+<ul>
+<li><p>A numeric value zero or higher sets the specified block variation, e.g.
+<code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">{&quot;vari_idx&quot;:</span> <span class="pre">1}</span></code> sets the second content variation of a <code class="docutils literal notranslate"><span class="pre">date</span></code> block (value 0
+corresponds to the first variation).</p></li>
+<li><p>A numeric value below zero removes the block, e.g. <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">{&quot;vari_idx&quot;:</span> <span class="pre">-1}</span></code> removes the
+<code class="docutils literal notranslate"><span class="pre">date</span></code> block from the generated content.</p></li>
+<li><p>A boolean <code class="docutils literal notranslate"><span class="pre">True</span></code> has the same effect as value zero (i.e., sets the first content
+variation) and boolean <code class="docutils literal notranslate"><span class="pre">False</span></code> has the same effect as negative value (i.e., removes
+the block).</p></li>
+</ul>
+</li>
+<li><p><strong>Removing a variable</strong> by setting its value to an <strong>empty string or to none</strong>, i.e.,
+<code class="docutils literal notranslate"><span class="pre">name:</span> <span class="pre">&quot;&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">name:</span> <span class="pre">None</span></code> both remove the <code class="docutils literal notranslate"><span class="pre">name</span></code> variable from the generated content.</p></li>
+<li><p><strong>Removing a block</strong> by setting its value to an <strong>empty dictionary, empty list, none, zero,
+or boolean false</strong>, i.e., <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">{}</span></code>, <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">0</span></code>,
+<code class="docutils literal notranslate"><span class="pre">date:</span> <span class="pre">False</span></code> all remove the <code class="docutils literal notranslate"><span class="pre">date</span></code> block from the generated content.</p></li>
+</ul>
+<p id="tgt-auto-fill-advanced-example">The filling script below expands the <a class="reference internal" href="#tgt-auto-fill-basic"><span class="std std-ref">basic automatic filling concepts</span></a>
+with the <a class="reference internal" href="#tgt-auto-fill-advanced"><span class="std std-ref">advanced concepts</span></a> described above. The template is
+defined directly by the <code class="docutils literal notranslate"><span class="pre">template</span></code> string and the data to fill the template with are defined by
+the <code class="docutils literal notranslate"><span class="pre">data</span></code> dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/relative/path/to/dir/with/blocky&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">blocky</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+
+<span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                            SHOPPING LIST</span>
+<span class="s2">  Items                                                         Quantity</span>
+<span class="s2">------------------------------------------------------------------------</span>
+<span class="s2">&lt;ITEMS&gt;</span>
+<span class="s2">* &lt;FLAG&gt;IMPORTANT! &lt;^FLAG&gt;MAYBE? &lt;/FLAG&gt;&lt;ITEM&gt;&lt;+&gt;               &lt;QTY&gt;&lt;UNIT&gt; kg&lt;^UNIT&gt; l&lt;/UNIT&gt;</span>
+<span class="s2">&lt;/ITEMS&gt;</span>
+
+
+<span class="s2">Short list: &lt;ITEMS&gt;&lt;ITEM&gt;&lt;.&gt;, &lt;^.&gt;&lt;/.&gt;&lt;/ITEMS&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;flag&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;apples&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;flag&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;potatoes&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;vari_idx&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}},</span>
+        <span class="p">{</span><span class="s2">&quot;flag&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;rice&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;vari_idx&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}},</span>
+        <span class="p">{</span><span class="s2">&quot;flag&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;orange juice&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;vari_idx&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}},</span>
+        <span class="p">{</span><span class="s2">&quot;flag&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;vari_idx&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="s2">&quot;cooking magazine&quot;</span><span class="p">,</span> <span class="s2">&quot;qty&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">blk</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+<span class="n">blk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">blk</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The script prints the following generated content:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                            SHOPPING LIST
+Items                                                           Quantity
+------------------------------------------------------------------------
+* apples                                                        1 kg
+* IMPORTANT! potatoes                                           2 kg
+* rice                                                          1 kg
+* orange juice                                                  1 l
+* MAYBE? cooking magazine
 </pre></div>
 </div>
 </section>
-<section id="getting-subblocks">
-<h2>Getting subblocks<a class="headerlink" href="#getting-subblocks" title="Link to this heading"></a></h2>
 </section>
-<section id="setting-and-clearing-block-variables">
-<h2>Setting and clearing block variables<a class="headerlink" href="#setting-and-clearing-block-variables" title="Link to this heading"></a></h2>
-</section>
-<section id="cloning-blocks">
-<h2>Cloning blocks<a class="headerlink" href="#cloning-blocks" title="Link to this heading"></a></h2>
-</section>
-<section id="setting-clearing-and-resetting-blocks">
-<h2>Setting, clearing and resetting blocks<a class="headerlink" href="#setting-clearing-and-resetting-blocks" title="Link to this heading"></a></h2>
-</section>
-<section id="saving-the-generated-block-content">
-<h2>Saving the generated block content<a class="headerlink" href="#saving-the-generated-block-content" title="Link to this heading"></a></h2>
-</section>
-</section>
-<section id="automated-template-filling">
-<h1>Automated template filling<a class="headerlink" href="#automated-template-filling" title="Link to this heading"></a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The documentation is in progress. In the meantime please see some basic examples of use in the <em>samples</em> and also
-<em>test</em> directories in the <a class="reference external" href="https://github.com/lubomilko/blocky">Blocky repository</a>.</p>
-</div>
 </section>
 
 
@@ -208,13 +341,13 @@ attribute or using the <a class="reference internal" href="api.html#blocky.Block
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="config.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Lubomir Milko.</p>
+    <p>&#169; Copyright 2025 Lubomir Milko.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

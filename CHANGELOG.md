@@ -12,7 +12,27 @@ template engine project.
 
 ## [unreleased] - 202y-mm-dd
 
-*Changes for the upcoming new version.*
+*Improved block configuration and general refactoring.*
+
+### Changed
+
+- Rework and simplify the `BlockConfig` class. Use customizable formatter functions for the
+  definition of tag strings.
+- Change the standard `subclass` attribute to a `children` property attribute.
+- Global refactoring to decrease the amount of code and increase efficiency and clarity.
+- Simplify and update all docstrings relying more on the type hints and code itself.
+
+### Removed
+
+- Remove the `BlockData` class since object of any type can be used for filling the template.
+- Remove loading of a simple template string by the `load_template()` method, making it only
+  load the template from a file.
+- Remove the `*name_value_args` parameter from the `set_variables()` method, making it only
+  accept the keyword arguments.
+
+### Added
+
+- Add Sphinx documentation.
 
 
 ## [1.4.0] - 2025-03-30

@@ -8,4 +8,5 @@ Blocky template engine
 
 	intro
 	usage
+	config
 	api
