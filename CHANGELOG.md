@@ -30,6 +30,10 @@ template engine project.
 - Remove the `*name_value_args` parameter from the `set_variables()` method, making it only
   accept the keyword arguments.
 
+### Added
+
+- Add Sphinx documentation.
+
 
 ## [1.4.0] - 2025-03-30
 
