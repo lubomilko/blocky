@@ -22,6 +22,4 @@ extensions = [
     'sphinx.ext.napoleon'
 ]
 
-# add_module_names = False
-
 html_theme = 'sphinx_rtd_theme'

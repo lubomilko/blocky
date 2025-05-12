@@ -4,4 +4,4 @@
 Configuration
 ###################################################################################################
 
-Under construction ...
+The format of the basic and automatic tags in a template 

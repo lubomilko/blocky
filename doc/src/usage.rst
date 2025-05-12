@@ -5,7 +5,7 @@ Usage
 The following chapters describe the essential concepts needed for the creation of templates
 and for filling them with data to generate an output content.
 
-However, it is also possible to quickly jump to the :ref:`basic <tgt_auto_fill_basic_example>` or
+However, it is also possible to jump to the :ref:`basic <tgt_auto_fill_basic_example>` or the
 :ref:`advanced <tgt_auto_fill_advanced_example>` example to get a quick overview of all the
 principles used in the :ref:`automatic template filling <tgt_auto_fill>`.
 
@@ -14,9 +14,21 @@ principles used in the :ref:`automatic template filling <tgt_auto_fill>`.
 Template tags
 ***************************************************************************************************
 
+Blocky uses templates containing *tags* to indicate variable parts of the template as illustrated
+on a simple template string below containing the so-called *block* named ``PEOPLE`` that can
+be filled with name, surname and age values of each person assigned to the *variables* ``NAME``,
+``SURNAME``, and ``AGE``.
+
+.. code-block:: text
+
+    A list of people:
+    <PEOPLE>
+    - <NAME> <SURNAME>, <AGE>
+    </PEOPLE>
+
 .. important::
-    Blocky uses templates containing *tags* to indicate variable parts of the template. By
-    default, the tags have an XML-like form using the uppercase letters for names, e.g.,
+    
+    By default, the tags have an XML-like form using the uppercase letters for names, e.g.,
     ``<TAG_NAME>`` is a tag named ``TAG_NAME``.
 
     The tag names in a Python filling script are automatically converted to the uppercase format
@@ -28,23 +40,23 @@ Template tags
     later.
 
 
-.. _tgt_basic_tags:
+.. _tgt_primary_tags:
 
-Basic tags
+Primary tags
 ===================================================================================================
 
-The templates used by Blocky contain two primary elements:
+The templates used by Blocky contain the following primary tag elements representing a variable
+content:
 
 *   **Variables** consisting of a single tag, e.g., ``<VARIABLE>`` representing a variable named
     ``VARIABLE`` that can be set to the required value using a simple string replacement.
 
-*   **Blocks** consisting of a tag start-end pair, e.g., ``<BLOCK>content</BLOCK>`` representing a
+*   **Blocks** consisting of a start-end tag pair, e.g., ``<BLOCK>content</BLOCK>`` representing a
     block named ``BLOCK`` having an internal content consisting of a simple string ``content``.
-    Apart from string constants, a block can also contain *variables* and other *subblocks*.
+    Apart from string constants, a block can also contain *variables* and other child *blocks*.
 
     A block can have multiple predefined **content variations** with each variation separated by
-    a special tag, which by default has a ``<^BLOCK>`` format (this is also
-    :ref:`configurable <tgt_config>`). For example, the
+    a special tag, which by default has a ``<^BLOCK>`` format. For example, the
     ``<BLOCK>content 1<^BLOCK>content 2<^BLOCK>content 3</BLOCK>`` defines a block with three
     variations of a content selectable by the filling script.
 
@@ -52,7 +64,10 @@ The templates used by Blocky contain two primary elements:
     as needed, and variables in each clone can be filled with different values.
 
 .. note::
-    The whole template is a block too, just an unnamed one, i.e, it is not marked by any tag pair.
+    The format of all tags is :ref:`configurable <tgt_config>`.
+
+    The whole template is considered to be a primary *block* and its content is not marked by any
+    start-end tag pair, i.e., the primary template block does not have a name.
 
 
 .. _tgt_auto_tags:
@@ -86,7 +101,7 @@ implicitly assigned in the filling script). These special *autotags* are describ
         Thomas                  Anderson
 
 *   A **variation** autotag in form of a ``<.>`` (dot) block with two, or optionally three
-    :ref:`content variations <tgt_basic_tags>`: ``<.>standard<^.>last</.>`` or
+    :ref:`content variations <tgt_primary_tags>`: ``<.>standard<^.>last</.>`` or
     ``<.>standard<^.>last<^.>first</.>``. This autotag is intended to be placed inside another
     block that is cloned during the :ref:`template filling <tgt_auto_fill>`. Then the first
     clone is (optionally) set to the ``first`` content of the variation autotag, the last clone is
@@ -125,7 +140,7 @@ Automatic template filling
 
 The automatic template filling is the simplest way to generate a templated content. The data used
 for setting the values in a template is defined by a Python dictionary with keys representing the
-template :ref:`variable and block tag names <tgt_basic_tags>`.
+template :ref:`variable and block tag names <tgt_primary_tags>`.
 
 To fill the template variables and blocks with data, it is first necessary to load the whole
 template into the primary :py:class:`.Block` object. This can be done by setting a template string
@@ -162,7 +177,7 @@ type of the dictionary value:
 .. _tgt_auto_fill_basic_example:
 
 The following filling script example shows all simple concepts described above, i.e., the template
-containing the :ref:`basic tags <tgt_basic_tags>` and also :ref:`automatic tags <tgt_auto_tags>`
+containing the :ref:`basic tags <tgt_primary_tags>` and also :ref:`automatic tags <tgt_auto_tags>`
 filled using the :ref:`basic principles <tgt_auto_fill_basic>` of automatic filling. The template
 is defined directly by the ``template`` string and the data to fill the template with are defined
 by the ``data`` dictionary.
@@ -229,12 +244,12 @@ The script prints the following generated content:
 Advanced automatic filling
 ===================================================================================================
 
-*   **Setting a block content without setting any of its child elements** by setting the block
-    value to a **non-empty string, non-zero numeric value or a boolean true**, i.e.,
-    ``date: "anything"``, ``date: 1``, ``date: True`` all set the content of a block amed ``date``
-    into the final generated output without explicitly setting any of its internal values or other
-    subblocks (it is expected that the block is either constant, i.e., without variables, or the
-    variables have been already set).
+*   **Setting a block content without setting its child elements** by setting the block value to a
+    **non-empty** value which can be a *non-empty string, non-zero numeric value or a boolean true*.
+    As an example, the key-value pairs ``date: "anything"``, ``date: 1``, ``date: True`` all set
+    the content of a block amed ``date`` into the final generated output without explicitly
+    setting any of its internal values or other subblocks (it is expected that the block is either
+    constant, i.e., without variables, or the variables have been already set).
 
 *   **Setting a block content variation** by a **dictionary with an artificial variable**
     ``vari_idx`` set to a numeric or boolean value with the following meaning:
