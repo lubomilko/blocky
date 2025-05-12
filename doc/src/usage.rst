@@ -57,53 +57,52 @@ The templates used by Blocky contain two primary elements:
 
 .. _tgt_auto_tags:
 
-Special automatic tags
+Automatic tags
 ===================================================================================================
 
 The template can contain special tags that are filled automatically (i.e., without any values
-implicitly assigned in the filling script). These special autotags are described below:
+implicitly assigned in the filling script). These special *autotags* are described below:
 
-*   **Alignment character repeat** tag ``<+>``: A special tag automatically repeating the first
-    character located right after this tag until another character is detected in the template
-    regardless of the length of a content located before the tag. This special autotag is useful
-    for the text alignment.
+*   An **alignment** autotag ``<+>``: A special tag useful for the text alignment. It automatically
+    repeats the first character located right after this tag in the template until a different
+    character is found. The column position of the different character is kept according to the
+    template regardless of the length of a generated content located before the alignment autotag.
 
-    Example of a template using the character repeat autotag:
+    Example of a template using the alignment autotag:
 
     .. code-block:: text
 
         <NAME><+>               <SURNAME>
 
     repeats the space character located after the ``<+>`` tag right until the beginning of a
-    surname. This effectively keeps the surname start column always the same, regardless of the
-    length of the ``NAME`` variable value, i.e., filling the template using name-surname pairs
-    ``John``, ``Connor`` and ``Thomas``, ``Anderson`` results in both surnames aligned to the
-    same column:
+    surname (since the character "<" is different from the repeated space character). The surname
+    start column will remain the same, regardless of the length of the ``NAME`` variable value. So,
+    for example, filling the template using the name-surname pairs ``John``, ``Connor`` and
+    ``Thomas``, ``Anderson`` results in both surnames aligned to the same column:
 
     .. code-block:: text
 
         John                    Connor
         Thomas                  Anderson
 
-*   **Clone variation** blocks ``<.>standard<^.>last</.>``: Special
-    :ref:`variation-like blocks <tgt_basic_tags>` that can be placed in a block being cloned.
-    All content clones, except for the last one, will have the ``standard`` content of the
-    *clone variation* autoblock, while the last clone will have the second variation - ``last``.
+*   A **variation** autotag in form of a ``<.>`` (dot) block with two, or optionally three
+    :ref:`content variations <tgt_basic_tags>`: ``<.>standard<^.>last</.>`` or
+    ``<.>standard<^.>last<^.>first</.>``. This autotag is intended to be placed inside another
+    block that is cloned during the :ref:`template filling <tgt_auto_fill>`. Then the first
+    clone is (optionally) set to the ``first`` content of the variation autotag, the last clone is
+    automatically set to the ``last`` content, and the rest of the clones in between are set to
+    the ``standard`` content.
 
-    It is also possible to define the *clone variation* autoblock with three variants of content:
-    ``<.>standard<^.>last<^.>first</.>``, where the ``first`` variation of a content will be
-    applied only in the first clone of a parent block. This autoblock can be useful for example
-    for the comma-separation of variables within a cloned block.
-
-    Example of a template with the clone variation blocks having the *standard* content set to a
-    comma ``, `` and the *last* content set to an empty string ````:
+    This autoblock can be useful, for example, for the comma-separation of variables within a
+    cloned block as illustrated below where the *standard* content is set to a comma ``, ``
+    and the *last* content is set to an empty string ````:
 
     .. code-block:: text
 
-        <VALUE_LIST><VALUE><.>, <^.></.></VALUE_LIST>
+        <NUM_LIST><NUM><.>, <^.></.></NUM_LIST>
 
-    Cloning the ``VALUE_LIST`` block with values ``1``, ``2``, ``3``, ``4`` set to the ``VALUE``
-    variable of each cloned content will result in a following string (notice that the last
+    Cloning the ``NUM_LIST`` block with values ``1``, ``2``, ``3``, ``4`` set to the ``NUM``
+    variable in each cloned content will result in a following string (notice that the last
     value ``4`` is not followed by a comma):
 
     .. code-block:: text
@@ -114,11 +113,14 @@ implicitly assigned in the filling script). These special autotags are described
     The format of the automatic tags can also be customized by the
     :ref:`configuration object <tgt_config>`.
 
+.. seealso::
+    See the :ref:`code example <tgt_auto_fill_basic_example>` using both of the automatic tags.
+
 
 .. _tgt_auto_fill:
 
 ***************************************************************************************************
-Automatic filling
+Automatic template filling
 ***************************************************************************************************
 
 The automatic template filling is the simplest way to generate a templated content. The data used
