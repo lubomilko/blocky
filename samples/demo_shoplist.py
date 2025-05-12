@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 sys.path.insert(0, f"{sys.path[0]}/../src")
 
-from blocky import Block    # pylint: disable = wrong-import-position   # noqa E402
+from blocky import Block, BlockConfig    # pylint: disable = wrong-import-position   # noqa E402
 
 
 def demo_shoplist_basic() -> None:
@@ -100,7 +100,46 @@ Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>
     print(blk.content)
 
 
+def demo_shoplist_custom_cfg() -> None:
+    template = """
+                            SHOPPING LIST
+  Items                                                         Quantity
+------------------------------------------------------------------------
+@items
+* @flagIMPORTANT! @~flagMAYBE? @!flag@item@*                   @qty@unit kg@~unit l@!unit
+@!items
+
+
+Short list: @items@item@_, @~_@!_@!items
+"""
+
+    data = {
+        "items": [
+            {"flag": None, "item": "apples", "qty": "1", "unit": True},
+            {"flag": True, "item": "potatoes", "qty": "2", "unit": {"vari_idx": 0}},
+            {"flag": None, "item": "rice", "qty": "1", "unit": {"vari_idx": 0}},
+            {"flag": None, "item": "orange juice", "qty": "1", "unit": {"vari_idx": 1}},
+            {"flag": {"vari_idx": 1}, "item": "cooking magazine", "qty": None, "unit": None},
+        ]
+    }
+
+    config = BlockConfig(
+        lambda name: f"@{name}",    # tag_gen_var
+        lambda name: f"@{name}",    # tag_gen_blk_start
+        lambda name: f"@!{name}",   # tag_gen_blk_end
+        lambda name: f"@~{name}",   # tag_gen_blk_vari
+        "*",                        # autotag_align
+        "_",                        # autotag_vari
+        8                           # tab_size
+    )
+
+    blk = Block(template, config=config)
+    blk.fill(data)
+    print(blk.content)
+
+
 if __name__ == "__main__":
     demo_shoplist_basic()
     demo_shoplist_basic_obj()
     demo_shoplist()
+    demo_shoplist_custom_cfg()
