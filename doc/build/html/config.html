@@ -76,7 +76,45 @@
              
   <section id="configuration">
 <span id="tgt-config"></span><h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h1>
-<p>Under construction …</p>
+<p>The format of <a class="reference internal" href="usage.html#tgt-primary-tags"><span class="std std-ref">primary</span></a> and <a class="reference internal" href="usage.html#tgt-auto-tags"><span class="std std-ref">automatic</span></a> tags in a
+template, together with other settings, can be configured by the configuration object of the
+<a class="reference internal" href="api.html#blocky.BlockConfig" title="blocky.BlockConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlockConfig</span></code></a> class.</p>
+<p>The configuration object attributes define the format of <a class="reference internal" href="usage.html#tgt-primary-tags"><span class="std std-ref">primary tags</span></a>
+using functions defining how a template tag string is generated from a tag name. The most
+straightforward way to define these tag generators is to use the <em>lamba</em> functions.</p>
+<p>The configuration object contains also attributes defining the symbols used for the
+<a class="reference internal" href="usage.html#tgt-auto-tags"><span class="std std-ref">automatic tags</span></a>, and a tabulator size attribute used by the <em>alignment
+autotag</em> when tabulators are used for the alignment.</p>
+<p>The following example of a block configuration object uses the <em>at</em> sign <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> as a primary tag
+symbol:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">BlockConfig</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>    <span class="c1"># tag_gen_var</span>
+    <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>    <span class="c1"># tag_gen_blk_start</span>
+    <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;@!</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># tag_gen_blk_end</span>
+    <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;@~</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># tag_gen_blk_vari</span>
+    <span class="s2">&quot;*&quot;</span><span class="p">,</span>                        <span class="c1"># autotag_align</span>
+    <span class="s2">&quot;_&quot;</span><span class="p">,</span>                        <span class="c1"># autotag_vari</span>
+    <span class="mi">8</span>                           <span class="c1"># tab_size</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The template tags configured by the configuration object above have the following format:</p>
+<ul class="simple">
+<li><p>Variable: <code class="docutils literal notranslate"><span class="pre">&#64;name</span></code>.</p></li>
+<li><p>Block start: <code class="docutils literal notranslate"><span class="pre">&#64;name</span></code>.</p></li>
+<li><p>Block end: <code class="docutils literal notranslate"><span class="pre">&#64;!name</span></code>.</p></li>
+<li><p>Block variation separator: <code class="docutils literal notranslate"><span class="pre">&#64;~name</span></code>.</p></li>
+<li><p>Alignment autotag: <code class="docutils literal notranslate"><span class="pre">&#64;*</span></code>.</p></li>
+<li><p>Variation autotag: <code class="docutils literal notranslate"><span class="pre">&#64;_</span></code>.</p></li>
+</ul>
+<p>The configuration object <code class="docutils literal notranslate"><span class="pre">config</span></code> can then be assigned to the primary <a class="reference internal" href="api.html#blocky.Block" title="blocky.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> object
+in its constructor <a class="reference internal" href="api.html#blocky.Block.__init__" title="blocky.Block.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Block.__init__()</span></code></a> as illustrated below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">blk</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, the configuration object can be assigned directly to the <a class="reference internal" href="api.html#blocky.Block.config" title="blocky.Block.config"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Block.config</span></code></a>
+attribute.</p>
+<p>All child blocks of a configured block will automatically use the same configuration.</p>
 </section>
 
 

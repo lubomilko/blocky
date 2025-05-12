@@ -81,11 +81,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#template-tags">Template tags</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="usage.html#basic-tags">Basic tags</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage.html#special-automatic-tags">Special automatic tags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#primary-tags">Primary tags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#automatic-tags">Automatic tags</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#automatic-filling">Automatic filling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#automatic-template-filling">Automatic template filling</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="usage.html#basic-automatic-filling">Basic automatic filling</a></li>
 <li class="toctree-l3"><a class="reference internal" href="usage.html#advanced-automatic-filling">Advanced automatic filling</a></li>
 </ul>
@@ -94,12 +94,37 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#block-class">Block class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#blocky.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.config"><code class="docutils literal notranslate"><span class="pre">Block.config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.name"><code class="docutils literal notranslate"><span class="pre">Block.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.content"><code class="docutils literal notranslate"><span class="pre">Block.content</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.autotags"><code class="docutils literal notranslate"><span class="pre">Block.autotags</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.__init__"><code class="docutils literal notranslate"><span class="pre">Block.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.parent"><code class="docutils literal notranslate"><span class="pre">Block.parent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.children"><code class="docutils literal notranslate"><span class="pre">Block.children</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.template"><code class="docutils literal notranslate"><span class="pre">Block.template</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.load_template"><code class="docutils literal notranslate"><span class="pre">Block.load_template()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.save_content"><code class="docutils literal notranslate"><span class="pre">Block.save_content()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.fill"><code class="docutils literal notranslate"><span class="pre">Block.fill()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.reset"><code class="docutils literal notranslate"><span class="pre">Block.reset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.clear"><code class="docutils literal notranslate"><span class="pre">Block.clear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.clone"><code class="docutils literal notranslate"><span class="pre">Block.clone()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.get_subblock"><code class="docutils literal notranslate"><span class="pre">Block.get_subblock()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.clear_subblock"><code class="docutils literal notranslate"><span class="pre">Block.clear_subblock()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.set_subblock"><code class="docutils literal notranslate"><span class="pre">Block.set_subblock()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.set"><code class="docutils literal notranslate"><span class="pre">Block.set()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.set_variables"><code class="docutils literal notranslate"><span class="pre">Block.set_variables()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.Block.clear_variables"><code class="docutils literal notranslate"><span class="pre">Block.clear_variables()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#block-configuration-class">Block configuration class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig"><code class="docutils literal notranslate"><span class="pre">BlockConfig</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#blocky.BlockConfig"><code class="docutils literal notranslate"><span class="pre">BlockConfig</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig.tag_gen_var"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_var</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig.tag_gen_blk_start"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_blk_start</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig.tag_gen_blk_end"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_blk_end</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig.tag_gen_blk_vari"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tag_gen_blk_vari</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig.autotag_align"><code class="docutils literal notranslate"><span class="pre">BlockConfig.autotag_align</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig.autotag_vari"><code class="docutils literal notranslate"><span class="pre">BlockConfig.autotag_vari</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#blocky.BlockConfig.tab_size"><code class="docutils literal notranslate"><span class="pre">BlockConfig.tab_size</span></code></a></li>
 </ul>
 </li>
 </ul>
