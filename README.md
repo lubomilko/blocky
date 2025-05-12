@@ -1,8 +1,8 @@
 # Blocky template engine
 
-[Blocky](https://github.com/lubomilko/blocky) is a minimalistic generic Python template engine
-able to generate various types of text-based content, e.g., standard text, source code in various
-languages, markdown or reStructuredText files, HTML pages, XML or JSON data files, etc.
+[Blocky](https://github.com/lubomilko/blocky) is a minimalistic general-purpose Python template
+engine able to generate various types of text-based content, e.g., standard text, source code in
+various languages, markdown or reStructuredText files, HTML pages, XML or JSON data files, etc.
 
 Please read the [documentation here](https://lubomilko.github.io/blocky).
 
@@ -15,6 +15,7 @@ content is printed at the end.
 
 ``` python
   from blocky import Block
+
 
   template = """
                               SHOPPING LIST

@@ -332,6 +332,7 @@ using the advanced operations described above. The template is defined directly 
 
     from blocky import Block
 
+
     template = """
                                 SHOPPING LIST
       Items                                                         Quantity
