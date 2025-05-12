@@ -49,7 +49,8 @@ class BlockConfig:
             string ``<^NAME>``.
         autotag_align: The *alignment* automatic tag symbol. Defaults to ``+``.
         autotag_vari: The *variation* automatic tag symbol. Defaults to ``.``.
-        tab_size: A tabulator size in number of space characters. Defaults to 4.
+        tab_size: A tabulator size in the number of space characters. Used by the *alignment*
+            automatic tag when tabulators are used for the alignment. Defaults to 4.
     """
     tag_gen_var: Callable[[str], str] = lambda name: f"<{name.upper()}>"
     tag_gen_blk_start: Callable[[str], str] = lambda name: f"<{name.upper()}>"
