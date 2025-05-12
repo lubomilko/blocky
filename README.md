@@ -14,10 +14,6 @@ is loaded from the `template` string and filled using the `data` dictionary. The
 content is printed at the end.
 
 ``` python
-  import sys
-
-  sys.path.insert(0, f"{sys.path[0]}/relative/path/to/dir/with/blocky")
-
   from blocky import Block
 
   template = """
