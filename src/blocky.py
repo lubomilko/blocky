@@ -47,16 +47,17 @@ class BlockConfig:
             tag.
             Defaults to a lamba function converting a tag name ``name`` to a block variation tag
             string ``<^NAME>``.
-        autotag_charrep: The *char repeat* automatic tag name. Defaults to ``+``.
-        autotag_stdlastfirst: The *standard/last/first* automatic tag name. Defaults to ``.``.
-        tab_size: A tabulator size in number of space characters. Defaults to 4.
+        autotag_align: The *alignment* automatic tag symbol. Defaults to ``+``.
+        autotag_vari: The *variation* automatic tag symbol. Defaults to ``.``.
+        tab_size: A tabulator size in the number of space characters. Used by the *alignment*
+            automatic tag when tabulators are used for the alignment. Defaults to 4.
     """
     tag_gen_var: Callable[[str], str] = lambda name: f"<{name.upper()}>"
     tag_gen_blk_start: Callable[[str], str] = lambda name: f"<{name.upper()}>"
     tag_gen_blk_end: Callable[[str], str] = lambda name: f"</{name.upper()}>"
     tag_gen_blk_vari: Callable[[str], str] = lambda name: f"<^{name.upper()}>"
-    autotag_charrep: str = "+"
-    autotag_stdlastfirst: str = "."
+    autotag_align: str = "+"
+    autotag_vari: str = "."
     tab_size: int = 4
 
 
@@ -68,7 +69,7 @@ class Block:
             a template.
         name (str): A block name. Usually set automatically by the :meth:`get_subblock` method.
         content (str): The generated block content, i.e., a template filled with data.
-        autotags (bool): Enables the automatic tags (char repeat, etc.) to be filled automatically.
+        autotags (bool): Enables the automatic tags (alignment, etc.) to be filled automatically.
     """
     def __init__(self, template: str | Path = "", name: str = "", config: BlockConfig = BlockConfig()) -> None:
         """Initializes a new block object.
@@ -88,7 +89,7 @@ class Block:
         self.__children: dict[str, Block] = {}
         self.__template: str = ""
         self.__clone_flag: bool = False     # Enables autoclone when setting new variables or subblocks.
-        self.__stdlastfirst_first: bool = True   # Indicates that the first value of stdlastfirst tag should be set.
+        self.__autovari_first: bool = True   # Indicates use of the first content of the "variation" autotag.
 
         if Path(template).is_file():
             self.load_template(template)
@@ -266,9 +267,9 @@ class Block:
             # Check if cloning flag indicates that the cloning should be actually performed.
             if force or self.__clone_flag:
                 if self.autotags:
-                    self.__set_std_last_first_tag(first=self.__stdlastfirst_first)
-                    self.__stdlastfirst_first = False
-                    self.__set_char_repeat_tag()
+                    self.__set_autotag_vari(first=self.__autovari_first)
+                    self.__autovari_first = False
+                    self.__set_autotag_align()
                 # Perform cloning.
                 self.content = f"{self.content}{self.__template}"
                 self.__clone_flag = False
@@ -368,9 +369,9 @@ class Block:
             self.parent.clone(passive=True)
         if self.autotags:
             # Finalize the block content by setting the value of special tags.
-            self.__set_std_last_first_tag(last=True)
-            self.__stdlastfirst_first = True
-            self.__set_char_repeat_tag()
+            self.__set_autotag_vari(last=True)
+            self.__autovari_first = True
+            self.__set_autotag_align()
         set_num = 0
         while self.parent and (set_num < count or count < 0):
             # pylint: disable=protected-access
@@ -477,17 +478,17 @@ class Block:
 
         return (subblk_start, subblk_end)
 
-    def __set_char_repeat_tag(self) -> None:
-        """Sets the value of the *char repeat* automatic tags in this block maintaining the
+    def __set_autotag_align(self) -> None:
+        """Sets the value of the *alignment* automatic tags in this block maintaining the
         predefined right-alignment to the next character different from the repeated one.
         """
         last_pos = 0
-        # Loop through all *char repeat* tags in block template and replace them with the correct
+        # Loop through all "alignment" tags in block template and replace them with the correct
         # number of repeated characters.
         while True:
-            (cont_start, cont_end, new_col, repeat_char) = self.__get_char_repeat_data(self.content)
+            (cont_start, cont_end, new_col, repeat_char) = self.__get_autotag_align_att(self.content)
             if cont_start >= 0:
-                (templ_start, templ_end, orig_col, _) = self.__get_char_repeat_data(self.__template, True, last_pos)
+                (templ_start, templ_end, orig_col, _) = self.__get_autotag_align_att(self.__template, True, last_pos)
                 orig_len = templ_end - templ_start
                 # Calculate the new length of the repeated characters in the filled content.
                 new_len = orig_len + (orig_col - new_col)
@@ -498,26 +499,26 @@ class Block:
                         new_len += 1
                 if new_len <= 0:
                     new_len = 1
-                # Set the repeated characters into the block content instead of the *char repeat* tag.
+                # Set the repeated characters into the block content instead of the "alignment" tag.
                 self.content = f"{self.content[0: cont_start]}{new_len * repeat_char}{self.content[cont_end:]}"
-                # Remember the last *char repeat* tag position in the template, because if there are more of these tags,
+                # Remember the last "alignment" tag position in the template, because if there are more of these tags,
                 # then we need to start searching only after the previous tag position, not again from the start.
                 last_pos = templ_end
             else:
                 break
 
-    def __get_char_repeat_data(self, text: str, expand_tabs: bool = False, start_pos: int = 0) \
-            -> tuple[int, int, int, str]:
-        """Returns the information about the first found *char repeat* automatic tag.
+    def __get_autotag_align_att(
+            self, text: str, expand_tabs: bool = False, start_pos: int = 0) -> tuple[int, int, int, str]:
+        """Returns the attributes of the first found *alignment* automatic tag.
 
         Args:
-            text: A string in which the *char repeat* automatic tag is searched.
+            text: A string in which the *alignment* automatic tag is searched.
             expand_tabs: Enables the replacement of tabulators with spaces for consistent
                 character position counting.
-            start_pos: The start character position for searching the *char repeat* automatic tag.
+            start_pos: The start character position for searching the *alignment* automatic tag.
 
         Returns:
-            A tuple with the following information about the *char repeat* automatic tag:
+            A tuple with the following information about the *alignment* automatic tag:
             start char position, end char position, line column index, character to be repeated.
         """
         if expand_tabs:
@@ -525,46 +526,50 @@ class Block:
         end_pos = -1
         tag_col_pos = -1
         repeat_char = None
-        charrep_tag = self.config.tag_gen_var(self.config.autotag_charrep)
+        charrep_tag = self.config.tag_gen_var(self.config.autotag_align)
         # Get starting position of repeated characters.
         st_pos = text.find(charrep_tag, start_pos)
         if st_pos >= 0:
             end_pos = st_pos + len(charrep_tag)
-            # Get character immediately following the *char repeat* tag. This character is going to be repeated.
+            # Get the repeated character immediately following the "alignment" tag.
             repeat_char = text[end_pos]
             while text[end_pos] == repeat_char:
                 end_pos += 1
-            # Get position of the last newline char before the *char repeat* tag.
+            # Get position of the last newline char before the "alignment" tag.
             line_st_pos = text.rfind("\n", 0, st_pos)
             line_st_pos = 0 if line_st_pos < 0 or line_st_pos > st_pos else line_st_pos + 1
-            # Get the line column position of the *char repeat* tag.
+            # Get the line column position of the "alignment" tag.
             tag_col_pos = len(text[line_st_pos: st_pos].expandtabs(self.config.tab_size))
         return (st_pos, end_pos, tag_col_pos, repeat_char)
 
-    def __set_std_last_first_tag(self, first: bool = False, last: bool = False) -> None:
-        """Sets the correct variation of the *standard/last/first* automatic tags in this block
-        content with the *standard* variation being set by default.
+    def __set_autotag_vari(self, first: bool = False, last: bool = False) -> None:
+        """Sets the correct content variation of the *variation* automatic tags in this block
+        content. The *variation* automatic tag can have two or three content variations:
+        *standard / last / first*, while the last *first* variation is optional. The *first*
+        (optional) variation is automatically set in the first clone of this block, the *standard*
+        variation is set in all subsequent clones, except for the last one, where the *last*
+        variation is set.
 
         Args:
-            first: Enables setting of the *first* value variation of the *standard/last/first*
-                automatic tag.
-            last: Enables setting of the *last* value variation of the *standard/last/first*
-                automatic tag.
+            first: Enables setting of the *first* value variation of the *variation* automatic tag.
+            last: Enables setting of the *last* value variation of the *variation* automatic tag.
         """
-        # Loop through all *last value* tags in block content and replace them with either standard value or last value.
+        # Loop through all *variation* autotags in a block content and replace them with either
+        # the "standard", "last" or "first" value.
         while True:
-            (subblk_start, subblk_end) = self.__get_block_pos(self.config.autotag_stdlastfirst, True)
+            (subblk_start, subblk_end) = self.__get_block_pos(self.config.autotag_vari, True)
             if 0 <= subblk_start < subblk_end:
-                (subblk_cont_start, subblk_cont_end) = self.__get_block_pos(self.config.autotag_stdlastfirst)
+                (subblk_cont_start, subblk_cont_end) = self.__get_block_pos(self.config.autotag_vari)
                 value_content = self.content[subblk_cont_start: subblk_cont_end]
                 value_content = self.__get_variation(
-                    value_content, self.config.autotag_stdlastfirst, 1 if last else 2 if first else 0)
+                    value_content, self.config.autotag_vari, 1 if last else 2 if first else 0)
                 self.content = f"{self.content[: subblk_start]}{value_content}{self.content[subblk_end:]}"
             else:
                 break
 
     def __get_variation(self, text: str, block_name: str, vari_idx: int) -> str:
-        """Finds the specified variation block and returns the required content variation from it.
+        """Finds the specified variation block and returns the content variation with the specified
+        index from it.
 
         Args:
             text: A string where the variation block is searched.

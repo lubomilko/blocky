@@ -123,16 +123,17 @@
 <span class="sd">            tag.</span>
 <span class="sd">            Defaults to a lamba function converting a tag name ``name`` to a block variation tag</span>
 <span class="sd">            string ``&lt;^NAME&gt;``.</span>
-<span class="sd">        autotag_charrep: The *char repeat* automatic tag name. Defaults to ``+``.</span>
-<span class="sd">        autotag_stdlastfirst: The *standard/last/first* automatic tag name. Defaults to ``.``.</span>
-<span class="sd">        tab_size: A tabulator size in number of space characters. Defaults to 4.</span>
+<span class="sd">        autotag_align: The *alignment* automatic tag symbol. Defaults to ``+``.</span>
+<span class="sd">        autotag_vari: The *variation* automatic tag symbol. Defaults to ``.``.</span>
+<span class="sd">        tab_size: A tabulator size in the number of space characters. Used by the *alignment*</span>
+<span class="sd">            automatic tag when tabulators are used for the alignment. Defaults to 4.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tag_gen_var</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
     <span class="n">tag_gen_blk_start</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
     <span class="n">tag_gen_blk_end</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;/</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
     <span class="n">tag_gen_blk_vari</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;^</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
-    <span class="n">autotag_charrep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span>
-    <span class="n">autotag_stdlastfirst</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+    <span class="n">autotag_align</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span>
+    <span class="n">autotag_vari</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
     <span class="n">tab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span></div>
 
 
@@ -147,7 +148,7 @@
 <span class="sd">            a template.</span>
 <span class="sd">        name (str): A block name. Usually set automatically by the :meth:`get_subblock` method.</span>
 <span class="sd">        content (str): The generated block content, i.e., a template filled with data.</span>
-<span class="sd">        autotags (bool): Enables the automatic tags (char repeat, etc.) to be filled automatically.</span>
+<span class="sd">        autotags (bool): Enables the automatic tags (alignment, etc.) to be filled automatically.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Block.__init__">
 <a class="viewcode-back" href="../api.html#blocky.Block.__init__">[docs]</a>
@@ -169,7 +170,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>     <span class="c1"># Enables autoclone when setting new variables or subblocks.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__stdlastfirst_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># Indicates that the first value of stdlastfirst tag should be set.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># Indicates use of the first content of the &quot;variation&quot; autotag.</span>
 
         <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
@@ -365,9 +366,9 @@
             <span class="c1"># Check if cloning flag indicates that the cloning should be actually performed.</span>
             <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autotags</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_std_last_first_tag</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__stdlastfirst_first</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__stdlastfirst_first</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_char_repeat_tag</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_vari</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_align</span><span class="p">()</span>
                 <span class="c1"># Perform cloning.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span> <span class="o">=</span> <span class="kc">False</span>
@@ -479,9 +480,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">passive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autotags</span><span class="p">:</span>
             <span class="c1"># Finalize the block content by setting the value of special tags.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__set_std_last_first_tag</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__stdlastfirst_first</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__set_char_repeat_tag</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_vari</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_align</span><span class="p">()</span>
         <span class="n">set_num</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="p">(</span><span class="n">set_num</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="c1"># pylint: disable=protected-access</span>
@@ -595,17 +596,17 @@
 
         <span class="k">return</span> <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__set_char_repeat_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the value of the *char repeat* automatic tags in this block maintaining the</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_autotag_align</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the value of the *alignment* automatic tags in this block maintaining the</span>
 <span class="sd">        predefined right-alignment to the next character different from the repeated one.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">last_pos</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Loop through all *char repeat* tags in block template and replace them with the correct</span>
+        <span class="c1"># Loop through all &quot;alignment&quot; tags in block template and replace them with the correct</span>
         <span class="c1"># number of repeated characters.</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">cont_start</span><span class="p">,</span> <span class="n">cont_end</span><span class="p">,</span> <span class="n">new_col</span><span class="p">,</span> <span class="n">repeat_char</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_char_repeat_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">cont_start</span><span class="p">,</span> <span class="n">cont_end</span><span class="p">,</span> <span class="n">new_col</span><span class="p">,</span> <span class="n">repeat_char</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_autotag_align_att</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">cont_start</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">templ_start</span><span class="p">,</span> <span class="n">templ_end</span><span class="p">,</span> <span class="n">orig_col</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_char_repeat_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_pos</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">templ_start</span><span class="p">,</span> <span class="n">templ_end</span><span class="p">,</span> <span class="n">orig_col</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_autotag_align_att</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_pos</span><span class="p">)</span>
                 <span class="n">orig_len</span> <span class="o">=</span> <span class="n">templ_end</span> <span class="o">-</span> <span class="n">templ_start</span>
                 <span class="c1"># Calculate the new length of the repeated characters in the filled content.</span>
                 <span class="n">new_len</span> <span class="o">=</span> <span class="n">orig_len</span> <span class="o">+</span> <span class="p">(</span><span class="n">orig_col</span> <span class="o">-</span> <span class="n">new_col</span><span class="p">)</span>
@@ -616,26 +617,26 @@
                         <span class="n">new_len</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">new_len</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">new_len</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="c1"># Set the repeated characters into the block content instead of the *char repeat* tag.</span>
+                <span class="c1"># Set the repeated characters into the block content instead of the &quot;alignment&quot; tag.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="w"> </span><span class="n">cont_start</span><span class="p">]</span><span class="si">}{</span><span class="n">new_len</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">repeat_char</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">cont_end</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="c1"># Remember the last *char repeat* tag position in the template, because if there are more of these tags,</span>
+                <span class="c1"># Remember the last &quot;alignment&quot; tag position in the template, because if there are more of these tags,</span>
                 <span class="c1"># then we need to start searching only after the previous tag position, not again from the start.</span>
                 <span class="n">last_pos</span> <span class="o">=</span> <span class="n">templ_end</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">break</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__get_char_repeat_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expand_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the information about the first found *char repeat* automatic tag.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_autotag_align_att</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expand_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the attributes of the first found *alignment* automatic tag.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            text: A string in which the *char repeat* automatic tag is searched.</span>
+<span class="sd">            text: A string in which the *alignment* automatic tag is searched.</span>
 <span class="sd">            expand_tabs: Enables the replacement of tabulators with spaces for consistent</span>
 <span class="sd">                character position counting.</span>
-<span class="sd">            start_pos: The start character position for searching the *char repeat* automatic tag.</span>
+<span class="sd">            start_pos: The start character position for searching the *alignment* automatic tag.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A tuple with the following information about the *char repeat* automatic tag:</span>
+<span class="sd">            A tuple with the following information about the *alignment* automatic tag:</span>
 <span class="sd">            start char position, end char position, line column index, character to be repeated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">expand_tabs</span><span class="p">:</span>
@@ -643,46 +644,50 @@
         <span class="n">end_pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">tag_col_pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">repeat_char</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">charrep_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_var</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_charrep</span><span class="p">)</span>
+        <span class="n">charrep_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_var</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_align</span><span class="p">)</span>
         <span class="c1"># Get starting position of repeated characters.</span>
         <span class="n">st_pos</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">charrep_tag</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">st_pos</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">end_pos</span> <span class="o">=</span> <span class="n">st_pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">charrep_tag</span><span class="p">)</span>
-            <span class="c1"># Get character immediately following the *char repeat* tag. This character is going to be repeated.</span>
+            <span class="c1"># Get the repeated character immediately following the &quot;alignment&quot; tag.</span>
             <span class="n">repeat_char</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">end_pos</span><span class="p">]</span>
             <span class="k">while</span> <span class="n">text</span><span class="p">[</span><span class="n">end_pos</span><span class="p">]</span> <span class="o">==</span> <span class="n">repeat_char</span><span class="p">:</span>
                 <span class="n">end_pos</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="c1"># Get position of the last newline char before the *char repeat* tag.</span>
+            <span class="c1"># Get position of the last newline char before the &quot;alignment&quot; tag.</span>
             <span class="n">line_st_pos</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">st_pos</span><span class="p">)</span>
             <span class="n">line_st_pos</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">line_st_pos</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">line_st_pos</span> <span class="o">&gt;</span> <span class="n">st_pos</span> <span class="k">else</span> <span class="n">line_st_pos</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="c1"># Get the line column position of the *char repeat* tag.</span>
+            <span class="c1"># Get the line column position of the &quot;alignment&quot; tag.</span>
             <span class="n">tag_col_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">line_st_pos</span><span class="p">:</span> <span class="n">st_pos</span><span class="p">]</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tab_size</span><span class="p">))</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">st_pos</span><span class="p">,</span> <span class="n">end_pos</span><span class="p">,</span> <span class="n">tag_col_pos</span><span class="p">,</span> <span class="n">repeat_char</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__set_std_last_first_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the correct variation of the *standard/last/first* automatic tags in this block</span>
-<span class="sd">        content with the *standard* variation being set by default.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_autotag_vari</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the correct content variation of the *variation* automatic tags in this block</span>
+<span class="sd">        content. The *variation* automatic tag can have two or three content variations:</span>
+<span class="sd">        *standard / last / first*, while the last *first* variation is optional. The *first*</span>
+<span class="sd">        (optional) variation is automatically set in the first clone of this block, the *standard*</span>
+<span class="sd">        variation is set in all subsequent clones, except for the last one, where the *last*</span>
+<span class="sd">        variation is set.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            first: Enables setting of the *first* value variation of the *standard/last/first*</span>
-<span class="sd">                automatic tag.</span>
-<span class="sd">            last: Enables setting of the *last* value variation of the *standard/last/first*</span>
-<span class="sd">                automatic tag.</span>
+<span class="sd">            first: Enables setting of the *first* value variation of the *variation* automatic tag.</span>
+<span class="sd">            last: Enables setting of the *last* value variation of the *variation* automatic tag.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Loop through all *last value* tags in block content and replace them with either standard value or last value.</span>
+        <span class="c1"># Loop through all *variation* autotags in a block content and replace them with either</span>
+        <span class="c1"># the &quot;standard&quot;, &quot;last&quot; or &quot;first&quot; value.</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_stdlastfirst</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_vari</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
             <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">subblk_start</span> <span class="o">&lt;</span> <span class="n">subblk_end</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">subblk_cont_start</span><span class="p">,</span> <span class="n">subblk_cont_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_stdlastfirst</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">subblk_cont_start</span><span class="p">,</span> <span class="n">subblk_cont_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_vari</span><span class="p">)</span>
                 <span class="n">value_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">subblk_cont_start</span><span class="p">:</span> <span class="n">subblk_cont_end</span><span class="p">]</span>
                 <span class="n">value_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_variation</span><span class="p">(</span>
-                    <span class="n">value_content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_stdlastfirst</span><span class="p">,</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">last</span> <span class="k">else</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">first</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">value_content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_vari</span><span class="p">,</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">last</span> <span class="k">else</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">first</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="w"> </span><span class="n">subblk_start</span><span class="p">]</span><span class="si">}{</span><span class="n">value_content</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">subblk_end</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">break</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__get_variation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vari_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the specified variation block and returns the required content variation from it.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the specified variation block and returns the content variation with the specified</span>
+<span class="sd">        index from it.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            text: A string where the variation block is searched.</span>
