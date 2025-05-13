@@ -1,20 +1,20 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blocky &mdash; Blocky 2.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-
+  <title>blocky &mdash; Blocky template engine 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-      <script src="../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=51b770b3"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -29,7 +29,7 @@
           
           
           <a href="../index.html" class="icon icon-home">
-            Blocky
+            Blocky template engine
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -42,8 +42,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../config.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#manual-template-filling">Manual template filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#automated-template-filling">Automated template filling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
 </ul>
 
@@ -53,7 +54,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Blocky</a>
+          <a href="../index.html">Blocky template engine</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -92,406 +93,624 @@
 <span class="sd">along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Lubomir Milko&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright (C) 2025 Lubomir Milko&quot;</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.0.0&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.1.0&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;GPLv3&quot;</span>
+
+
+<div class="viewcode-block" id="Tag">
+<a class="viewcode-back" href="../api.html#blocky.Tag">[docs]</a>
+<span class="k">class</span> <span class="nc">Tag</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class representing a generic tag in the template.</span>
+<span class="sd">    Each tag consists of tag name surrounded by tag begin and end strings.</span>
+<span class="sd">    Example of a possible tag string with the tag name = *&quot;example&quot;*, tag begin</span>
+<span class="sd">    string = *&quot;&lt;&quot;* and tag end string = *&quot;&gt;&quot;*:</span>
+<span class="sd">    *&lt;example&gt;*</span>
+<span class="sd">    Tag name is usually variable, but a default name can be assigned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: disable=used-before-assignment</span>
+    <span class="c1"># rationale: Probably a bug in Pylint, because it assumes that the first &quot;str&quot; type hint is a variable</span>
+    <span class="c1"># being used before assignment.</span>
+<div class="viewcode-block" id="Tag.__init__">
+<a class="viewcode-back" href="../api.html#blocky.Tag.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">begin_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="n">end_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tag class constructor.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            default_name (str, optional): Default tag name. Defaults to &quot;&quot;.</span>
+<span class="sd">            begin_str (str, optional): String defining the beginning of a tag. Defaults to &quot;&lt;&quot;.</span>
+<span class="sd">            end_str (str, optional): String defining the end of a tag. Defaults to &quot;&gt;&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin</span> <span class="o">=</span> <span class="n">begin_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">end_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="Tag.str_name">
+<a class="viewcode-back" href="../api.html#blocky.Tag.str_name">[docs]</a>
+    <span class="k">def</span> <span class="nf">str_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns complete tag string consisting of provided tag name surrounded by tag begin and</span>
+<span class="sd">        tag end strings, i.e. &quot;tag_begin&quot;+&quot;tag_name&quot;+&quot;tag_end&quot;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tag_name (str): Name of the tag. If not specified, then default tag name is used. Defaults to &quot;&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Tag string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">tag_name</span> <span class="k">if</span> <span class="n">tag_name</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">begin</span><span class="si">}{</span><span class="n">name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property method that returns the complete tag string consisting of predefined tag name surrounded by</span>
+<span class="sd">        tag begin and tag end strings, i.e. &quot;tag_begin&quot;+&quot;tag_name&quot;+&quot;tag_end&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Tag string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">begin</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TagsFormat">
+<a class="viewcode-back" href="../api.html#blocky.TagsFormat">[docs]</a>
+<span class="k">class</span> <span class="nc">TagsFormat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class defining the format of tags used in template strings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TagsFormat.__init__">
+<a class="viewcode-back" href="../api.html#blocky.TagsFormat.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">block_start</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">block_end</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">block_variation</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">char_repeat</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span>
+            <span class="n">std_last_first_start</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">std_last_first_end</span><span class="p">:</span> <span class="n">Tag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">:</span> <span class="n">Tag</span> <span class="o">=</span> <span class="n">variable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_start</span><span class="p">:</span> <span class="n">Tag</span> <span class="o">=</span> <span class="n">block_start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_end</span><span class="p">:</span> <span class="n">Tag</span> <span class="o">=</span> <span class="n">block_end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_variation</span><span class="p">:</span> <span class="n">Tag</span> <span class="o">=</span> <span class="n">block_variation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">char_repeat</span><span class="p">:</span> <span class="n">Tag</span> <span class="o">=</span> <span class="n">char_repeat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">std_last_first_start</span><span class="p">:</span> <span class="n">Tag</span> <span class="o">=</span> <span class="n">std_last_first_start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">std_last_first_end</span><span class="p">:</span> <span class="n">Tag</span> <span class="o">=</span> <span class="n">std_last_first_end</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="BlockConfig">
 <a class="viewcode-back" href="../api.html#blocky.BlockConfig">[docs]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">BlockConfig</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The template block configuration defining the format of tags and other template parts.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        tag_gen_var (Callable[[str], str]): A tag generator function for a variable tag.</span>
-<span class="sd">            Defaults to a lamba function converting a tag name ``name`` to a variable tag string</span>
-<span class="sd">            ``&lt;NAME&gt;``.</span>
-<span class="sd">        tag_gen_blk_start (Callable[[str], str]): A tag generator function for a block start tag.</span>
-<span class="sd">            Defaults to a lamba function converting a tag name ``name`` to a block start tag</span>
-<span class="sd">            string ``&lt;NAME&gt;``.</span>
-<span class="sd">        tag_gen_blk_end (Callable[[str], str]): A tag generator function for a block end tag.</span>
-<span class="sd">            Defaults to a lamba function converting a tag name ``name`` to a block end tag string</span>
-<span class="sd">            ``&lt;/NAME&gt;``.</span>
-<span class="sd">        tag_gen_blk_vari (Callable[[str], str]): A tag generator function for a block variation</span>
-<span class="sd">            tag.</span>
-<span class="sd">            Defaults to a lamba function converting a tag name ``name`` to a block variation tag</span>
-<span class="sd">            string ``&lt;^NAME&gt;``.</span>
-<span class="sd">        autotag_align: The *alignment* automatic tag symbol. Defaults to ``+``.</span>
-<span class="sd">        autotag_vari: The *variation* automatic tag symbol. Defaults to ``.``.</span>
-<span class="sd">        tab_size: A tabulator size in the number of space characters. Used by the *alignment*</span>
-<span class="sd">            automatic tag when tabulators are used for the alignment. Defaults to 4.</span>
+<span class="k">class</span> <span class="nc">BlockConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Block configuration class defining the formatting of blocks within the string template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tag_gen_var</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
-    <span class="n">tag_gen_blk_start</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
-    <span class="n">tag_gen_blk_end</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;/</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
-    <span class="n">tag_gen_blk_vari</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;^</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
-    <span class="n">autotag_align</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span>
-    <span class="n">autotag_vari</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
-    <span class="n">tab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span></div>
+<div class="viewcode-block" id="BlockConfig.__init__">
+<a class="viewcode-back" href="../api.html#blocky.BlockConfig.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">TagsFormat</span><span class="p">,</span> <span class="n">tab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span> <span class="n">TagsFormat</span> <span class="o">=</span> <span class="n">tags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">tab_size</span></div>
+</div>
+
+
+
+<span class="n">DEFAULT_BLOCK_CONFIG</span><span class="p">:</span> <span class="n">BlockConfig</span> <span class="o">=</span> <span class="n">BlockConfig</span><span class="p">(</span>
+    <span class="n">TagsFormat</span><span class="p">(</span>                             <span class="c1"># tags</span>
+        <span class="n">Tag</span><span class="p">(),</span>                                  <span class="c1"># tags.variable</span>
+        <span class="n">Tag</span><span class="p">(),</span>                                  <span class="c1"># tags.block_start</span>
+        <span class="n">Tag</span><span class="p">(</span><span class="n">begin_str</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;&lt;/&quot;</span><span class="p">),</span>                   <span class="c1"># tags.block_end</span>
+        <span class="n">Tag</span><span class="p">(</span><span class="n">begin_str</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;&lt;^&quot;</span><span class="p">),</span>                   <span class="c1"># tags.block_variation</span>
+        <span class="n">Tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;+&quot;</span><span class="p">),</span>                         <span class="c1"># tags.char_repeat</span>
+        <span class="n">Tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>                         <span class="c1"># tags.std_last_first_start</span>
+        <span class="n">Tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">begin_str</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;&lt;/&quot;</span><span class="p">)),</span>       <span class="c1"># tags.std_last_first_end</span>
+    <span class="mi">4</span><span class="p">)</span>                                      <span class="c1"># tab_size</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Object defining default block configuration.</span>
+
+<span class="sd">* Below is the default format of template tags with example tag names using upper-case letters:</span>
+
+<span class="sd">    * Variable: ``&lt;VAR_NAME&gt;``</span>
+<span class="sd">    * Block</span>
+
+<span class="sd">        * start: ``&lt;BLOCK_NAME&gt;``</span>
+<span class="sd">        * end: ``&lt;/BLOCK_NAME&gt;``</span>
+
+<span class="sd">    * Right-aligned character repeat: ``&lt;+&gt;``</span>
+<span class="sd">    * Standard/last value definition: ``&lt;.&gt;STD_VALUE&lt;^.&gt;LAST_VALUE&lt;/.&gt;``</span>
+<span class="sd">    * Standard/last/first value definition: ``&lt;.&gt;STD_VALUE&lt;^.&gt;LAST_VALUE&lt;^.&gt;FIRST_VALUE&lt;/.&gt;``</span>
+
+<span class="sd">* Default tabulator size = 4.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="BlockData">
+<a class="viewcode-back" href="../api.html#blocky.BlockData">[docs]</a>
+<span class="k">class</span> <span class="nc">BlockData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for creating objects containing data to be filled into template blocks defined by</span>
+<span class="sd">    the :class:`Block` class. The object attributes shall directly correspond to the block and variable tags</span>
+<span class="sd">    within the block template. The attribute values can then be used to :meth:`fill` the block template.</span>
+<span class="sd">    The list below defines relationships between :class:`BlockData` object attribute types and their use in</span>
+<span class="sd">    a block template:</span>
+
+<span class="sd">    *   Strings, integers, floats, booleans -&gt; Values set directly as block variables.</span>
+<span class="sd">    *   :class:`BlockData` subobject -&gt; Data to be filled into a subblock of the parent block being filled.</span>
+<span class="sd">    *   List -&gt; Content of block clones, each list item represents a content to be used in one cloned instance.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BlockData.__init__">
+<a class="viewcode-back" href="../api.html#blocky.BlockData.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_hndl</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Block&quot;</span><span class="p">,</span> <span class="nb">object</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor creating new block object data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_dict (dict, optional): Dictionary defining the object attributes to be created using the</span>
+<span class="sd">                :meth:`import_dict` method. Defaults to None.</span>
+<span class="sd">            fill_hndl (Callable[[Block, object | dict, int], None], optional): Handler function to be called after</span>
+<span class="sd">                the values of a corresponding :class:`BlockData` object are set into the block template. The handler</span>
+<span class="sd">                can contain special operations to be performed after the regular template filling using the block data</span>
+<span class="sd">                values. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill_hndl</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Block</span><span class="p">,</span> <span class="nb">object</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill_hndl</span>
+        <span class="k">if</span> <span class="n">data_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">import_dict</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlockData.import_dict">
+<a class="viewcode-back" href="../api.html#blocky.BlockData.import_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Imports data from dictionary, i.e., converts the dictionary key-value pairs into the object attribute-value</span>
+<span class="sd">        pairs. The dictionary values are converted according to the following rules:</span>
+
+<span class="sd">        *   Strings, integers, floats, booleans -&gt; Directly used as :class:`BlockData` object attribute values.</span>
+<span class="sd">        *   Subdictionary with its own key-value pairs -&gt; Subdictionary is added as a :class:`BlockData` subobject</span>
+<span class="sd">            into the parent :class:`BlockData` object with internal attributes set according to the key-value</span>
+<span class="sd">            pairs of the subdictionary.</span>
+<span class="sd">        *   List, tuple -&gt; Added as a list attribute to the parent :class:`BlockData` object. Lists or tuples define</span>
+<span class="sd">            instances of template blocks that need to be cloned. Each list or tuple item should consist of a</span>
+<span class="sd">            dictionary defining the key-value pairs used for filling a single clone instance.</span>
+<span class="sd">            Only one-dimensional lists are supported for filling the template blocks.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_dict (dict): Dictionary defining the structure of object attributes to be created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">BlockData</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">BlockData</span><span class="p">()</span>
+                <span class="n">val</span><span class="o">.</span><span class="n">import_dict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">val</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">get_value</span><span class="p">(</span><span class="n">value</span><span class="p">))</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="Block">
 <a class="viewcode-back" href="../api.html#blocky.Block">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Block</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Block data corresponding to a part of the template within a block start and end tags.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        config (BlockConfig): A block configuration primarily defining the format of tags within</span>
-<span class="sd">            a template.</span>
-<span class="sd">        name (str): A block name. Usually set automatically by the :meth:`get_subblock` method.</span>
-<span class="sd">        content (str): The generated block content, i.e., a template filled with data.</span>
-<span class="sd">        autotags (bool): Enables the automatic tags (alignment, etc.) to be filled automatically.</span>
+<span class="k">class</span> <span class="nc">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class representing a block indicated by block start and block end tags inside parent block template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Block.__init__">
 <a class="viewcode-back" href="../api.html#blocky.Block.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">BlockConfig</span> <span class="o">=</span> <span class="n">BlockConfig</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes a new block object.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">config</span><span class="p">:</span> <span class="n">BlockConfig</span> <span class="o">=</span> <span class="n">DEFAULT_BLOCK_CONFIG</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="s2">&quot;Block&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor. Creates a new block object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            template (str | Path): Template string or a path to a text file template.</span>
-<span class="sd">            name (str): A block name.</span>
-<span class="sd">            config (BlockConfig): A block configuration (template tags format, tabulator size,</span>
-<span class="sd">                etc.)</span>
+<span class="sd">            template (str, optional): Template to be used for the :class:`Block` object. Defaults to &quot;&quot;.</span>
+<span class="sd">            block_name (str, optional): Block name. Set automatically to the block tag name from the</span>
+<span class="sd">                template when the :meth:`get_subblock` method is used.</span>
+<span class="sd">            config (:class:`BlockConfig`, optional): Block configuration (template tags format, tabulator size, etc.)</span>
+<span class="sd">            parent: Parent :class:`Block` object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span> <span class="n">BlockConfig</span> <span class="o">=</span> <span class="n">config</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">autotags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">__parent</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Template with tags to be filled by filling module.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>     <span class="c1"># Enables autoclone when setting new variables or subblocks.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># Indicates use of the first content of the &quot;variation&quot; autotag.</span>
+        <span class="c1"># Content created by filling tags in the template and its clones.</span>
+        <span class="c1"># Flag indicating that a new clone of the template is going to be automatically added after the</span>
+        <span class="c1"># actual content as soon as new template variables or blocks are set.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Flag indicating that a first value of a special *first-last value* tag should be set.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_first_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_content</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="c1"># Block name corresponding to the block tag name in the template.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">block_name</span>
+        <span class="c1"># Parent block and dictionary of child subblocks with block names as keys and block objects as values.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">and</span> <span class="n">block_name</span><span class="p">:</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">subblocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span></div>
+        <span class="c1"># Set template if it is defined in constructor.</span>
+        <span class="k">if</span> <span class="n">template</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="n">template</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Block&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A parent block.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parent</span>
+    <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property method that returns the block template string containing the tags representing subblocks and variables.</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Block&quot;</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of child subblocks extracted using a :meth:`get_subblock` method.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__children</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A block template string.&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Block template.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__template</span>
 
     <span class="nd">@template</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter method that sets a block template string containing the tags representing subblocks and variables.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            template (str): Block template string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__template</span> <span class="o">=</span> <span class="n">template</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">template</span>
 
 <div class="viewcode-block" id="Block.load_template">
 <a class="viewcode-back" href="../api.html#blocky.Block.load_template">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">load_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the block template from a text file.&quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_template</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">file_template</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span></div>
+    <span class="k">def</span> <span class="nf">load_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">subblock_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads block template from the text file. Alternatively, if the template is provided directly</span>
+<span class="sd">        as a string (i.e., not the file path), then the string is directly used as a block template.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            template (str | Path): Path to the text file containing a string to be used as a block template.</span>
+<span class="sd">                Alternatively, a raw string can be provided instead of the file path, to be directly used</span>
+<span class="sd">                as a template.</span>
+<span class="sd">            subblock_name (str, optional): Name of the subblock to be extracted from the specified template.</span>
+<span class="sd">                If not specified, then the whole template string will be set as a template. Defaults to an</span>
+<span class="sd">                empty string &quot;&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_template</span><span class="p">:</span>
+                <span class="n">template_str</span> <span class="o">=</span> <span class="n">file_template</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">template_str</span> <span class="o">=</span> <span class="n">template</span>
+
+        <span class="k">if</span> <span class="n">subblock_name</span><span class="p">:</span>
+            <span class="n">blk_file</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="n">template_str</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">blk_file</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">subblock_name</span><span class="p">)</span><span class="o">.</span><span class="n">template</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">subblock_name</span>
+            <span class="k">del</span> <span class="n">blk_file</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template_str</span></div>
 
 
 <div class="viewcode-block" id="Block.save_content">
 <a class="viewcode-back" href="../api.html#blocky.Block.save_content">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">save_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the block content to a text file.&quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_content</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">save_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves block content to the text file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            content_file_path (str | Path): Path to the text file in which the block content will be saved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">content_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_content</span><span class="p">:</span>
             <span class="n">file_content</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Block.fill">
 <a class="viewcode-back" href="../api.html#blocky.Block.fill">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">object</span><span class="p">,</span> <span class="n">__clone_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fills the block content using the data from a dictionary or an object.</span>
+    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_data</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">__subidx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fills the block content using the data from a specified object (:class:`BlockData` recommended) or a</span>
+<span class="sd">        dictionary. The list below defines the relationships between the object attribute values or dictionary</span>
+<span class="sd">        values and their use in a block template:</span>
 
-<span class="sd">        The dictionary keys or object attribute names define the template variable or a block to</span>
-<span class="sd">        be set. The dictionary or object attribute values are used according to the rules below:</span>
-
-<span class="sd">        *   Strings, integers, floats, booleans -&gt; Variable values.</span>
-<span class="sd">        *   Dictionary or object -&gt; Data to be filled into a child block in a current block.</span>
-<span class="sd">        *   List or tuple -&gt; Content of block clones. Each element must be a dictionary or object</span>
-<span class="sd">            with data used a for filling one cloned instance of a block.</span>
-
-<span class="sd">        Two special key/attribute-value pairs can be used in a data dictionary or object:</span>
-
-<span class="sd">        *   ``fill_hndl`` - ``func(block: Block, data: dict | object, clone_subidx: int) -&gt; None``</span>
-<span class="sd">            function: A user-defined handler function with an access to the template block object</span>
-<span class="sd">            and a data being filled usable for special low-level operations.</span>
-
-<span class="sd">        *   ``vari_idx`` - int: A variation index to be set for a variation block type</span>
-<span class="sd">            (see the ``vari_idx`` attribute of the :meth:``set`` method).</span>
+<span class="sd">        *   Strings, integers, floats, booleans -&gt; Values set directly as block variables into the template tags.</span>
+<span class="sd">        *   Subobject or subdictionary -&gt; Data to be filled into a subblock of the parent block being filled.</span>
+<span class="sd">        *   List or tuple -&gt; Content of block clones. Each list or tuple item should consist of another subobject or</span>
+<span class="sd">            a subdictionary representing attributes and their values to be used in one cloned instance of</span>
+<span class="sd">            a template block.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data: A dictionary or object with to be used for filling a block template.</span>
-<span class="sd">            __clone_idx: An internal index of a block clone being filled.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            int | bool: Internally used variation index for variation blocks being filled.</span>
+<span class="sd">            block_data (object | dict): Object or dictionary with attribute-value or key-value pairs to be used to</span>
+<span class="sd">                fill the block template.</span>
+<span class="sd">            __subidx (int, optional): Internal value representing the item index for attributes of list type.</span>
+<span class="sd">                The index is sent as an argument to the fill handler function (it it&#39;s used) to indicate which</span>
+<span class="sd">                list item is being used for filling the template block. This parameter shall be left at a</span>
+<span class="sd">                default value 0 when this method is called. Defaults to 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
-            <span class="k">return</span> <span class="mi">0</span>    <span class="c1"># Do nothing if data is not a dictionary or an object.</span>
-
-        <span class="c1"># Returned variation index for a block filled with data having the special vari_idx attribute.</span>
-        <span class="n">ret_vari_idx</span> <span class="o">=</span> <span class="mi">0</span>
-
         <span class="c1"># Get the block data in form of a dictionary even if it is defined as an object.</span>
-        <span class="n">data_dict</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">data</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="n">block_data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">block_data</span><span class="o">.</span><span class="vm">__dict__</span>
 
-        <span class="c1"># 1. Loop through list or tuple elements of block data and fill the cloned blocks.</span>
+        <span class="c1"># 1. Loop through list items of block data and fill the template blocks that need to be cloned.</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">attrib</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">subblk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="k">break</span>
+                <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">subblk</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
                         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
                             <span class="n">subblk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
                             <span class="n">subblk</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-                        <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># Value is an empty list, i.e., [].</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># Value is an empty list, i.e., [].</span>
 
-        <span class="c1"># 2. Loop through object or dict elements of block data and fill the single instance (non-cloned) blocks.</span>
+        <span class="c1"># 2. Loop through object or dict items of block data and fill the single instance (non-cloned) template blocks.</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">))</span> <span class="ow">and</span> <span class="n">attrib</span> <span class="o">!=</span> <span class="s2">&quot;fill_hndl&quot;</span><span class="p">:</span>
-                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">attrib</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">subblk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="c1"># If no block is found and data are empty, then try to clear the variables.</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">clear_variables</span><span class="p">(</span><span class="n">attrib</span><span class="p">)</span>
-                        <span class="k">break</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="n">attrib</span> <span class="o">!=</span> <span class="s2">&quot;fill_hndl&quot;</span><span class="p">:</span>
+                <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">subblk</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-                        <span class="c1"># Get the variation index from the internal elements if they contain a vari_idx attribute.</span>
-                        <span class="n">vari_idx</span> <span class="o">=</span> <span class="n">subblk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                        <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vari_idx</span><span class="o">=</span><span class="n">vari_idx</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># Clear block if empty data are provided.</span>
+                        <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>    <span class="c1"># Value is a None object or an empty dict, i.e., None or {}.</span>
 
         <span class="c1"># 3. Loop through simple data type items of block data and fill the template tags.</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">attrib</span> <span class="o">==</span> <span class="s2">&quot;vari_idx&quot;</span><span class="p">:</span>
-                    <span class="c1"># If the attribute is vari_idx, then return its value to be used as a variation idx</span>
-                    <span class="c1"># argument of the set method setting the parent block containing this attribute.</span>
-                    <span class="n">ret_vari_idx</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                        <span class="n">subblk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">attrib</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">subblk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="k">break</span>
-                        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-                            <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># Value is &quot;&quot;, 0 or False</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">attrib</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attrib</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
 
         <span class="c1"># 4. If an external fill handle is defined within the block data, then call it.</span>
         <span class="n">fill_hndl</span> <span class="o">=</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fill_hndl&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">fill_hndl</span><span class="p">:</span>
-            <span class="n">fill_hndl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">__clone_idx</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">ret_vari_idx</span></div>
+            <span class="n">fill_hndl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_data</span><span class="p">,</span> <span class="n">__subidx</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Block.reset">
 <a class="viewcode-back" href="../api.html#blocky.Block.reset">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_children</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the block content to the initial template.</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_subblocks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets block content to the initial template.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            all_children: Enables a reset of all child blocks too.</span>
+<span class="sd">            all_subblocks (bool, optional): Flag indicating that all subblocks, i.e. child :class:`Block` objects</span>
+<span class="sd">                are reset together with the parent current block. Defaults to True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reset block by setting the content to the initial template string.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__template</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">all_children</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">blk_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">all_subblocks</span><span class="p">:</span>
+            <span class="c1"># Reset all subblocks of the current block and recursively also their subblocks.</span>
+            <span class="k">for</span> <span class="n">blk_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="n">blk_obj</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Block.clear">
 <a class="viewcode-back" href="../api.html#blocky.Block.clear">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears the block from its parent block, i.e., sets the block to an empty string.</span>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears subblock from parent block, i.e. the content of the subblock is erased from the parent content.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            count: The maximum number of blocks with the same name to be cleared, -1 = all.</span>
+<span class="sd">            count (int, optional): Maximum number of subblocks to be cleared (if there are multiple blocks using</span>
+<span class="sd">                the same tag names). If set to -1, then all corresponding subblock tags in the parent content will</span>
+<span class="sd">                be replaced by empty string. Defaults to -1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set the content to empty string and remove the block from parent&#39;s dictionary of subblocks.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Block.clone">
 <a class="viewcode-back" href="../api.html#blocky.Block.clone">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copies</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">passive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">set_children</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clones the block, i.e., virtually adds another copy of a block template after the</span>
-<span class="sd">        existing block content making the new template copy ready to be filled with other values.</span>
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_copies</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">passive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="n">set_subblocks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clones block by adding the template after the actual block content. Then subblocks and variables in</span>
+<span class="sd">        the added template can be filled again with values.</span>
 
-<span class="sd">        The clone is created only if blocks and variables are set after cloning. The child blocks</span>
-<span class="sd">        are reset after cloning, unless the ``passive`` argument is set to ``True``.</span>
+<span class="sd">        .. note::</span>
+<span class="sd">            This method actually only internaly indicates that there is a need to perform the template cloning</span>
+<span class="sd">            and only if there is an already previously indicated need, then the actual cloning is performed.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            copies: The number of template copies to be prepared. If &gt; 1, then ``force`` and</span>
-<span class="sd">                ``passive`` arguments are automatically ``False``.</span>
-<span class="sd">            force: Forces the clone to be created even if no variable or block is then set.</span>
-<span class="sd">            passive: Enables cloning only if an active (non-passive) clone has been requested</span>
-<span class="sd">                previously and no further clone is created.</span>
-<span class="sd">            set_children: Enables setting of all child blocks to this parent block before cloning.</span>
+<span class="sd">            num_copies (int, optional): Number of copies to be created. Defaults to 1.</span>
+<span class="sd">            force (bool, optional): Switch forcing the cloning to be performed immediately regardless of whether</span>
+<span class="sd">                it will be actually needed for setting subblocks and variables or not, i.e., new template is</span>
+<span class="sd">                forcefully added after the block content. If the ``num_copies`` parameter is higher than 1, then</span>
+<span class="sd">                this switch is always set to False. Defaults to False.</span>
+<span class="sd">            passive (bool, optional): Switch to perform the cloning only if a need for the clone</span>
+<span class="sd">                has already been indicated previously, otherwise no new cloning need is indicated. If the</span>
+<span class="sd">                ``num_copies`` parameter is higher than 1, then this switch is always set to False.</span>
+<span class="sd">                Defaults to False.</span>
+<span class="sd">            set_subblocks (bool, optional): Switch to set all subblocks to this parent block first, before</span>
+<span class="sd">                cloning this block. If the ``num_copies`` parameter is higher than 1, then the subblocks are</span>
+<span class="sd">                set only once before making the first copy of this parent block. Defaults to False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">set_children</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="n">child</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">set_subblocks</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">blk_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">blk_obj</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">copies</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">copies</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num_copies</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_copies</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Check if cloning flag indicates that the cloning should be actually performed.</span>
+            <span class="c1"># Check if cloning flag indicates that the cloning shall be actually performed.</span>
+            <span class="c1"># If cloning is not forced, then the block should be cloned only after it has been filled, which is</span>
+            <span class="c1"># indicated by the clone_flag.</span>
             <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autotags</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_vari</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_align</span><span class="p">()</span>
-                <span class="c1"># Perform cloning.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_content</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_std_last_first_tag</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__set_first_value</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_first_value</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__set_char_repeat_tag</span><span class="p">()</span>
+                <span class="c1"># Perform a clone, i.e. finalize the content and add new template at the end of the content.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">passive</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__clone_flag</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="c1"># Reset all child blocks to make their content ready to be filled with new values.</span>
-                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                    <span class="n">child</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">all_children</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+                <span class="c1"># Reset all subblocks of the current block and recursively also their subblocks to have</span>
+                <span class="c1"># a fresh new instance of all cloned blocks without any remaining unset modified content</span>
+                <span class="c1"># strings or cloning flags set to True.</span>
+                <span class="k">for</span> <span class="n">blk_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="n">blk_obj</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">all_subblocks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Block.get_subblock">
 <a class="viewcode-back" href="../api.html#blocky.Block.get_subblock">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblock_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Block&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Block&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the specified child block object from the current block content. Each child</span>
-<span class="sd">        is also automatically added into the ``children`` attribute of the current block.</span>
+    <span class="k">def</span> <span class="nf">get_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblock_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Block&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Block&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a subblock object defined by block start and end tags within the actual block template.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            subblock_names: The tag names of blocks to be extracted from a current block content.</span>
+<span class="sd">            subblock_names (str): Name(s) of the subblock tags in the actual block template. The string between</span>
+<span class="sd">                the subblock tags is used as a template for the returned subblock object.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A :class:`Block` object or a list of blocks if multiple subblock names are specified.</span>
-<span class="sd">            ``None`` is returned if the specified block tags are not found.</span>
+<span class="sd">            :class:`CodeBlock`: Subblock object or a list of subblock objects in case of multiple subblock names</span>
+<span class="sd">            specified in the input arguments. If the specified subblock is not found, then ``None`` is returned.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ret_blk</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">subblock_name</span> <span class="ow">in</span> <span class="n">subblock_names</span><span class="p">:</span>
+            <span class="c1"># Init subblock object to None, so if subblock name is not found, then None is returned.</span>
             <span class="n">subblk</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="c1"># Clone block if the cloning flag is set to true to ensure that the subblock tags</span>
-            <span class="c1"># can be found in the block content and the subblock can be extracted from them.</span>
+            <span class="c1"># Clone block if the cloning flag is set to true to ensure that the subblock tags can be</span>
+            <span class="c1"># found in the block content and the subblock content can be extracted from them.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">passive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">subblock_name</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_block_pos</span><span class="p">(</span><span class="n">subblock_name</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_subblock_start_end_pos</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">block_start</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="n">subblock_name</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">block_end</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="n">subblock_name</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">subblk_start</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">subblk_end</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">subblk</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">subblk_start</span><span class="p">:</span> <span class="n">subblk_end</span><span class="p">],</span> <span class="n">subblock_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-                    <span class="n">subblk</span><span class="o">.</span><span class="n">__parent</span> <span class="o">=</span> <span class="bp">self</span>      <span class="c1"># pylint: disable=protected-access, unused-private-member</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="p">[</span><span class="n">subblock_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">subblk</span>
+                    <span class="c1"># If subblock tags are found, then create a new subblock and set correct parent-subblock relations.</span>
+                    <span class="n">subblk</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">subblk_start</span><span class="p">:</span> <span class="n">subblk_end</span><span class="p">],</span> <span class="n">subblock_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
             <span class="n">ret_blk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subblk</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ret_blk</span> <span class="k">else</span> <span class="n">ret_blk</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret_blk</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">ret_blk</span></div>
+        <span class="k">if</span> <span class="n">ret_blk</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret_blk</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ret_blk</span> <span class="o">=</span> <span class="n">ret_blk</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret_blk</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">ret_blk</span></div>
 
 
 <div class="viewcode-block" id="Block.clear_subblock">
 <a class="viewcode-back" href="../api.html#blocky.Block.clear_subblock">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">clear_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblocks</span><span class="p">:</span> <span class="s2">&quot;Block | str&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears the content of specified child blocks from a current block content.</span>
+    <span class="k">def</span> <span class="nf">clear_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblock_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears subblock with given name, i.e. the content of the subblock is erased from the parent content.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Subblock can be cleared only if it has not been :meth:`set` to the parent block yet.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            subblocks: Subblock object(s) or their names to be cleared.</span>
+<span class="sd">            subblock_names (str): Subblock name(s) to be cleared from the current block content.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">subblk</span> <span class="ow">in</span> <span class="n">subblocks</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subblk</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">blk_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subblk</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">subblk</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">blk_sub</span><span class="p">:</span>
-                    <span class="n">blk_sub</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">subblock_name</span> <span class="ow">in</span> <span class="n">subblock_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subblock_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">:</span>
+                <span class="c1"># If subblock is already defined in child subblocks, then clear it directly.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">[</span><span class="n">subblock_name</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">subblk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+                <span class="c1"># If subblock is not defined yet, then extract it and then call the clear method.</span>
+                <span class="n">blk_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">subblock_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">blk_sub</span><span class="p">:</span>
+                    <span class="n">blk_sub</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Block.set_subblock">
 <a class="viewcode-back" href="../api.html#blocky.Block.set_subblock">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblocks</span><span class="p">:</span> <span class="s2">&quot;Block | str&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the content of specified child blocks into the content of the current block.</span>
+    <span class="k">def</span> <span class="nf">set_subblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">subblocks</span><span class="p">:</span> <span class="s2">&quot;Block | str&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the content of a subblock object into the template of the parent block object from which this method</span>
+<span class="sd">        is called, i.e. replaces the subblock tags in the parent block template with the subblock content.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Calling this method is equivalent to the call of the :meth:`set` method from the subblock object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            subblocks: The subblock object(s) or their names to be set.</span>
+<span class="sd">            subblocks (:class:`Block` | str): Subblock object(s) or names whose content will be set into the</span>
+<span class="sd">                parent block object template.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">subblk</span> <span class="ow">in</span> <span class="n">subblocks</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subblk</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">blk_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subblk</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">subblk</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">blk_sub</span><span class="p">:</span>
-                    <span class="n">blk_sub</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">subblk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">:</span>
+                    <span class="c1"># If subblock is already defined in child subblocks, then set it directly.</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">[</span><span class="n">subblk</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># If subblock is not defined yet, then extract it and then call the set method.</span>
+                    <span class="n">blk_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subblock</span><span class="p">(</span><span class="n">subblk</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">blk_sub</span><span class="p">:</span>
+                        <span class="n">blk_sub</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">subblk</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Block.set">
 <a class="viewcode-back" href="../api.html#blocky.Block.set">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vari_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">all_children</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the content of this block into its parent block content.</span>
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variation_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">all_subblocks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">raw_content</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the content of the block from which this method is called into its parent block template,</span>
+<span class="sd">        i.e. replaces the subblock tags in the parent block template with the subblock content.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            vari_idx: An index of a variation block content (if any) to be set starting from 0.</span>
-<span class="sd">                A negative index or boolean false causes the block to be cleared. A boolean true</span>
-<span class="sd">                is the same as index 0.</span>
-<span class="sd">            all_children: Enables setting of all child blocks of this block before setting it.</span>
-<span class="sd">            count: The maximum number of blocks with the same name to be set (-1 = no limit).</span>
+<span class="sd">            variation_idx (int | bool, optional): Variation index of a block content to be set starting from 0.</span>
+<span class="sd">                Variations are content parts separated by the separator tags. Negative variation number causes</span>
+<span class="sd">                the block to be cleared instead of set. A boolean value True represents the first block variation 0</span>
+<span class="sd">                and False represents the block variation -1, i.e., it clears the block. Defaults to 0.</span>
+<span class="sd">            all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block</span>
+<span class="sd">                should be set into its parent blocks first before the current block is set into its parent block.</span>
+<span class="sd">            raw_content (bool | None, optional): Flag indicating that the block content should be set as is without</span>
+<span class="sd">                any processing, i.e., without setting values for special tags. If set to ``None``, then the</span>
+<span class="sd">                internal raw content flag for a block is unchanged and it is used to determine if the special tag values</span>
+<span class="sd">                are set or not. Defaults to None.</span>
+<span class="sd">            count (int, optional): Maximum number of block contents to be set. If set to -1, then all</span>
+<span class="sd">                corresponding subblock tags in the parent content will be replaced by the subblock content.</span>
+<span class="sd">                Defaults to -1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Convert potentially boolean variation index to integer.</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vari_idx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="n">vari_idx</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">vari_idx</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variation_idx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">variation_idx</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">variation_idx</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="c1"># If variation index is below zero, then clear the block and exit.</span>
-        <span class="k">if</span> <span class="n">vari_idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variation_idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">all_children</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">raw_content</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raw_content</span> <span class="o">=</span> <span class="n">raw_content</span>
+
+        <span class="k">if</span> <span class="n">all_subblocks</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">blk_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblocks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="c1"># pylint: disable=protected-access</span>
                 <span class="c1"># rationale: Private variable __clone_flag is used primarily internally for cloning operation.</span>
                 <span class="c1"># However, in this case it can be used to detect if subblock has been already set to parent block</span>
                 <span class="c1"># or not. if clone flag is True, then the subblock needs to be set.</span>
-                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">__clone_flag</span><span class="p">:</span>
-                    <span class="n">child</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vari_idx</span><span class="p">,</span> <span class="n">all_children</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">blk_obj</span><span class="o">.</span><span class="n">__clone_flag</span><span class="p">:</span>
+                    <span class="n">blk_obj</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">variation_idx</span><span class="p">,</span> <span class="n">all_subblocks</span><span class="p">,</span> <span class="n">raw_content</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="p">:</span>
             <span class="c1"># If content has been changed from the template, then clone the parent block if</span>
             <span class="c1"># its cloning flag is set to true to ensure that the subblock tags can be</span>
             <span class="c1"># found in the parent block content and the subblock content can be set into them.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">passive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autotags</span><span class="p">:</span>
-            <span class="c1"># Finalize the block content by setting the value of special tags.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_vari</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__autovari_first</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__set_autotag_align</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_content</span><span class="p">:</span>
+            <span class="c1"># Finalize the block content by setting value of special tags.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_std_last_first_tag</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_first_value</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_char_repeat_tag</span><span class="p">()</span>
         <span class="n">set_num</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="p">(</span><span class="n">set_num</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="c1"># pylint: disable=protected-access</span>
-            <span class="c1"># rationale: Private method __get_block_pos is called from non-self object only here and</span>
+            <span class="c1"># rationale: Private method __get_subblock_start_end_pos is called from non-self object only here and</span>
             <span class="c1"># it is easier and simpler to keep it that way instead of rewriting the method to be static and sending</span>
             <span class="c1"># parent object data into it for processing.</span>
-            <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_Block__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">subblk_start</span> <span class="o">&lt;</span> <span class="n">subblk_end</span><span class="p">:</span>
-                <span class="n">blk_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_variation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">vari_idx</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_Block__get_subblock_start_end_pos</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">block_start</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">block_end</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                <span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">subblk_start</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">subblk_end</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">blk_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_variation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">variation_idx</span><span class="p">)</span>
                 <span class="c1"># If subblock tags are found, then set the current block content into all corresponding subblock tags</span>
                 <span class="c1"># in the parent block content.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> \
@@ -504,16 +723,66 @@
 
 <div class="viewcode-block" id="Block.set_variables">
 <a class="viewcode-back" href="../api.html#blocky.Block.set_variables">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">autoclone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">name_value_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets values into the specified variables within this block content.</span>
+    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">name_value_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">autoclone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">name_value_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets values into the variables inside the block template, i.e. replaces the tags representing</span>
+<span class="sd">        variables with the specified values.</span>
+<span class="sd">        Only positional or only keyword arguments described below or both at the same time can be used</span>
+<span class="sd">        to define the variables and their values.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            autoclone: Enables automatic clone of this block after setting all variables.</span>
-<span class="sd">            name_value_kwargs: Keyword arguments representing variable name-value pairs, e.g.,</span>
-<span class="sd">                ``name=&quot;Thomas&quot;, surname=&quot;Anderson&quot;, age=37``. Tuples or lists can be used as</span>
-<span class="sd">                variable values, making this block to be automatically cloned after setting each</span>
-<span class="sd">                element value.</span>
+<span class="sd">            name_value_args (str): Positional arguments representing variable *name*-*value* pairs. The</span>
+<span class="sd">                following example illustrates setting the ``var1`` variable to value ``1`` and the ``var2``</span>
+<span class="sd">                variable to value ``2``.</span>
+
+<span class="sd">                .. code-block::</span>
+
+<span class="sd">                    some_block.set_variables(&quot;var1&quot;, &quot;1&quot;, &quot;var2&quot;, &quot;2&quot;)</span>
+
+<span class="sd">                .. important::</span>
+<span class="sd">                    Positional arguments ``name_value_args`` are supported only for backward compatibility</span>
+<span class="sd">                    purposes. Usage of keyword arguments ``name_value_kwargs`` instead of positional arguments</span>
+<span class="sd">                    is strongly recommended.</span>
+
+<span class="sd">            autoclone (bool, optional): Flag indicating that the block containing the variable tags</span>
+<span class="sd">                being set should be automatically cloned after the variable is set to its value.</span>
+<span class="sd">            name_value_kwargs : Keyword arguments representing variable *name*-*value* pairs, e.g.:</span>
+
+<span class="sd">                .. code-block::</span>
+
+<span class="sd">                    some_block.set_variables(var1=&quot;1&quot;, var2=&quot;2&quot;)</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Non-string variable value types are allowed, if they have a string representation, i.e. they</span>
+<span class="sd">            can be automatically converted to the string. Following example shows setting variable ``var`` to</span>
+<span class="sd">            value ``1`` by specifying the value as an integer number:</span>
+
+<span class="sd">            .. code-block::</span>
+
+<span class="sd">                some_block.set_variables(var=1)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If this method is called with the first positional argument set to something else than a string,</span>
+        <span class="c1"># then assume that it is a boolean flag for the autoclone argument, e.g.: set_variables(True, VARIABLE=value).</span>
+        <span class="c1"># Set the non-string argument into the the autoclone argument and increment the start index of the usable</span>
+        <span class="c1"># positional arguments.</span>
+        <span class="n">pos_arg_start_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">name_value_args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_value_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">autoclone</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">name_value_args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">pos_arg_start_idx</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">var_tags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">var_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Loop through variable name-value positional and keyword arguments and extract the variable tags</span>
+        <span class="c1"># and corresponding values.</span>
+        <span class="k">for</span> <span class="n">var_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pos_arg_start_idx</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">name_value_args</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">var_idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">name_value_args</span><span class="p">):</span>
+                <span class="n">var_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="n">name_value_args</span><span class="p">[</span><span class="n">var_idx</span><span class="p">]))</span>
+                <span class="n">var_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name_value_args</span><span class="p">[</span><span class="n">var_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">var_value</span> <span class="ow">in</span> <span class="n">name_value_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">var_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="n">var_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_value</span><span class="p">)</span>
+
         <span class="n">iter_idx</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">detected_iters_num</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">while</span> <span class="n">iter_idx</span> <span class="o">&lt;</span> <span class="n">detected_iters_num</span><span class="p">:</span>
@@ -521,21 +790,21 @@
             <span class="c1"># found in the block content and the variable values can be set into them.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">passive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="c1"># Loop through variable tags and replace them with the corresponding variable values.</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="n">name_value_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()]:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="n">var_value</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">for</span> <span class="n">var_idx</span><span class="p">,</span> <span class="n">var_tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">var_tags</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">var_value</span> <span class="o">=</span> <span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Check if the val is iterable and if so, then set its individual elements.</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="n">_</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-                        <span class="n">detected_iters_num</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">detected_iters_num</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
-                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">iter_idx</span><span class="p">:</span>
-                            <span class="n">var_value</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">iter_idx</span><span class="p">]</span>
+                        <span class="n">_</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">detected_iters_num</span><span class="p">:</span>
+                            <span class="n">detected_iters_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">iter_idx</span><span class="p">:</span>
+                            <span class="n">var_value</span> <span class="o">=</span> <span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">][</span><span class="n">iter_idx</span><span class="p">]</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">var_value</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="n">var_value</span> <span class="o">=</span> <span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                        <span class="n">var_value</span> <span class="o">=</span> <span class="n">val</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">var_value</span> <span class="o">=</span> <span class="n">var_values</span><span class="p">[</span><span class="n">var_idx</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">var_tag</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">iter_idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">detected_iters_num</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">autoclone</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span></div>
@@ -543,30 +812,31 @@
 
 <div class="viewcode-block" id="Block.clear_variables">
 <a class="viewcode-back" href="../api.html#blocky.Block.clear_variables">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">clear_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">var_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears the specified variables from this block content. Has the same effect as setting</span>
-<span class="sd">        the variables to an empty string.</span>
+    <span class="k">def</span> <span class="nf">clear_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">var_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes specified variables from the block template, i.e. replaces the tags representing variables with</span>
+<span class="sd">        the empty strings.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            var_names: Names of the variables to be cleared.</span>
+<span class="sd">            var_names (str): Arguments with variable names to be cleared.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">var_names</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_var</span><span class="p">(</span><span class="n">var_name</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="n">var_name</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include_tags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the position of the specified block within the content of this block.</span>
+    <span class="k">def</span> <span class="nf">__get_subblock_start_end_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include_tags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns start and end position of a subblock string in the block content.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            block_name: The name of the block whose position should be returned.</span>
-<span class="sd">            include_tags: Enables the inclusion of the block tags themselves in the returned</span>
-<span class="sd">                position.</span>
+<span class="sd">            start_tag (str): Subblock start tag string.</span>
+<span class="sd">            end_tag (str): Subblock end tag string.</span>
+<span class="sd">            include_tags (bool, optional): If true, then start-end position takes into account also</span>
+<span class="sd">                the subblock tags themselves. Defaults to False.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A tuple with the start and end character position of the block.</span>
+<span class="sd">            tuple[int, int]: Returned start and end character position of the subblock, i.e. ``(start_pos, end_pos)``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">start_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_blk_start</span><span class="p">(</span><span class="n">block_name</span><span class="p">)</span>
-        <span class="n">end_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_blk_end</span><span class="p">(</span><span class="n">block_name</span><span class="p">)</span>
         <span class="n">subblk_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">start_tag</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">subblk_start</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">include_tags</span><span class="p">:</span>
@@ -596,19 +866,23 @@
 
         <span class="k">return</span> <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__set_autotag_align</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the value of the *alignment* automatic tags in this block maintaining the</span>
-<span class="sd">        predefined right-alignment to the next character different from the repeated one.</span>
+    <span class="k">def</span> <span class="nf">__set_char_repeat_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replaces special tags representing repeated characters in the block content with the correct amount of</span>
+<span class="sd">        repeated characters (usually spaces or tabulators) to keep predefined right-alignement.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">last_pos</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Loop through all &quot;alignment&quot; tags in block template and replace them with the correct</span>
+        <span class="c1"># Loop through all *char repeat* tags in block template and replace them with the correct</span>
         <span class="c1"># number of repeated characters.</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">cont_start</span><span class="p">,</span> <span class="n">cont_end</span><span class="p">,</span> <span class="n">new_col</span><span class="p">,</span> <span class="n">repeat_char</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_autotag_align_att</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="c1"># Get data about char repeat in the block content.</span>
+            <span class="p">(</span><span class="n">cont_start</span><span class="p">,</span> <span class="n">cont_end</span><span class="p">,</span> <span class="n">new_col</span><span class="p">,</span> <span class="n">repeat_char</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_char_repeat_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">cont_start</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">templ_start</span><span class="p">,</span> <span class="n">templ_end</span><span class="p">,</span> <span class="n">orig_col</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_autotag_align_att</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_pos</span><span class="p">)</span>
+                <span class="c1"># Get data about char repeat in the block template, i.e. the content before it has been filled.</span>
+                <span class="p">(</span><span class="n">templ_start</span><span class="p">,</span> <span class="n">templ_end</span><span class="p">,</span> <span class="n">orig_col</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_char_repeat_data</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__template</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_pos</span><span class="p">)</span>
                 <span class="n">orig_len</span> <span class="o">=</span> <span class="n">templ_end</span> <span class="o">-</span> <span class="n">templ_start</span>
-                <span class="c1"># Calculate the new length of the repeated characters in the filled content.</span>
+                <span class="c1"># Calculate new length of repeated characters in the filled content.</span>
                 <span class="n">new_len</span> <span class="o">=</span> <span class="n">orig_len</span> <span class="o">+</span> <span class="p">(</span><span class="n">orig_col</span> <span class="o">-</span> <span class="n">new_col</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">repeat_char</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">:</span>
                     <span class="n">temp_len</span> <span class="o">=</span> <span class="n">new_len</span>
@@ -617,101 +891,115 @@
                         <span class="n">new_len</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">new_len</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">new_len</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="c1"># Set the repeated characters into the block content instead of the &quot;alignment&quot; tag.</span>
+                <span class="c1"># Set repeated characters into the block content instead of the *char repeat* tag.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="w"> </span><span class="n">cont_start</span><span class="p">]</span><span class="si">}{</span><span class="n">new_len</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">repeat_char</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">cont_end</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="c1"># Remember the last &quot;alignment&quot; tag position in the template, because if there are more of these tags,</span>
+                <span class="c1"># Remember last *char repeat* tag position in the template, because if there are more of these tags,</span>
                 <span class="c1"># then we need to start searching only after the previous tag position, not again from the start.</span>
                 <span class="n">last_pos</span> <span class="o">=</span> <span class="n">templ_end</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">break</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__get_autotag_align_att</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expand_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the attributes of the first found *alignment* automatic tag.</span>
+    <span class="k">def</span> <span class="nf">__get_char_repeat_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expand_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns data about special *char repeat* tag, i.e. its start, end position, column index in line and</span>
+<span class="sd">        the character to be repeated.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            text: A string in which the *alignment* automatic tag is searched.</span>
-<span class="sd">            expand_tabs: Enables the replacement of tabulators with spaces for consistent</span>
-<span class="sd">                character position counting.</span>
-<span class="sd">            start_pos: The start character position for searching the *alignment* automatic tag.</span>
+<span class="sd">            input_string (str): String in which the special tag is searched.</span>
+<span class="sd">            expand_tabs (bool, optional): If true, then tabulators are replaced with spaces for consistent</span>
+<span class="sd">                character position counting. Defaults to False.</span>
+<span class="sd">            start_index (int, optional): Start character index from which the special tag is searched.</span>
+<span class="sd">                Defaults to 0.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A tuple with the following information about the *alignment* automatic tag:</span>
-<span class="sd">            start char position, end char position, line column index, character to be repeated.</span>
+<span class="sd">            tuple[int, int, int, str]: *char repeat* tag data in form of a following tuple:</span>
+<span class="sd">                ``(start_pos, end_pos, column_pos, repeated_char)``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">expand_tabs</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tab_size</span><span class="p">)</span>
+            <span class="n">input_string</span> <span class="o">=</span> <span class="n">input_string</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tab_size</span><span class="p">)</span>
         <span class="n">end_pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">tag_col_pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">repeat_char</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">charrep_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_var</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_align</span><span class="p">)</span>
         <span class="c1"># Get starting position of repeated characters.</span>
-        <span class="n">st_pos</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">charrep_tag</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">st_pos</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">end_pos</span> <span class="o">=</span> <span class="n">st_pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">charrep_tag</span><span class="p">)</span>
-            <span class="c1"># Get the repeated character immediately following the &quot;alignment&quot; tag.</span>
-            <span class="n">repeat_char</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">end_pos</span><span class="p">]</span>
-            <span class="k">while</span> <span class="n">text</span><span class="p">[</span><span class="n">end_pos</span><span class="p">]</span> <span class="o">==</span> <span class="n">repeat_char</span><span class="p">:</span>
+        <span class="n">start_pos</span> <span class="o">=</span> <span class="n">input_string</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">char_repeat</span><span class="o">.</span><span class="n">str</span><span class="p">,</span> <span class="n">start_index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_pos</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">end_pos</span> <span class="o">=</span> <span class="n">start_pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">char_repeat</span><span class="o">.</span><span class="n">str</span><span class="p">)</span>
+            <span class="c1"># Get character immediately following the *char repeat* tag. This character is going to be repeated.</span>
+            <span class="n">repeat_char</span> <span class="o">=</span> <span class="n">input_string</span><span class="p">[</span><span class="n">end_pos</span><span class="p">]</span>
+            <span class="c1"># Get ending position of repeated characters.</span>
+            <span class="k">while</span> <span class="n">input_string</span><span class="p">[</span><span class="n">end_pos</span><span class="p">]</span> <span class="o">==</span> <span class="n">repeat_char</span><span class="p">:</span>
                 <span class="n">end_pos</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="c1"># Get position of the last newline char before the &quot;alignment&quot; tag.</span>
-            <span class="n">line_st_pos</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">st_pos</span><span class="p">)</span>
-            <span class="n">line_st_pos</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">line_st_pos</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">line_st_pos</span> <span class="o">&gt;</span> <span class="n">st_pos</span> <span class="k">else</span> <span class="n">line_st_pos</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="c1"># Get the line column position of the &quot;alignment&quot; tag.</span>
-            <span class="n">tag_col_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">line_st_pos</span><span class="p">:</span> <span class="n">st_pos</span><span class="p">]</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tab_size</span><span class="p">))</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">st_pos</span><span class="p">,</span> <span class="n">end_pos</span><span class="p">,</span> <span class="n">tag_col_pos</span><span class="p">,</span> <span class="n">repeat_char</span><span class="p">)</span>
+            <span class="c1"># Get position of the line start in which the *char repeat* tag is located.</span>
+            <span class="n">line_start_pos</span> <span class="o">=</span> <span class="n">input_string</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">)</span>
+            <span class="n">line_start_pos</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">line_start_pos</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">line_start_pos</span> <span class="o">&gt;</span> <span class="n">start_pos</span> <span class="k">else</span> <span class="n">line_start_pos</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="c1"># Get column position of *char repeat* tag, i.e. the position of the *char repeat* tag within its line.</span>
+            <span class="n">tag_col_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_string</span><span class="p">[</span><span class="n">line_start_pos</span><span class="p">:</span> <span class="n">start_pos</span><span class="p">]</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tab_size</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">start_pos</span><span class="p">,</span> <span class="n">end_pos</span><span class="p">,</span> <span class="n">tag_col_pos</span><span class="p">,</span> <span class="n">repeat_char</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__set_autotag_vari</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the correct content variation of the *variation* automatic tags in this block</span>
-<span class="sd">        content. The *variation* automatic tag can have two or three content variations:</span>
-<span class="sd">        *standard / last / first*, while the last *first* variation is optional. The *first*</span>
-<span class="sd">        (optional) variation is automatically set in the first clone of this block, the *standard*</span>
-<span class="sd">        variation is set in all subsequent clones, except for the last one, where the *last*</span>
-<span class="sd">        variation is set.</span>
+    <span class="k">def</span> <span class="nf">__set_std_last_first_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replaces special *last value* tag in the block content with either the standard value or the last value.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            first: Enables setting of the *first* value variation of the *variation* automatic tag.</span>
-<span class="sd">            last: Enables setting of the *last* value variation of the *variation* automatic tag.</span>
+<span class="sd">            first (bool, optional):  Switch to set the *first* value in place of the *std last first* tag. If False,</span>
+<span class="sd">                then the standard value is used. Defaults to False.</span>
+<span class="sd">            last (bool, optional): Switch to set the *last* value in place of the *std last first* tag. If False,</span>
+<span class="sd">                then the standard value is used. This switch has a priority over the ``first`` switch argument.</span>
+<span class="sd">                Defaults to False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Loop through all *variation* autotags in a block content and replace them with either</span>
-        <span class="c1"># the &quot;standard&quot;, &quot;last&quot; or &quot;first&quot; value.</span>
+        <span class="c1"># Loop through all *last value* tags in block content and replace them with either standard value or last value.</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_vari</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">subblk_start</span> <span class="o">&lt;</span> <span class="n">subblk_end</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">subblk_cont_start</span><span class="p">,</span> <span class="n">subblk_cont_end</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_block_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_vari</span><span class="p">)</span>
+            <span class="c1"># Get the start and end position of the *last value* tag including the start/end tags.</span>
+            <span class="p">(</span><span class="n">subblk_start</span><span class="p">,</span> <span class="n">subblk_end</span><span class="p">)</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">__get_subblock_start_end_pos</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">std_last_first_start</span><span class="o">.</span><span class="n">str</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">std_last_first_end</span><span class="o">.</span><span class="n">str</span><span class="p">,</span>
+                    <span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># If *last value* tag is found.</span>
+            <span class="k">if</span> <span class="n">subblk_start</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">subblk_end</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Extract the content of the *last value* tag without the start/end tags themselves.</span>
+                <span class="p">(</span><span class="n">subblk_cont_start</span><span class="p">,</span> <span class="n">subblk_cont_end</span><span class="p">)</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__get_subblock_start_end_pos</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">std_last_first_start</span><span class="o">.</span><span class="n">str</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">std_last_first_end</span><span class="o">.</span><span class="n">str</span><span class="p">)</span>
                 <span class="n">value_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">subblk_cont_start</span><span class="p">:</span> <span class="n">subblk_cont_end</span><span class="p">]</span>
                 <span class="n">value_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_variation</span><span class="p">(</span>
-                    <span class="n">value_content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">autotag_vari</span><span class="p">,</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">last</span> <span class="k">else</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">first</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">value_content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">std_last_first_start</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">last</span> <span class="k">else</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">first</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="w"> </span><span class="n">subblk_start</span><span class="p">]</span><span class="si">}{</span><span class="n">value_content</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">subblk_end</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">break</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__get_variation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vari_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the specified variation block and returns the content variation with the specified</span>
-<span class="sd">        index from it.</span>
+    <span class="k">def</span> <span class="nf">__get_variation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">variation_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a block content string corresponding to the specified variation of a block content from</span>
+<span class="sd">        all variations defined using special *block variation* tags.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            text: A string where the variation block is searched.</span>
-<span class="sd">            block_name: The variation block name being searched.</span>
-<span class="sd">            vari_idx: The content variation index (starting from 0) to be returned. Variation 0</span>
-<span class="sd">                is returned if the specified index is higher than the number of defined variations.</span>
+<span class="sd">            content (str): Content string with multiple variations formatted using *block variation* tags.</span>
+<span class="sd">            block_name (str): Block name that is used in *block variation* tags.</span>
+<span class="sd">            variation_idx (int): Index of a variation (starting from 0) to be returned by this method.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A string representing the content variation corresponding to the specified variation</span>
-<span class="sd">            index. The whole ``text`` argument is returned if the variation block is not found.</span>
+<span class="sd">            str: Block content string variation corresponding to the specified variation index.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">content_vari</span> <span class="o">=</span> <span class="n">text</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_blk_vari</span><span class="p">(</span><span class="n">block_name</span><span class="p">)</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
-            <span class="n">var_list</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tag_gen_blk_vari</span><span class="p">(</span><span class="n">block_name</span><span class="p">))</span>
-            <span class="n">content_vari</span> <span class="o">=</span> <span class="n">var_list</span><span class="p">[</span><span class="n">vari_idx</span><span class="p">]</span> <span class="k">if</span> <span class="n">vari_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_list</span><span class="p">)</span> <span class="k">else</span> <span class="n">var_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># Remove the initial empty space up to the first newline char &quot;\n&quot;, including the &quot;\n&quot; if present.</span>
-            <span class="n">first_nl</span> <span class="o">=</span> <span class="n">content_vari</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">first_nl</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">content_vari</span><span class="p">[:</span> <span class="n">first_nl</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="n">content_vari</span> <span class="o">=</span> <span class="n">content_vari</span><span class="p">[</span><span class="n">first_nl</span><span class="p">:]</span>
-            <span class="c1"># Remove trailing empty space after the final newline char &quot;\n&quot;, not including the final &quot;\n&quot; if present).</span>
-            <span class="n">last_nl</span> <span class="o">=</span> <span class="n">content_vari</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">last_nl</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">content_vari</span><span class="p">[</span><span class="n">last_nl</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="n">content_vari</span> <span class="o">=</span> <span class="n">content_vari</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="n">last_nl</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">content_vari</span></div>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">block_variation</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="n">block_name</span><span class="p">)</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="n">var_list</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">block_variation</span><span class="o">.</span><span class="n">str_name</span><span class="p">(</span><span class="n">block_name</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">variation_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_list</span><span class="p">):</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">var_list</span><span class="p">[</span><span class="n">variation_idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">var_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Remove initial empty space up to the first new line char &quot;\n&quot;, including the &quot;\n&quot; if present.</span>
+            <span class="n">first_nl</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">first_nl</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">var</span><span class="p">[:</span> <span class="n">first_nl</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="n">first_nl</span><span class="p">:]</span>
+            <span class="c1"># Remove trailing empty space after the final new line char &quot;\n&quot;, not including the final &quot;\n&quot; if present).</span>
+            <span class="n">last_nl</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">last_nl</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">var</span><span class="p">[</span><span class="n">last_nl</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="n">last_nl</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">var</span></div>
 
 </pre></div>
 
@@ -722,7 +1010,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Lubomir Milko.</p>
+    <p>&#169; Copyright 2024 Lubomir Milko.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
