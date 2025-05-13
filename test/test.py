@@ -57,7 +57,7 @@ def test_lowlevel() -> None:
 
     blk_val = blk_test2.get_subblock("VAL")
     blk_val.set_variables(ID=(11, 22, 33), LABEL="man")
-    blk_test2.set(all_children=True)
+    blk_test2.set(all_subblocks=True)
 
     blk_line = blk_file.get_subblock("LINE1")
     blk_val = blk_line.get_subblock("VAL")
@@ -76,8 +76,8 @@ def test_lowlevel() -> None:
         blk_val.clone()
         if (i + 1) % 10 == 0:
             blk_line.set_variables(SEP=20*"_")
-            blk_line.clone(set_children=True)
-    blk_line.set(all_children=True)
+            blk_line.clone(set_subblocks=True)
+    blk_line.set(all_subblocks=True)
 
     blk_line = blk_file.get_subblock("LINE3")
     blk_val = blk_line.get_subblock("VAL")
@@ -89,24 +89,24 @@ def test_lowlevel() -> None:
             blk_val.get_subblock("DEF").set(1)
         blk_val.clone()
         if (i + 1) % 10 == 0:
-            blk_line.clone(set_children=True)
+            blk_line.clone(set_subblocks=True)
     # blk_val.set()   # Not necessary, because there is no remaining blk_val content to be set.
-    blk_line.set(all_children=True)
+    blk_line.set(all_subblocks=True)
 
     blk_container = blk_file.get_subblock("CONTAINER")
     blk_line = blk_container.get_subblock("LINE4")
     blk_val = blk_line.get_subblock("VAL")
-    blk_val.clone(copies=10)
-    blk_line.clone(set_children=True)
-    blk_val.clone(copies=10)
-    blk_line.set(all_children=True)
+    blk_val.clone(num_copies=10)
+    blk_line.clone(set_subblocks=True)
+    blk_val.clone(num_copies=10)
+    blk_line.set(all_subblocks=True)
 
     blk_container.clone()
-    blk_val.clone(copies=3)
+    blk_val.clone(num_copies=3)
     blk_val.set()
     blk_line.clone()
-    blk_val.clone(copies=2)
-    blk_container.set(all_children=True)
+    blk_val.clone(num_copies=2)
+    blk_container.set(all_subblocks=True)
 
     blk_prm = blk_file.get_subblock("BLK_PRM")
     blk_prm.set_variables(ARR="", PRM_NAME="PARAM1")
@@ -146,22 +146,21 @@ def test_lowlevel() -> None:
 
     blk_container = blk_file.get_subblock("MULTI2")
     blk_blk = blk_container.get_subblock("BLK")
-    blk_blk.autotags = False
     blk_blk.set_variables(A=123)
-    blk_blk.set(0)
+    blk_blk.set(0, raw_content=True)
     blk_container.clone()
     blk_blk.set_variables(A=123456)
-    blk_blk.set(1)
+    blk_blk.set(1, raw_content=True)
     blk_container.clone()
     blk_blk.set_variables(A=123456789)
-    blk_blk.set(2)
+    blk_blk.set(2, raw_content=True)
     blk_container.set()
 
     blk_table = blk_file.get_subblock("TABLE")
     blk_row = blk_table.get_subblock("ROW")
     blk_row.set_variables(autoclone=True, A=1, B=23, C=456)
     blk_row.set_variables(autoclone=True, A="def", B="bc", C="a")
-    blk_table.set(all_children=True)
+    blk_table.set(all_subblocks=True)
 
     tab_values = (
         ("name", "surname", "age"),
@@ -172,11 +171,11 @@ def test_lowlevel() -> None:
     blk_html_table = blk_file.get_subblock("HTML_TABLE")
     blk_row = blk_html_table.get_subblock("ROW")
     blk_col = blk_row.get_subblock("COL")
-    blk_col.autotags = False
+    blk_col.raw_content = True
     for row_vals in tab_values:
         blk_col.set_variables(VALUE=row_vals)
-        blk_row.clone(set_children=True)
-    blk_html_table.set(all_children=True)
+        blk_row.clone(set_subblocks=True)
+    blk_html_table.set(all_subblocks=True)
     blk_file.save_content(str("data/content_gen.txt"))
 
     assert compare_files("data/content_gen.txt", "data/content_exp.txt")

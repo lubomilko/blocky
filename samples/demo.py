@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(Path(__file__).parent.parent, "src").resolve()))
 
-from blocky import Block    # pylint: disable = wrong-import-position   # noqa E402
+from blocky import Block    # pylint: disable = import-error, wrong-import-position     # noqa: E402
 
 
 def demo_item_list_essential() -> None:
@@ -117,10 +117,42 @@ def demo_dict_fill() -> None:
     blk_file.save_content("samples/generated_dict_fill.txt")
 
 
+def demo_shoplist() -> None:
+    list_tmpl = (
+        "                            SHOPPING LIST\n"
+        "  Items                                                       Quantity\n"
+        "----------------------------------------------------------------------\n"
+        "<ITEMS>\n"
+        "* <FLAG>! <^FLAG>? </FLAG><ITEM><+>                           <QTY>\n"
+        "<ALT_WRAP>\n"
+        "  - alternatives: <ALTS><ITEM><.>, <^.></.></ALTS>\n"
+        "</ALT_WRAP>\n"
+        "</ITEMS>\n"
+        "\n"
+        "Short list: <ITEMS><ITEM><.>, <^.></.></ITEMS>\n"
+    )
+
+    data = {
+        "items": [
+            {"flag": None, "item": "apples", "qty": "1 kg", "alt_wrap":
+             {"alts": [{"item": "pears"}]}},
+            {"flag": {"vari_idx": 0}, "item": "potatoes", "qty": "2 kg", "alt_wrap": None},
+            {"flag": None, "item": "rice", "qty": "1 kg", "alt_wrap":
+             {"alts": [{"item": "pasta"}, {"item": "quinoa"}, {"item": "couscous"}]}},
+            {"flag": {"vari_idx": 1}, "item": "cooking magazine", "qty": None, "alt_wrap": None},
+        ]
+    }
+
+    blk = Block(list_tmpl)
+    blk.fill(data)
+    print(blk.content)
+
+
 def main() -> None:
     demo_item_list_essential()
     demo_item_lists()
     demo_dict_fill()
+    demo_shoplist()
 
 
 if __name__ == "__main__":

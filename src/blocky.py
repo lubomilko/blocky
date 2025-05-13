@@ -19,155 +19,325 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from pathlib import Path
-from collections.abc import Callable
-from dataclasses import dataclass
-from typing import Union
+from typing import Union, Callable
 
 __author__ = "Lubomir Milko"
 __copyright__ = "Copyright (C) 2025 Lubomir Milko"
-__version__ = "2.0.0"
+__version__ = "1.4.0"
 __license__ = "GPLv3"
 
 
-@dataclass
-class BlockConfig:
-    """The template block configuration defining the format of tags and other template parts.
-
-    Attributes:
-        tag_gen_var (Callable[[str], str]): A tag generator function for a variable tag.
-            Defaults to a lamba function converting a tag name ``name`` to a variable tag string
-            ``<NAME>``.
-        tag_gen_blk_start (Callable[[str], str]): A tag generator function for a block start tag.
-            Defaults to a lamba function converting a tag name ``name`` to a block start tag
-            string ``<NAME>``.
-        tag_gen_blk_end (Callable[[str], str]): A tag generator function for a block end tag.
-            Defaults to a lamba function converting a tag name ``name`` to a block end tag string
-            ``</NAME>``.
-        tag_gen_blk_vari (Callable[[str], str]): A tag generator function for a block variation
-            tag.
-            Defaults to a lamba function converting a tag name ``name`` to a block variation tag
-            string ``<^NAME>``.
-        autotag_align: The *alignment* automatic tag symbol. Defaults to ``+``.
-        autotag_vari: The *variation* automatic tag symbol. Defaults to ``.``.
-        tab_size: A tabulator size in the number of space characters. Used by the *alignment*
-            automatic tag when tabulators are used for the alignment. Defaults to 4.
+class Tag:
     """
-    tag_gen_var: Callable[[str], str] = lambda name: f"<{name.upper()}>"
-    tag_gen_blk_start: Callable[[str], str] = lambda name: f"<{name.upper()}>"
-    tag_gen_blk_end: Callable[[str], str] = lambda name: f"</{name.upper()}>"
-    tag_gen_blk_vari: Callable[[str], str] = lambda name: f"<^{name.upper()}>"
-    autotag_align: str = "+"
-    autotag_vari: str = "."
-    tab_size: int = 4
+    Class representing a generic tag in the template.
+    Each tag consists of tag name surrounded by tag begin and end strings.
+    Example of a possible tag string with the tag name = *"example"*, tag begin
+    string = *"<"* and tag end string = *">"*:
+    *<example>*
+    Tag name is usually variable, but a default name can be assigned.
+    """
+    # pylint: disable=used-before-assignment
+    # rationale: Probably a bug in Pylint, because it assumes that the first "str" type hint is a variable
+    # being used before assignment.
+    def __init__(self, name: str = "", begin_str: str = r"<", end_str: str = r">") -> None:
+        """
+        Tag class constructor.
+
+        Parameters:
+            default_name (str, optional): Default tag name. Defaults to "".
+            begin_str (str, optional): String defining the beginning of a tag. Defaults to "<".
+            end_str (str, optional): String defining the end of a tag. Defaults to ">".
+        """
+        self.begin = begin_str
+        self.end = end_str
+        self.name = name
+
+    def str_name(self, tag_name: str = "") -> str:
+        """
+        Returns complete tag string consisting of provided tag name surrounded by tag begin and
+        tag end strings, i.e. "tag_begin"+"tag_name"+"tag_end".
+
+        Args:
+            tag_name (str): Name of the tag. If not specified, then default tag name is used. Defaults to "".
+
+        Returns:
+            str: Tag string.
+        """
+        name = tag_name if tag_name else self.name
+        return str(f"{self.begin}{name}{self.end}")
+
+    @property
+    def str(self) -> str:
+        """
+        Property method that returns the complete tag string consisting of predefined tag name surrounded by
+        tag begin and tag end strings, i.e. "tag_begin"+"tag_name"+"tag_end".
+
+        Returns:
+            str: Tag string.
+        """
+        return str(f"{self.begin}{self.name}{self.end}")
+
+
+class TagsFormat:
+    """
+    Class defining the format of tags used in template strings.
+    """
+    def __init__(
+            self, variable: Tag, block_start: Tag, block_end: Tag, block_variation: Tag, char_repeat: Tag,
+            std_last_first_start: Tag, std_last_first_end: Tag) -> None:
+        self.variable: Tag = variable
+        self.block_start: Tag = block_start
+        self.block_end: Tag = block_end
+        self.block_variation: Tag = block_variation
+        self.char_repeat: Tag = char_repeat
+        self.std_last_first_start: Tag = std_last_first_start
+        self.std_last_first_end: Tag = std_last_first_end
+
+
+class BlockConfig:
+    """
+    Block configuration class defining the formatting of blocks within the string template.
+    """
+    def __init__(self, tags: TagsFormat, tab_size: int = 4) -> None:
+        self.tags: TagsFormat = tags
+        self.tab_size: int = tab_size
+
+
+DEFAULT_BLOCK_CONFIG: BlockConfig = BlockConfig(
+    TagsFormat(                             # tags
+        Tag(),                                  # tags.variable
+        Tag(),                                  # tags.block_start
+        Tag(begin_str=r"</"),                   # tags.block_end
+        Tag(begin_str=r"<^"),                   # tags.block_variation
+        Tag(name=r"+"),                         # tags.char_repeat
+        Tag(name=r"."),                         # tags.std_last_first_start
+        Tag(name=r".", begin_str=r"</")),       # tags.std_last_first_end
+    4)                                      # tab_size
+"""
+Object defining default block configuration.
+
+* Below is the default format of template tags with example tag names using upper-case letters:
+
+    * Variable: ``<VAR_NAME>``
+    * Block
+
+        * start: ``<BLOCK_NAME>``
+        * end: ``</BLOCK_NAME>``
+
+    * Right-aligned character repeat: ``<+>``
+    * Standard/last value definition: ``<.>STD_VALUE<^.>LAST_VALUE</.>``
+    * Standard/last/first value definition: ``<.>STD_VALUE<^.>LAST_VALUE<^.>FIRST_VALUE</.>``
+
+* Default tabulator size = 4.
+"""
+
+
+class BlockData(object):
+    """
+    Class for creating objects containing data to be filled into template blocks defined by
+    the :class:`Block` class. The object attributes shall directly correspond to the block and variable tags
+    within the block template. The attribute values can then be used to :meth:`fill` the block template.
+    The list below defines relationships between :class:`BlockData` object attribute types and their use in
+    a block template:
+
+    *   Strings, integers, floats, booleans -> Values set directly as block variables.
+    *   :class:`BlockData` subobject -> Data to be filled into a subblock of the parent block being filled.
+    *   List -> Content of block clones, each list item represents a content to be used in one cloned instance.
+
+    """
+    def __init__(self, data_dict: dict = None, fill_hndl: Callable[["Block", object | dict, int], None] = None) -> None:
+        """
+        Constructor creating new block object data.
+
+        Args:
+            data_dict (dict, optional): Dictionary defining the object attributes to be created using the
+                :meth:`import_dict` method. Defaults to None.
+            fill_hndl (Callable[[Block, object | dict, int], None], optional): Handler function to be called after
+                the values of a corresponding :class:`BlockData` object are set into the block template. The handler
+                can contain special operations to be performed after the regular template filling using the block data
+                values. Defaults to None.
+        """
+        self.fill_hndl: Callable[[Block, object | dict, int], None] = fill_hndl
+        if data_dict:
+            self.import_dict(data_dict)
+
+    def import_dict(self, data_dict: dict) -> None:
+        """
+        Imports data from dictionary, i.e., converts the dictionary key-value pairs into the object attribute-value
+        pairs. The dictionary values are converted according to the following rules:
+
+        *   Strings, integers, floats, booleans -> Directly used as :class:`BlockData` object attribute values.
+        *   Subdictionary with its own key-value pairs -> Subdictionary is added as a :class:`BlockData` subobject
+            into the parent :class:`BlockData` object with internal attributes set according to the key-value
+            pairs of the subdictionary.
+        *   List, tuple -> Added as a list attribute to the parent :class:`BlockData` object. Lists or tuples define
+            instances of template blocks that need to be cloned. Each list or tuple item should consist of a
+            dictionary defining the key-value pairs used for filling a single clone instance.
+            Only one-dimensional lists are supported for filling the template blocks.
+
+        Args:
+            data_dict (dict): Dictionary defining the structure of object attributes to be created.
+        """
+        def get_value(value: any) -> list | BlockData | str:
+            val = None
+            if isinstance(value, (list, tuple)):
+                val = [get_value(v) for v in value]
+            elif isinstance(value, dict):
+                val = BlockData()
+                val.import_dict(value)
+            else:
+                val = value
+            return val
+
+        for (attrib, value) in data_dict.items():
+            setattr(self, attrib, get_value(value))
 
 
 class Block:
-    """Block data corresponding to a part of the template within a block start and end tags.
-
-    Attributes:
-        config (BlockConfig): A block configuration primarily defining the format of tags within
-            a template.
-        name (str): A block name. Usually set automatically by the :meth:`get_subblock` method.
-        content (str): The generated block content, i.e., a template filled with data.
-        autotags (bool): Enables the automatic tags (alignment, etc.) to be filled automatically.
     """
-    def __init__(self, template: str | Path = "", name: str = "", config: BlockConfig = BlockConfig()) -> None:
-        """Initializes a new block object.
+    Class representing a block indicated by block start and block end tags inside parent block template.
+    """
+    def __init__(self, template: str | Path = "", block_name: str = "",
+                 config: BlockConfig = DEFAULT_BLOCK_CONFIG, parent: "Block" = None) -> None:
+        """
+        Constructor. Creates a new block object.
 
         Args:
-            template (str | Path): Template string or a path to a text file template.
-            name (str): A block name.
-            config (BlockConfig): A block configuration (template tags format, tabulator size,
-                etc.)
+            template (str, optional): Template to be used for the :class:`Block` object. Defaults to "".
+            block_name (str, optional): Block name. Set automatically to the block tag name from the
+                template when the :meth:`get_subblock` method is used.
+            config (:class:`BlockConfig`, optional): Block configuration (template tags format, tabulator size, etc.)
+            parent: Parent :class:`Block` object.
         """
-        self.config: BlockConfig = config
-        self.name: str = name
-        self.content: str = ""
-        self.autotags: bool = True
-
-        self.__parent: Block | None = None
-        self.__children: dict[str, Block] = {}
+        # Template with tags to be filled by filling module.
         self.__template: str = ""
-        self.__clone_flag: bool = False     # Enables autoclone when setting new variables or subblocks.
-        self.__autovari_first: bool = True   # Indicates use of the first content of the "variation" autotag.
+        # Content created by filling tags in the template and its clones.
+        # Flag indicating that a new clone of the template is going to be automatically added after the
+        # actual content as soon as new template variables or blocks are set.
+        self.__clone_flag: bool = False
+        # Flag indicating that a first value of a special *first-last value* tag should be set.
+        self.__set_first_value: bool = True
+        self.raw_content: bool = False
+        self.content: str = ""
+        self.config = config
+        # Block name corresponding to the block tag name in the template.
+        self.name: str = block_name
+        # Parent block and dictionary of child subblocks with block names as keys and block objects as values.
+        self.parent: Block = parent
+        if parent and block_name:
+            parent.subblocks[block_name] = self
+        self.subblocks: dict[str, Block] = {}
 
-        if Path(template).is_file():
+        # Set template if it is defined in constructor.
+        if template:
             self.load_template(template)
-        else:
-            self.template = template
-
-    @property
-    def parent(self) -> "Block":
-        """A parent block."""
-        return self.__parent
-
-    @property
-    def children(self) -> dict[str, "Block"]:
-        """A list of child subblocks extracted using a :meth:`get_subblock` method."""
-        return self.__children
 
     @property
     def template(self) -> str:
-        """A block template string."""
+        """
+        Property method that returns the block template string containing the tags representing subblocks and variables.
+
+        Returns:
+            str: Block template.
+        """
         return self.__template
 
     @template.setter
     def template(self, template: str) -> None:
+        """
+        Setter method that sets a block template string containing the tags representing subblocks and variables.
+
+        Args:
+            template (str): Block template string.
+        """
         self.__template = template
         self.content = template
 
-    def load_template(self, file_path: str | Path) -> None:
-        """Loads the block template from a text file."""
-        with open(file_path, "r", encoding="utf-8") as file_template:
-            self.template = file_template.read()
-            self.name = Path(file_path).name
-
-    def save_content(self, file_path: str | Path) -> None:
-        """Saves the block content to a text file."""
-        with open(file_path, "w", encoding="utf-8") as file_content:
-            file_content.write(self.content)
-
-    def fill(self, data: dict | object, __clone_idx: int = 0) -> int | bool:
-        """Fills the block content using the data from a dictionary or an object.
-
-        The dictionary keys or object attribute names define the template variable or a block to
-        be set. The dictionary or object attribute values are used according to the rules below:
-
-        *   Strings, integers, floats, booleans -> Variable values.
-        *   Dictionary or object -> Data to be filled into a child block in a current block.
-        *   List or tuple -> Content of block clones. Each element must be a dictionary or object
-            with data used a for filling one cloned instance of a block.
-
-        Two special key/attribute-value pairs can be used in a data dictionary or object:
-
-        *   ``fill_hndl`` - ``func(block: Block, data: dict | object, clone_subidx: int) -> None``
-            function: A user-defined handler function with an access to the template block object
-            and a data being filled usable for special low-level operations.
-
-        *   ``vari_idx`` - int: A variation index to be set for a variation block type
-            (see the ``vari_idx`` attribute of the :meth:``set`` method).
+    def load_template(self, template: str | Path, subblock_name: str = "") -> None:
+        """
+        Loads block template from the text file. Alternatively, if the template is provided directly
+        as a string (i.e., not the file path), then the string is directly used as a block template.
 
         Args:
-            data: A dictionary or object with to be used for filling a block template.
-            __clone_idx: An internal index of a block clone being filled.
+            template (str | Path): Path to the text file containing a string to be used as a block template.
+                Alternatively, a raw string can be provided instead of the file path, to be directly used
+                as a template.
+            subblock_name (str, optional): Name of the subblock to be extracted from the specified template.
+                If not specified, then the whole template string will be set as a template. Defaults to an
+                empty string "".
+        """
+        if Path(template).is_file():
+            with open(template, "r", encoding="utf-8") as file_template:
+                template_str = file_template.read()
+            self.name = Path(template).name
+        else:
+            template_str = template
+
+        if subblock_name:
+            blk_file = Block(template=template_str, config=self.config)
+            self.template = blk_file.get_subblock(subblock_name).template
+            self.name = subblock_name
+            del blk_file
+        else:
+            self.template = template_str
+
+    def save_content(self, content_file_path: str | Path) -> None:
+        """
+        Saves block content to the text file.
+
+        Args:
+            content_file_path (str | Path): Path to the text file in which the block content will be saved.
+        """
+        with open(content_file_path, "w", encoding="utf-8") as file_content:
+            file_content.write(self.content)
+
+    def fill(self, block_data: object | dict, __subidx: int = 0) -> int | bool:
+        """
+        Fills the block content using the data from a specified object (:class:`BlockData` recommended) or a
+        dictionary. The list below defines the relationships between the object attribute values or dictionary
+        values and their use in a block template:
+
+        *   Strings, integers, floats, booleans -> Values set directly as block variables into the template tags.
+        *   Subobject or subdictionary -> Data to be filled into a subblock of the parent block being filled.
+        *   List or tuple -> Content of block clones. Each list or tuple item should consist of another subobject or
+            a subdictionary representing attributes and their values to be used in one cloned instance of
+            a template block.
+
+        Args:
+            block_data (object | dict): Object or dictionary with the attribute-value or key-value pairs to be
+                used for filling the block template. The following two special attributes can be defined:
+
+                *   ``fill_hndl``: A function called before the parent template block containing this
+                    attribute is set into the template. Useful for custom low-level modifications of the
+                    template block.
+                *   ``vari_idx``: A *variation index* specifying the variation of the parent template block
+                    containing this attribute to be set into the template. Only valid for blocks having
+                    multiple variations (see the ``variation_idx`` attribute of the :meth:``set`` method).
+
+            __subidx (int, optional): Internal value representing the item index for attributes of list type.
+                The index is sent as an argument to the fill handler function (it it's used) to indicate which
+                list item is being used for filling the template block. This parameter shall be left at a
+                default value 0 when this method is called. Defaults to 0.
 
         Returns:
-            int | bool: Internally used variation index for variation blocks being filled.
+            int | bool: Iteration index to be used for setting the parent block containing the elements
+                being filled within the current call of this method.
         """
-        if data is None or isinstance(data, (list, tuple, str, int, float, bool)):
-            return 0    # Do nothing if data is not a dictionary or an object.
+        # Do nothing if block_data is not a dictionary or an object.
+        if block_data is None or isinstance(block_data, (list, tuple, str, int, float, bool)):
+            return 0
 
-        # Returned variation index for a block filled with data having the special vari_idx attribute.
+        # Returned variation index used for setting the parent block after the execution of this method.
         ret_vari_idx = 0
 
         # Get the block data in form of a dictionary even if it is defined as an object.
-        data_dict = data if isinstance(data, dict) else data.__dict__
+        data_dict = block_data if isinstance(block_data, dict) else block_data.__dict__
 
-        # 1. Loop through list or tuple elements of block data and fill the cloned blocks.
+        # 1. Loop through list or tuple items of block data and fill the template blocks that need to be cloned.
         for (attrib, value) in data_dict.items():
             if isinstance(value, (list, tuple)):
                 while True:
-                    subblk = self.get_subblock(attrib)
+                    subblk = self.get_subblock(f"{attrib.upper()}")
                     if subblk is None:
                         break
                     if value:
@@ -178,209 +348,274 @@ class Block:
                     else:
                         subblk.clear(count=1)   # Value is an empty list, i.e., [].
 
-        # 2. Loop through object or dict elements of block data and fill the single instance (non-cloned) blocks.
+        # 2. Loop through other types (None, object or dict) of block data and fill the single instance (non-cloned)
+        #    template blocks.
         for (attrib, value) in data_dict.items():
             if not isinstance(value, (list, tuple, str, int, float, bool)) and attrib != "fill_hndl":
                 while True:
-                    subblk = self.get_subblock(attrib)
+                    subblk = self.get_subblock(f"{attrib.upper()}")
                     if subblk is None:
-                        # If no block is found and data are empty, then try to clear the variables.
+                        # If value is a None object or an empty dict, i.e., None or {} and there is no
+                        # template block with the specified name, then try to clear the variables with that name.
                         if not value:
-                            self.clear_variables(attrib)
+                            self.clear_variables(f"{attrib.upper()}")
                         break
                     if value:
                         # Get the variation index from the internal elements if they contain a vari_idx attribute.
                         vari_idx = subblk.fill(value)
-                        subblk.set(vari_idx=vari_idx, count=1)
+                        subblk.set(variation_idx=vari_idx, count=1)
                     else:
-                        subblk.clear(count=1)   # Clear block if empty data are provided.
+                        subblk.clear(count=1)   # Value is a None object or an empty dict, i.e., None or {}.
 
         # 3. Loop through simple data type items of block data and fill the template tags.
         for (attrib, value) in data_dict.items():
             if isinstance(value, (str, int, float, bool)):
                 if attrib == "vari_idx":
-                    # If the attribute is vari_idx, then return its value to be used as a variation idx
+                    # If the attribute is vari_idx, then return its value to be used as a variation_idx
                     # argument of the set method setting the parent block containing this attribute.
                     ret_vari_idx = value
                 else:
                     while True:
-                        subblk = self.get_subblock(attrib)
+                        subblk = self.get_subblock(f"{attrib.upper()}")
                         if subblk is None:
                             break
                         if value:
                             subblk.set(count=1)
                         else:
                             subblk.clear(count=1)   # Value is "", 0 or False
-                    self.set_variables(**{attrib: value})
+                    self.set_variables(**{f"{attrib.upper()}": value})
 
         # 4. If an external fill handle is defined within the block data, then call it.
         fill_hndl = data_dict.get("fill_hndl")
         if fill_hndl:
-            fill_hndl(self, data, __clone_idx)
+            fill_hndl(self, block_data, __subidx)
 
         return ret_vari_idx
 
-    def reset(self, all_children: bool = True) -> None:
-        """Resets the block content to the initial template.
+    def reset(self, all_subblocks: bool = True) -> None:
+        """
+        Resets block content to the initial template.
 
         Args:
-            all_children: Enables a reset of all child blocks too.
+            all_subblocks (bool, optional): Flag indicating that all subblocks, i.e. child :class:`Block` objects
+                are reset together with the parent current block. Defaults to True.
         """
+        # Reset block by setting the content to the initial template string.
         self.content = self.__template
         self.__clone_flag = False
-        if all_children:
-            for blk_obj in self.__children.values():
+        if all_subblocks:
+            # Reset all subblocks of the current block and recursively also their subblocks.
+            for blk_obj in self.subblocks.values():
                 blk_obj.reset()
 
     def clear(self, count: int = -1) -> None:
-        """Clears the block from its parent block, i.e., sets the block to an empty string.
+        """
+        Clears subblock from parent block, i.e. the content of the subblock is erased from the parent content.
 
         Args:
-            count: The maximum number of blocks with the same name to be cleared, -1 = all.
+            count (int, optional): Maximum number of subblocks to be cleared (if there are multiple blocks using
+                the same tag names). If set to -1, then all corresponding subblock tags in the parent content will
+                be replaced by empty string. Defaults to -1.
         """
+        # Set the content to empty string and remove the block from parent's dictionary of subblocks.
         self.content = ""
         self.set(count=count)
 
-    def clone(self, copies: int = 1, force: bool = False, passive: bool = False, set_children: bool = False) -> None:
-        """Clones the block, i.e., virtually adds another copy of a block template after the
-        existing block content making the new template copy ready to be filled with other values.
+    def clone(self, num_copies: int = 1, force: bool = False, passive: bool = False,
+              set_subblocks: bool = False) -> None:
+        """
+        Clones block by adding the template after the actual block content. Then subblocks and variables in
+        the added template can be filled again with values.
 
-        The clone is created only if blocks and variables are set after cloning. The child blocks
-        are reset after cloning, unless the ``passive`` argument is set to ``True``.
+        .. note::
+            This method actually only internaly indicates that there is a need to perform the template cloning
+            and only if there is an already previously indicated need, then the actual cloning is performed.
 
         Args:
-            copies: The number of template copies to be prepared. If > 1, then ``force`` and
-                ``passive`` arguments are automatically ``False``.
-            force: Forces the clone to be created even if no variable or block is then set.
-            passive: Enables cloning only if an active (non-passive) clone has been requested
-                previously and no further clone is created.
-            set_children: Enables setting of all child blocks to this parent block before cloning.
+            num_copies (int, optional): Number of copies to be created. Defaults to 1.
+            force (bool, optional): Switch forcing the cloning to be performed immediately regardless of whether
+                it will be actually needed for setting subblocks and variables or not, i.e., new template is
+                forcefully added after the block content. If the ``num_copies`` parameter is higher than 1, then
+                this switch is always set to False. Defaults to False.
+            passive (bool, optional): Switch to perform the cloning only if a need for the clone
+                has already been indicated previously, otherwise no new cloning need is indicated. If the
+                ``num_copies`` parameter is higher than 1, then this switch is always set to False.
+                Defaults to False.
+            set_subblocks (bool, optional): Switch to set all subblocks to this parent block first, before
+                cloning this block. If the ``num_copies`` parameter is higher than 1, then the subblocks are
+                set only once before making the first copy of this parent block. Defaults to False.
         """
-        if set_children:
-            for child in self.__children.values():
-                child.set()
+        if set_subblocks:
+            for blk_obj in self.subblocks.values():
+                blk_obj.set()
 
-        if copies > 1:
-            for _ in range(copies):
+        if num_copies > 1:
+            for _ in range(num_copies):
                 self.clone(1, False, False, False)
         else:
-            # Check if cloning flag indicates that the cloning should be actually performed.
+            # Check if cloning flag indicates that the cloning shall be actually performed.
+            # If cloning is not forced, then the block should be cloned only after it has been filled, which is
+            # indicated by the clone_flag.
             if force or self.__clone_flag:
-                if self.autotags:
-                    self.__set_autotag_vari(first=self.__autovari_first)
-                    self.__autovari_first = False
-                    self.__set_autotag_align()
-                # Perform cloning.
+                if not self.raw_content:
+                    self.__set_std_last_first_tag(first=self.__set_first_value)
+                    self.__set_first_value = False
+                    self.__set_char_repeat_tag()
+                # Perform a clone, i.e. finalize the content and add new template at the end of the content.
                 self.content = f"{self.content}{self.__template}"
                 self.__clone_flag = False
             if not passive:
                 if not force:
                     self.__clone_flag = True
-                # Reset all child blocks to make their content ready to be filled with new values.
-                for child in self.__children.values():
-                    child.reset(all_children=True)
+                # Reset all subblocks of the current block and recursively also their subblocks to have
+                # a fresh new instance of all cloned blocks without any remaining unset modified content
+                # strings or cloning flags set to True.
+                for blk_obj in self.subblocks.values():
+                    blk_obj.reset(all_subblocks=True)
 
     def get_subblock(self, *subblock_names: str) -> Union["Block", list["Block"], None]:
-        """Returns the specified child block object from the current block content. Each child
-        is also automatically added into the ``children`` attribute of the current block.
+        """
+        Returns a subblock object defined by block start and end tags within the actual block template.
 
         Args:
-            subblock_names: The tag names of blocks to be extracted from a current block content.
+            subblock_names (str): Name(s) of the subblock tags in the actual block template. The string between
+                the subblock tags is used as a template for the returned subblock object.
 
         Returns:
-            A :class:`Block` object or a list of blocks if multiple subblock names are specified.
-            ``None`` is returned if the specified block tags are not found.
+            :class:`CodeBlock`: Subblock object or a list of subblock objects in case of multiple subblock names
+            specified in the input arguments. If the specified subblock is not found, then ``None`` is returned.
         """
         ret_blk = []
         for subblock_name in subblock_names:
+            # Init subblock object to None, so if subblock name is not found, then None is returned.
             subblk = None
-            # Clone block if the cloning flag is set to true to ensure that the subblock tags
-            # can be found in the block content and the subblock can be extracted from them.
+            # Clone block if the cloning flag is set to true to ensure that the subblock tags can be
+            # found in the block content and the subblock content can be extracted from them.
             self.clone(passive=True)
             if subblock_name:
-                (subblk_start, subblk_end) = self.__get_block_pos(subblock_name)
+                (subblk_start, subblk_end) = self.__get_subblock_start_end_pos(
+                    self.config.tags.block_start.str_name(subblock_name),
+                    self.config.tags.block_end.str_name(subblock_name))
                 if subblk_start >= 0 and subblk_end >= 0:
-                    subblk = Block(self.content[subblk_start: subblk_end], subblock_name, self.config)
-                    subblk.__parent = self      # pylint: disable=protected-access, unused-private-member
-                    self.__children[subblock_name] = subblk
+                    # If subblock tags are found, then create a new subblock and set correct parent-subblock relations.
+                    subblk = Block(self.content[subblk_start: subblk_end], subblock_name, self.config, self)
             ret_blk.append(subblk)
-        return None if not ret_blk else ret_blk[0] if len(ret_blk) == 1 else ret_blk
+        if ret_blk:
+            if len(ret_blk) == 1:
+                ret_blk = ret_blk[0]
+        else:
+            ret_blk = None
+        return ret_blk
 
-    def clear_subblock(self, *subblocks: "Block | str") -> None:
-        """Clears the content of specified child blocks from a current block content.
+    def clear_subblock(self, *subblock_names: str) -> None:
+        """
+        Clears subblock with given name, i.e. the content of the subblock is erased from the parent content.
+
+        .. note::
+            Subblock can be cleared only if it has not been :meth:`set` to the parent block yet.
 
         Args:
-            subblocks: Subblock object(s) or their names to be cleared.
+            subblock_names (str): Subblock name(s) to be cleared from the current block content.
         """
-        for subblk in subblocks:
-            if isinstance(subblk, str):
-                blk_sub = self.children.get(subblk, self.get_subblock(subblk))
+        for subblock_name in subblock_names:
+            if subblock_name in self.subblocks:
+                # If subblock is already defined in child subblocks, then clear it directly.
+                self.subblocks[subblock_name].clear()
+            else:
+                # If subblock is not defined yet, then extract it and then call the clear method.
+                blk_sub = self.get_subblock(subblock_name)
                 if blk_sub:
                     blk_sub.clear()
-            else:
-                subblk.clear()
 
     def set_subblock(self, *subblocks: "Block | str") -> None:
-        """Sets the content of specified child blocks into the content of the current block.
+        """
+        Sets the content of a subblock object into the template of the parent block object from which this method
+        is called, i.e. replaces the subblock tags in the parent block template with the subblock content.
+
+        .. note::
+            Calling this method is equivalent to the call of the :meth:`set` method from the subblock object.
 
         Args:
-            subblocks: The subblock object(s) or their names to be set.
+            subblocks (:class:`Block` | str): Subblock object(s) or names whose content will be set into the
+                parent block object template.
         """
         for subblk in subblocks:
             if isinstance(subblk, str):
-                blk_sub = self.children.get(subblk, self.get_subblock(subblk))
-                if blk_sub:
-                    blk_sub.set()
+                if subblk in self.subblocks:
+                    # If subblock is already defined in child subblocks, then set it directly.
+                    self.subblocks[subblk].set()
+                else:
+                    # If subblock is not defined yet, then extract it and then call the set method.
+                    blk_sub = self.get_subblock(subblk)
+                    if blk_sub:
+                        blk_sub.set()
             else:
                 subblk.set()
 
-    def set(self, vari_idx: int | bool = 0, all_children: bool = False, count: int = -1) -> None:
-        """Sets the content of this block into its parent block content.
+    def set(self, variation_idx: int | bool = 0, all_subblocks: bool = False,
+            raw_content: bool | None = None, count: int = -1) -> None:
+        """
+        Sets the content of the block from which this method is called into its parent block template,
+        i.e. replaces the subblock tags in the parent block template with the subblock content.
 
         Args:
-            vari_idx: An index of a variation block content (if any) to be set starting from 0.
-                A negative index or boolean false causes the block to be cleared. A boolean true
-                is the same as index 0.
-            all_children: Enables setting of all child blocks of this block before setting it.
-            count: The maximum number of blocks with the same name to be set (-1 = no limit).
+            variation_idx (int | bool, optional): Variation index of a block content to be set starting from 0.
+                Variations are content parts separated by the separator tags. Negative variation number causes
+                the block to be cleared instead of set. A boolean value True represents the first block variation 0
+                and False represents the block variation -1, i.e., it clears the block. Defaults to 0.
+            all_subblocks(bool, optional): Flag indicating that all subsequent child subblocks of current block
+                should be set into its parent blocks first before the current block is set into its parent block.
+            raw_content (bool | None, optional): Flag indicating that the block content should be set as is without
+                any processing, i.e., without setting values for special tags. If set to ``None``, then the
+                internal raw content flag for a block is unchanged and it is used to determine if the special tag values
+                are set or not. Defaults to None.
+            count (int, optional): Maximum number of block contents to be set. If set to -1, then all
+                corresponding subblock tags in the parent content will be replaced by the subblock content.
+                Defaults to -1.
         """
         # Convert potentially boolean variation index to integer.
-        if isinstance(vari_idx, bool):
-            vari_idx = 0 if vari_idx else -1
+        if isinstance(variation_idx, bool):
+            variation_idx = 0 if variation_idx else -1
 
         # If variation index is below zero, then clear the block and exit.
-        if vari_idx < 0:
+        if variation_idx < 0:
             self.clear(count=count)
             return
 
-        if all_children and self.__children:
-            for child in self.__children.values():
+        if raw_content is not None:
+            self.raw_content = raw_content
+
+        if all_subblocks and self.subblocks:
+            for blk_obj in self.subblocks.values():
                 # pylint: disable=protected-access
                 # rationale: Private variable __clone_flag is used primarily internally for cloning operation.
                 # However, in this case it can be used to detect if subblock has been already set to parent block
                 # or not. if clone flag is True, then the subblock needs to be set.
-                if child.__clone_flag:
-                    child.set(vari_idx, all_children=True)
+                if blk_obj.__clone_flag:
+                    blk_obj.set(variation_idx, all_subblocks, raw_content)
 
         if self.parent and self.content != self.__template:
             # If content has been changed from the template, then clone the parent block if
             # its cloning flag is set to true to ensure that the subblock tags can be
             # found in the parent block content and the subblock content can be set into them.
             self.parent.clone(passive=True)
-        if self.autotags:
-            # Finalize the block content by setting the value of special tags.
-            self.__set_autotag_vari(last=True)
-            self.__autovari_first = True
-            self.__set_autotag_align()
+        if not self.raw_content:
+            # Finalize the block content by setting value of special tags.
+            self.__set_std_last_first_tag(last=True)
+            self.__set_first_value = True
+            self.__set_char_repeat_tag()
         set_num = 0
         while self.parent and (set_num < count or count < 0):
             # pylint: disable=protected-access
-            # rationale: Private method __get_block_pos is called from non-self object only here and
+            # rationale: Private method __get_subblock_start_end_pos is called from non-self object only here and
             # it is easier and simpler to keep it that way instead of rewriting the method to be static and sending
             # parent object data into it for processing.
-            (subblk_start, subblk_end) = self.parent._Block__get_block_pos(self.name, True)
+            (subblk_start, subblk_end) = self.parent._Block__get_subblock_start_end_pos(
+                self.parent.config.tags.block_start.str_name(self.name),
+                self.parent.config.tags.block_end.str_name(self.name),
+                True)
             if 0 <= subblk_start < subblk_end:
-                blk_content = self.__get_variation(self.content, self.name, vari_idx)
+                blk_content = self.__get_variation(self.content, self.name, variation_idx)
                 # If subblock tags are found, then set the current block content into all corresponding subblock tags
                 # in the parent block content.
                 self.parent.content = \
@@ -390,16 +625,66 @@ class Block:
             else:
                 break
 
-    def set_variables(self, autoclone: bool = False, **name_value_kwargs) -> None:
-        """Sets values into the specified variables within this block content.
+    def set_variables(self, *name_value_args: str, autoclone: bool = False, **name_value_kwargs) -> None:
+        """
+        Sets values into the variables inside the block template, i.e. replaces the tags representing
+        variables with the specified values.
+        Only positional or only keyword arguments described below or both at the same time can be used
+        to define the variables and their values.
 
         Args:
-            autoclone: Enables automatic clone of this block after setting all variables.
-            name_value_kwargs: Keyword arguments representing variable name-value pairs, e.g.,
-                ``name="Thomas", surname="Anderson", age=37``. Tuples or lists can be used as
-                variable values, making this block to be automatically cloned after setting each
-                element value.
+            name_value_args (str): Positional arguments representing variable *name*-*value* pairs. The
+                following example illustrates setting the ``var1`` variable to value ``1`` and the ``var2``
+                variable to value ``2``.
+
+                .. code-block::
+
+                    some_block.set_variables("var1", "1", "var2", "2")
+
+                .. important::
+                    Positional arguments ``name_value_args`` are supported only for backward compatibility
+                    purposes. Usage of keyword arguments ``name_value_kwargs`` instead of positional arguments
+                    is strongly recommended.
+
+            autoclone (bool, optional): Flag indicating that the block containing the variable tags
+                being set should be automatically cloned after the variable is set to its value.
+            name_value_kwargs : Keyword arguments representing variable *name*-*value* pairs, e.g.:
+
+                .. code-block::
+
+                    some_block.set_variables(var1="1", var2="2")
+
+        .. note::
+            Non-string variable value types are allowed, if they have a string representation, i.e. they
+            can be automatically converted to the string. Following example shows setting variable ``var`` to
+            value ``1`` by specifying the value as an integer number:
+
+            .. code-block::
+
+                some_block.set_variables(var=1)
         """
+        # If this method is called with the first positional argument set to something else than a string,
+        # then assume that it is a boolean flag for the autoclone argument, e.g.: set_variables(True, VARIABLE=value).
+        # Set the non-string argument into the the autoclone argument and increment the start index of the usable
+        # positional arguments.
+        pos_arg_start_idx = 0
+        if name_value_args:
+            if not isinstance(name_value_args[0], str):
+                autoclone = bool(name_value_args[0])
+                pos_arg_start_idx = 1
+
+        var_tags = []
+        var_values = []
+        # Loop through variable name-value positional and keyword arguments and extract the variable tags
+        # and corresponding values.
+        for var_idx in range(pos_arg_start_idx, len(name_value_args), 2):
+            if var_idx + 1 < len(name_value_args):
+                var_tags.append(self.config.tags.variable.str_name(name_value_args[var_idx]))
+                var_values.append(name_value_args[var_idx + 1])
+        for var_name, var_value in name_value_kwargs.items():
+            var_tags.append(self.config.tags.variable.str_name(f"{var_name}"))
+            var_values.append(var_value)
+
         iter_idx = 0
         detected_iters_num = 1
         while iter_idx < detected_iters_num:
@@ -407,48 +692,49 @@ class Block:
             # found in the block content and the variable values can be set into them.
             self.clone(passive=True)
             # Loop through variable tags and replace them with the corresponding variable values.
-            for (tag, val) in [(self.config.tag_gen_var(f"{name}"), val) for (name, val) in name_value_kwargs.items()]:
-                if isinstance(val, str):
-                    var_value = val
+            for var_idx, var_tag in enumerate(var_tags):
+                if isinstance(var_values[var_idx], str):
+                    var_value = var_values[var_idx]
                 else:
-                    # Check if the val is iterable and if so, then set its individual elements.
                     try:
-                        _ = iter(val)
-                        detected_iters_num = max(detected_iters_num, len(val))
-                        if len(val) > iter_idx:
-                            var_value = val[iter_idx]
+                        _ = iter(var_values[var_idx])
+                        if len(var_values[var_idx]) > detected_iters_num:
+                            detected_iters_num = len(var_values[var_idx])
+                        if len(var_values[var_idx]) > iter_idx:
+                            var_value = var_values[var_idx][iter_idx]
                         else:
-                            var_value = val[-1]
+                            var_value = var_values[var_idx][-1]
                     except TypeError:
-                        var_value = val
-                self.content = self.content.replace(tag, f"{var_value}")
+                        var_value = var_values[var_idx]
+                self.content = self.content.replace(var_tag, f"{var_value}")
             iter_idx += 1
             if detected_iters_num > 1 or autoclone:
                 self.clone()
 
     def clear_variables(self, *var_names: str) -> None:
-        """Clears the specified variables from this block content. Has the same effect as setting
-        the variables to an empty string.
+        """
+        Removes specified variables from the block template, i.e. replaces the tags representing variables with
+        the empty strings.
 
         Args:
-            var_names: Names of the variables to be cleared.
+            var_names (str): Arguments with variable names to be cleared.
         """
         for var_name in var_names:
-            self.content = self.content.replace(self.config.tag_gen_var(var_name), "")
+            self.content = self.content.replace(self.config.tags.variable.str_name(var_name), "")
 
-    def __get_block_pos(self, block_name: str, include_tags: bool = False) -> tuple[int, int]:
-        """Returns the position of the specified block within the content of this block.
+    def __get_subblock_start_end_pos(self, start_tag: str, end_tag: str, include_tags: bool = False) -> tuple[int, int]:
+        """
+        Returns start and end position of a subblock string in the block content.
 
         Args:
-            block_name: The name of the block whose position should be returned.
-            include_tags: Enables the inclusion of the block tags themselves in the returned
-                position.
+            start_tag (str): Subblock start tag string.
+            end_tag (str): Subblock end tag string.
+            include_tags (bool, optional): If true, then start-end position takes into account also
+                the subblock tags themselves. Defaults to False.
 
         Returns:
-            A tuple with the start and end character position of the block.
+            tuple[int, int]: Returned start and end character position of the subblock, i.e. ``(start_pos, end_pos)``.
         """
-        start_tag = self.config.tag_gen_blk_start(block_name)
-        end_tag = self.config.tag_gen_blk_end(block_name)
         subblk_start = self.content.find(start_tag)
         if subblk_start >= 0:
             if not include_tags:
@@ -478,19 +764,23 @@ class Block:
 
         return (subblk_start, subblk_end)
 
-    def __set_autotag_align(self) -> None:
-        """Sets the value of the *alignment* automatic tags in this block maintaining the
-        predefined right-alignment to the next character different from the repeated one.
+    def __set_char_repeat_tag(self) -> None:
+        """
+        Replaces special tags representing repeated characters in the block content with the correct amount of
+        repeated characters (usually spaces or tabulators) to keep predefined right-alignement.
         """
         last_pos = 0
-        # Loop through all "alignment" tags in block template and replace them with the correct
+        # Loop through all *char repeat* tags in block template and replace them with the correct
         # number of repeated characters.
         while True:
-            (cont_start, cont_end, new_col, repeat_char) = self.__get_autotag_align_att(self.content)
+            # Get data about char repeat in the block content.
+            (cont_start, cont_end, new_col, repeat_char) = self.__get_char_repeat_data(self.content)
             if cont_start >= 0:
-                (templ_start, templ_end, orig_col, _) = self.__get_autotag_align_att(self.__template, True, last_pos)
+                # Get data about char repeat in the block template, i.e. the content before it has been filled.
+                (templ_start, templ_end, orig_col, _) = self.__get_char_repeat_data(
+                    self.__template, True, last_pos)
                 orig_len = templ_end - templ_start
-                # Calculate the new length of the repeated characters in the filled content.
+                # Calculate new length of repeated characters in the filled content.
                 new_len = orig_len + (orig_col - new_col)
                 if repeat_char == "\t":
                     temp_len = new_len
@@ -499,98 +789,112 @@ class Block:
                         new_len += 1
                 if new_len <= 0:
                     new_len = 1
-                # Set the repeated characters into the block content instead of the "alignment" tag.
+                # Set repeated characters into the block content instead of the *char repeat* tag.
                 self.content = f"{self.content[0: cont_start]}{new_len * repeat_char}{self.content[cont_end:]}"
-                # Remember the last "alignment" tag position in the template, because if there are more of these tags,
+                # Remember last *char repeat* tag position in the template, because if there are more of these tags,
                 # then we need to start searching only after the previous tag position, not again from the start.
                 last_pos = templ_end
             else:
                 break
 
-    def __get_autotag_align_att(
-            self, text: str, expand_tabs: bool = False, start_pos: int = 0) -> tuple[int, int, int, str]:
-        """Returns the attributes of the first found *alignment* automatic tag.
+    def __get_char_repeat_data(self, input_string: str, expand_tabs: bool = False, start_index: int = 0) \
+            -> tuple[int, int, int, str]:
+        """
+        Returns data about special *char repeat* tag, i.e. its start, end position, column index in line and
+        the character to be repeated.
 
         Args:
-            text: A string in which the *alignment* automatic tag is searched.
-            expand_tabs: Enables the replacement of tabulators with spaces for consistent
-                character position counting.
-            start_pos: The start character position for searching the *alignment* automatic tag.
+            input_string (str): String in which the special tag is searched.
+            expand_tabs (bool, optional): If true, then tabulators are replaced with spaces for consistent
+                character position counting. Defaults to False.
+            start_index (int, optional): Start character index from which the special tag is searched.
+                Defaults to 0.
 
         Returns:
-            A tuple with the following information about the *alignment* automatic tag:
-            start char position, end char position, line column index, character to be repeated.
+            tuple[int, int, int, str]: *char repeat* tag data in form of a following tuple:
+                ``(start_pos, end_pos, column_pos, repeated_char)``.
         """
         if expand_tabs:
-            text = text.expandtabs(self.config.tab_size)
+            input_string = input_string.expandtabs(self.config.tab_size)
         end_pos = -1
         tag_col_pos = -1
         repeat_char = None
-        charrep_tag = self.config.tag_gen_var(self.config.autotag_align)
         # Get starting position of repeated characters.
-        st_pos = text.find(charrep_tag, start_pos)
-        if st_pos >= 0:
-            end_pos = st_pos + len(charrep_tag)
-            # Get the repeated character immediately following the "alignment" tag.
-            repeat_char = text[end_pos]
-            while text[end_pos] == repeat_char:
+        start_pos = input_string.find(self.config.tags.char_repeat.str, start_index)
+        if start_pos >= 0:
+            end_pos = start_pos + len(self.config.tags.char_repeat.str)
+            # Get character immediately following the *char repeat* tag. This character is going to be repeated.
+            repeat_char = input_string[end_pos]
+            # Get ending position of repeated characters.
+            while input_string[end_pos] == repeat_char:
                 end_pos += 1
-            # Get position of the last newline char before the "alignment" tag.
-            line_st_pos = text.rfind("\n", 0, st_pos)
-            line_st_pos = 0 if line_st_pos < 0 or line_st_pos > st_pos else line_st_pos + 1
-            # Get the line column position of the "alignment" tag.
-            tag_col_pos = len(text[line_st_pos: st_pos].expandtabs(self.config.tab_size))
-        return (st_pos, end_pos, tag_col_pos, repeat_char)
+            # Get position of the line start in which the *char repeat* tag is located.
+            line_start_pos = input_string.rfind("\n", 0, start_pos)
+            line_start_pos = 0 if line_start_pos < 0 or line_start_pos > start_pos else line_start_pos + 1
+            # Get column position of *char repeat* tag, i.e. the position of the *char repeat* tag within its line.
+            tag_col_pos = len(input_string[line_start_pos: start_pos].expandtabs(self.config.tab_size))
+        return (start_pos, end_pos, tag_col_pos, repeat_char)
 
-    def __set_autotag_vari(self, first: bool = False, last: bool = False) -> None:
-        """Sets the correct content variation of the *variation* automatic tags in this block
-        content. The *variation* automatic tag can have two or three content variations:
-        *standard / last / first*, while the last *first* variation is optional. The *first*
-        (optional) variation is automatically set in the first clone of this block, the *standard*
-        variation is set in all subsequent clones, except for the last one, where the *last*
-        variation is set.
+    def __set_std_last_first_tag(self, first: bool = False, last: bool = False) -> None:
+        """
+        Replaces special *last value* tag in the block content with either the standard value or the last value.
 
         Args:
-            first: Enables setting of the *first* value variation of the *variation* automatic tag.
-            last: Enables setting of the *last* value variation of the *variation* automatic tag.
+            first (bool, optional):  Switch to set the *first* value in place of the *std last first* tag. If False,
+                then the standard value is used. Defaults to False.
+            last (bool, optional): Switch to set the *last* value in place of the *std last first* tag. If False,
+                then the standard value is used. This switch has a priority over the ``first`` switch argument.
+                Defaults to False.
         """
-        # Loop through all *variation* autotags in a block content and replace them with either
-        # the "standard", "last" or "first" value.
+        # Loop through all *last value* tags in block content and replace them with either standard value or last value.
         while True:
-            (subblk_start, subblk_end) = self.__get_block_pos(self.config.autotag_vari, True)
+            # Get the start and end position of the *last value* tag including the start/end tags.
+            (subblk_start, subblk_end) = \
+                self.__get_subblock_start_end_pos(
+                    self.config.tags.std_last_first_start.str,
+                    self.config.tags.std_last_first_end.str,
+                    True)
+            # If *last value* tag is found.
             if 0 <= subblk_start < subblk_end:
-                (subblk_cont_start, subblk_cont_end) = self.__get_block_pos(self.config.autotag_vari)
+                # Extract the content of the *last value* tag without the start/end tags themselves.
+                (subblk_cont_start, subblk_cont_end) = \
+                    self.__get_subblock_start_end_pos(
+                        self.config.tags.std_last_first_start.str,
+                        self.config.tags.std_last_first_end.str)
                 value_content = self.content[subblk_cont_start: subblk_cont_end]
                 value_content = self.__get_variation(
-                    value_content, self.config.autotag_vari, 1 if last else 2 if first else 0)
+                    value_content, self.config.tags.std_last_first_start.name, 1 if last else 2 if first else 0)
                 self.content = f"{self.content[: subblk_start]}{value_content}{self.content[subblk_end:]}"
             else:
                 break
 
-    def __get_variation(self, text: str, block_name: str, vari_idx: int) -> str:
-        """Finds the specified variation block and returns the content variation with the specified
-        index from it.
+    def __get_variation(self, content: str, block_name: str, variation_idx: int) -> str:
+        """
+        Returns a block content string corresponding to the specified variation of a block content from
+        all variations defined using special *block variation* tags.
 
         Args:
-            text: A string where the variation block is searched.
-            block_name: The variation block name being searched.
-            vari_idx: The content variation index (starting from 0) to be returned. Variation 0
-                is returned if the specified index is higher than the number of defined variations.
+            content (str): Content string with multiple variations formatted using *block variation* tags.
+            block_name (str): Block name that is used in *block variation* tags.
+            variation_idx (int): Index of a variation (starting from 0) to be returned by this method.
 
         Returns:
-            A string representing the content variation corresponding to the specified variation
-            index. The whole ``text`` argument is returned if the variation block is not found.
+            str: Block content string variation corresponding to the specified variation index.
         """
-        content_vari = text
-        if self.config.tag_gen_blk_vari(block_name) in text:
-            var_list = text.split(self.config.tag_gen_blk_vari(block_name))
-            content_vari = var_list[vari_idx] if vari_idx < len(var_list) else var_list[0]
-            # Remove the initial empty space up to the first newline char "\n", including the "\n" if present.
-            first_nl = content_vari.find("\n") + 1
-            if first_nl > 0 and content_vari[: first_nl].strip() == "":
-                content_vari = content_vari[first_nl:]
-            # Remove trailing empty space after the final newline char "\n", not including the final "\n" if present).
-            last_nl = content_vari.rfind("\n") + 1
-            if last_nl > 0 and content_vari[last_nl:].strip() == "":
-                content_vari = content_vari[0: last_nl]
-        return content_vari
+        var = content
+        if self.config.tags.block_variation.str_name(block_name) in content:
+            var_list = content.split(self.config.tags.block_variation.str_name(block_name))
+            if variation_idx < len(var_list):
+                var = var_list[variation_idx]
+            else:
+                var = var_list[0]
+            # Remove initial empty space up to the first new line char "\n", including the "\n" if present.
+            first_nl = var.find("\n") + 1
+            if first_nl > 0 and var[: first_nl].strip() == "":
+                var = var[first_nl:]
+            # Remove trailing empty space after the final new line char "\n", not including the final "\n" if present).
+            last_nl = var.rfind("\n") + 1
+            if last_nl > 0 and var[last_nl:].strip() == "":
+                var = var[0: last_nl]
+
+        return var

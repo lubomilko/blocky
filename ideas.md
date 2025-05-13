@@ -23,31 +23,3 @@ should generate:
 ``` text
 Values: 1, 2, 3         (Just some values.)
 ```
-
-# Bugs
-
-Assumming that block blk_b is within the blk_a. The blk_b.set(1) in the following code does not
-work. Works only if it's called after blk_a.set_variables(...) as shown by the commented code line.
-
-``` python
-for i in i_list:
-    blk_b.set(1)
-    blk_a.set_variables(...)
-    # blk_b.set(1)
-
-    blk_a.clone()
-blk_a.set()
-```
-
-The blk_a.set_variables(autoclone=True, ...) does not work properly, generates unfilled string at
-the end. Works only if blk_a is cloned manually as shown by the commented code line.
-
-``` python
-for i in i_list:
-    blk_a.set_variables(autoclone=True, ...)
-    for j in j_list:
-        blk_b.set_variables(autoclone=True, ...)
-    blk_b.set()
-    # blk_a.clone()
-blk_a.set()
-```
